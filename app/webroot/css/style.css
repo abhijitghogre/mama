@@ -1,0 +1,72 @@
+.logo{
+    height: 34px;
+}
+.formMessage{
+    text-align: center;
+    line-height: 40px;
+    background-color: rgb(207, 50, 50);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.close-button{
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 16px;
+    color: white;
+    background-color: #B85858;
+    text-align: center;
+    font-size: 10px;
+    font-weight: bold;
+    border: 1px solid grey;
+    cursor: pointer;
+}
+.add-button{
+    background: #FC770A;
+    float: left;
+    color: white;
+    border: 1px solid #A37550;
+    height: 30px;
+    width: 30px;
+    line-height: 28px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 26px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.edit-button{
+    position: absolute;
+    right: 22px;
+    background-color: green;
+    color: white;
+    padding: 4px;
+    top: 0;
+    text-align: center;
+    font-size: 10px;
+    font-weight: bold;
+    border: 1px solid grey;
+    cursor: pointer;
+    border-right: 0;
+}
+.edit-button,.close-button{
+    display: none;
+}
+.formField:hover .edit-button{
+    display: block;
+}
+.formField:hover .close-button{
+    display: block;
+}
+.formField{
+    position: relative;
+}
+.add-button{
+    float: right;
+}
+.field-checkboxes,.field-radios,.field-select{
+    position: relative;
+}
