@@ -95,7 +95,8 @@ class AppController extends Controller {
      * CUSTOM USER FUNCTIONS 
      */
     protected function _customFieldsArrayToDom($array, $showRemoveButton = true) {
-        $dom = "";
+        $dom = '<div class="row">
+    <div class="col-sm-8">';
         if (!isset($array)) {
             $array = array();
         }
@@ -112,72 +113,67 @@ class AppController extends Controller {
                                     </div>';
                     break;
                 case "radio":
-                    $dom = $dom . ('<div class="row formField" data-index="' . $key . '" data-type="' . $field['type'] . '" data-name="' . $field['name'] . '">
-                        <div class="hide json-data">' . json_encode($field) . '</div>
-                                <div class="large-3 columns">
-                                    <label>' . $field['label'] . ($field['required'] === 'true' ? '*' : '') . ':</label>
-                                </div>
-                                <div class="large-9 columns">');
+                    $dom = $dom . '<div class="form-group formField" data-index="' . $key . '" data-type="' . $field['type'] . '" data-name="' . $field['name'] . '">
+                                        <div class="hide json-data">' . json_encode($field) . '</div>
+                                        <label class="col-md-2 control-label">' . $field['label'] . ($field['required'] === 'true' ? '*' : '') . ':</label>
+                                        <div class="col-md-10">';
                     foreach ($field['radios'] as $k => $radio) {
-                        $dom = $dom . ('
-                                        <input value="' . $radio['label'] . '" class="custom-field-input" id="' . $field['label'] . $k . '" type="radio" ' . ($radio['disabled'] === 'true' ? 'disabled="disabled"' : '') . ' ' . ($radio['checked'] === 'true' ? 'checked="checked"' : '') . ' name="' . $field['name'] . '">
-                                        <label for="' . $field['label'] . $k . '">' . $radio['label'] . '</label><br/>
-                               ');
+                        $dom = $dom . '<div class="radio">
+                                                <label>
+                                                    <input class="custom-field-input" value="' . $radio['label'] . '" type="radio" ' . ($radio['disabled'] === 'true' ? 'disabled="disabled"' : '') . ' ' . ($radio['checked'] === 'true' ? 'checked="checked"' : '') . ' name="' . $field['name'] . '">
+                                                    ' . $radio['label'] . '</label>
+                                            </div>';
                     }
-                    $dom = $dom . ('</div>
-                                ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
-                            </div>');
+                    $dom = $dom . '</div>
+                                        ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
+                                </div>';
+
                     break;
                 case "checkbox":
-                    $dom = $dom . ('<div class="row formField" data-index="' . $key . '" data-type="' . $field['type'] . '" data-name="' . $field['name'] . '">
-                        <div class="hide json-data">' . json_encode($field) . '</div>
-                                <div class="large-3 columns">
-                                    <label>' . $field['label'] . ($field['required'] === 'true' ? '*' : '') . ':</label>
-                                </div>
-                                <div class="large-9 columns">');
+                    $dom = $dom . '<div class="form-group formField" data-index="' . $key . '" data-type="' . $field['type'] . '" data-name="' . $field['name'] . '">
+                                        <div class="hide json-data">' . json_encode($field) . '</div>
+                                        <label class="col-md-2 control-label">' . $field['label'] . ($field['required'] === 'true' ? '*' : '') . ':</label>
+                                        <div class="col-md-10">';
                     foreach ($field['checkboxes'] as $k => $checkbox) {
-                        $dom = $dom . ('
-                                        <input value="' . $checkbox['label'] . '" class="custom-field-input" name="' . $field['name'] . '" id="' . $field['label'] . $k . '" type="checkbox" ' . ($checkbox['disabled'] === 'true' ? 'disabled="disabled"' : '') . ' ' . ($checkbox['checked'] === 'true' ? 'checked="checked"' : '') . '">
-                                    
-                                        <label for="' . $field['label'] . $k . '">' . $checkbox['label'] . '</label><br/>
-                                    ');
+                        $dom = $dom . '   <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" ' . ($checkbox['disabled'] === 'true' ? 'disabled="disabled"' : '') . ' ' . ($checkbox['checked'] === 'true' ? 'checked="checked"' : '') . '" value="' . $checkbox['label'] . '" class="custom-field-input" name="' . $field['name'] . '">
+                                                    ' . $checkbox['label'] . ' </label>
+                                            </div>';
                     }
-                    $dom = $dom . ('</div>
-                                ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
-                            </div>');
+                    $dom = $dom . '</div>
+                                    ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
+                                </div>';
                     break;
                 case "select":
-                    $dom = $dom . ('<div class="row formField" data-index="' . $key . '" data-type="' . $field['type'] . '" data-name="' . $field['name'] . '">
-                        <div class="hide json-data">' . json_encode($field) . '</div>
-                                <div class="large-3 columns">
-                                    <label>' . $field['label'] . ($field['required'] === 'true' ? '*' : '') . '</label>
-                                </div>
-                                <div class="large-9 columns">
-                                        <select type="select" class="custom-field-input" name="' . $field['name'] . '">');
+                    $dom = $dom . '<div class="form-group formField" data-index="' . $key . '" data-type="' . $field['type'] . '" data-name="' . $field['name'] . '">
+                                    <div class="hide json-data">' . json_encode($field) . '</div>
+                                    <label class="col-md-2 control-label">' . $field['label'] . ($field['required'] === 'true' ? '*' : '') . '</label>
+                                    <div class="col-md-10">
+                                       <select class="form-control custom-field-input" type="select" name="' . $field['name'] . '">';
                     foreach ($field['options'] as $option) {
-                        $dom = $dom . ('<option value="' . $option['value'] . '" ' . ($option['disabled'] === 'true' ? "disabled" : "") . ' ' . ($option['selected'] === 'true' ? "selected" : "") . '>' . $option['value'] . '</option>');
+                        $dom = $dom . '<option value="' . $option['value'] . '" ' . ($option['disabled'] === 'true' ? "disabled" : "") . ' ' . ($option['selected'] === 'true' ? "selected" : "") . '>' . $option['value'] . '</option>';
                     }
-                    $dom = $dom . ('</select>
-                                </div>
-                                ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
-                            </div>');
+                    $dom = $dom . '</select> 
+                                    </div>
+                                    ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
+                                </div>';
                     break;
                 case "textarea":
-                    $dom = $dom . ('<div class="row formField" data-index="' . $key . '" data-type="' . $field['type'] . '" data-name="' . $field['name'] . '">
-                        <div class="hide json-data">' . json_encode($field) . '</div>
-                                <div class="large-3 columns">
-                                    <label>' . $field['label'] . ($field['required'] === 'true' ? '*' : '') . ':</label>
-                                </div>
-                                <div class="large-9 columns">
-                                    <textarea type="textarea" class="custom-field-input" name="' . $field['name'] . '" rows="' . $field['rows'] . '" cols="' . $field['cols'] . '" ' . ($field['disabled'] === 'true' ? 'disabled="disabled"' : '') . '>' . $field['value'] . '</textarea>
-                                </div>
-                                ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
-                            </div>');
+
+                    $dom = $dom . ' <div class="form-group formField" data-index="' . $key . '" data-type="' . $field['type'] . '" data-name="' . $field['name'] . '">
+                                        <div class="hide json-data">' . json_encode($field) . '</div>
+                                        <label class="col-sm-2 control-label">' . $field['label'] . ($field['required'] === 'true' ? '*' : '') . ':</label>
+                                        <div class="col-sm-10">
+                                            <textarea type="textarea" class="form-control custom-field-input" name="' . $field['name'] . '" rows="' . $field['rows'] . '" cols="' . $field['cols'] . '" ' . ($field['disabled'] === 'true' ? 'disabled="disabled"' : '') . '>' . $field['value'] . '</textarea>
+                                        </div>
+                                        ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
+                                    </div>';
                     break;
             }
         }
 
-        return $dom;
+        return $dom.'</div></div>';
     }
 
 }

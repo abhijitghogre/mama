@@ -374,7 +374,8 @@ $(document).ready(function() {
                 customFields: fields,
                 editing: "1",
                 user_id: $('input.user_id').val(),
-                user_meta_id: $('input.user_meta_id').val()
+                user_meta_id: $('input.user_meta_id').val(),
+                user_callflag_id: $('input.user_callflag_id').val()
             }, function(response) {
                 if (JSON.parse(response).type === "success") {
                     window.location.replace(BASE_URL + '/users/listUsers/' + $('.project_id').val());
@@ -514,6 +515,11 @@ $(document).ready(function() {
     //hide form message on click
     $(document).on('click', '.formMessage', function() {
         $('#flashMessage').remove();
+    });
+
+    //relode page after model is hidden
+    $('#custom-field-modal').on('hidden.bs.modal', function(e) {
+        location.reload();
     });
 
     /***

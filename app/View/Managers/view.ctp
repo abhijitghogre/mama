@@ -1,6 +1,6 @@
 <div class="content-box-large">
     <div class="panel-heading">
-        <div class="panel-title">Striped Rows</div>
+        <div class="panel-title">Manager Details</div>
     </div>
     <div class="panel-body">
         <div class="row">

@@ -21,6 +21,7 @@ class UsersController extends AppController {
             if (isset($this->request->data['user_id'])) {
                 $savedata["User"]["id"] = $this->request->data['user_id'];
                 $savedata["UserMeta"]["id"] = $this->request->data['user_meta_id'];
+                $savedata["UserCallflag"]["id"] = $this->request->data['user_callflag_id'];
             } else {
                 $this->User->create();
             }
@@ -108,6 +109,7 @@ class UsersController extends AppController {
         $this->set('user', $user);
 //        var_dump($user);exit;
         $this->set('user_meta_id', $user[0]['UserMeta']['id']);
+        $this->set('user_callflag_id', $user[0]['UserCallflag']['id']);
     }
 
 }

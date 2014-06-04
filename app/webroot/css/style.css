@@ -64,6 +64,9 @@
 .formField{
     position: relative;
 }
+.custom-fields-cont .formField:hover{
+    background-color: #ECECEC;
+}
 .add-button{
     float: right;
 }
