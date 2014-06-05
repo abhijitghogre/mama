@@ -9,6 +9,8 @@ class HomeController extends AppController {
 
     public function index() {
         //return $this->redirect(array('controller' => 'projects', 'action' => 'listProjects'));
+        $projects = $this->Project->getAllProjects();
+        $this->set('projects', $projects);
     }
 
 }

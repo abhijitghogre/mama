@@ -522,24 +522,25 @@ $(document).ready(function() {
         location.reload();
     });
 
+
     /***
      * TEST CODE BELOW REMOVE AFTER USE
      */
-
-    $('input[name="mand-name"]').val('Jane Doe');
-    $('input[name="mand-age"]').val(42);
-    $('input[name="mand-phone"]').val(8898132628);
-    $('input[name="mand-phone-alt"]').val(8898132628);
-    $('input[name="mand-phone-type"]').prop('checked', true);
-    $('input[name="mand-phone-type"]').trigger('change');
-    $('input[name="mand-phone-code"]').val('022');
-    $('input[name="mand-phone-owner"]').prop('checked', true);
-    $('input[name="mand-phone-owner"]').trigger('change');
-    $('input[name="mand-phone-owner-other"]').val('neighbour');
-    $('input[name="mand-lmp"]').val("2014-05-16");
-    $('input[name="mand-reg-date"]').val("2014-05-16");
-    $('input[name="mand-gest-age"]').val(42);
-
+    /*
+     $('input[name="mand-name"]').val('Jane Doe');
+     $('input[name="mand-age"]').val(42);
+     $('input[name="mand-phone"]').val(8898132628);
+     $('input[name="mand-phone-alt"]').val(8898132628);
+     $('input[name="mand-phone-type"]').prop('checked', true);
+     $('input[name="mand-phone-type"]').trigger('change');
+     $('input[name="mand-phone-code"]').val('022');
+     $('input[name="mand-phone-owner"]').prop('checked', true);
+     $('input[name="mand-phone-owner"]').trigger('change');
+     $('input[name="mand-phone-owner-other"]').val('neighbour');
+     $('input[name="mand-lmp"]').val("2014-05-16");
+     $('input[name="mand-reg-date"]').val("2014-05-16");
+     $('input[name="mand-gest-age"]').val(42);
+     */
 });//ready ends
 
 //converts something like "Hello, This is my text." into "hello-this-is-my-text"
