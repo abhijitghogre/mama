@@ -1,6 +1,8 @@
 var BASE_URL = document.location.origin;
 if (BASE_URL === "http://localhost") {
-    BASE_URL = "http://localhost/hero/v2/mama";
+    BASE_URL = "http://localhost/mama";
+} else {
+    BASE_URL = "http://herohelpline.org/mMitra-MAMA";
 }
 
 $(document).ready(function() {
@@ -522,6 +524,45 @@ $(document).ready(function() {
         location.reload();
     });
 
+    /*logs page*/
+    var oTable = $('#report').dataTable();
+    $('#LogsProjectId').on('change', function() {
+        var id = $(this).val();
+        if (id != 0) {
+            $('.username').hide();
+            $('.project' + id).show();
+        } else {
+            $('.username').show();
+        }
+
+    });
+    // setting fromdate and todate in logs form
+    var now = new Date();
+    var day = ("0" + now.getDate()).slice(-2);
+    var month = ("0" + (now.getMonth() + 1)).slice(-2);
+    var today = now.getFullYear() + "-" + (month) + "-" + (day);
+    var fdate = new Date();
+    fdate = ("0" + (fdate.getDate() - fdate.getDay() + 1)).slice(-2);
+    var fromdate = now.getFullYear() + "-" + (month) + "-" + (fdate);
+    $('#LogsFromdate').val(fromdate);
+    $('#LogsTodate').val(today);
+
+    $('#generatereport').on('click', function(e) {
+        e.preventDefault();
+        var projectId = $('#LogsProjectId').val();
+        var userId = $('#LogsUserId').val();
+        var callCode = $('#LogsCallCode').val();
+        var fromDate = $('#LogsFromdate').val();
+        var toDate = $('#LogsTodate').val();
+        var other = $('#LogsOther').val();
+        $('.loader').show();
+        $.post(BASE_URL + '/logs/generate_report', {projectId: projectId, userId: userId, callCode: callCode, fromDate: fromDate, toDate: toDate}, function(data) {
+            oTable.fnDestroy();
+            $('#report').replaceWith(data);
+            oTable = $('#report').dataTable({"aaSorting": [[6, "desc"]]});
+            $('.loader').hide();
+        });
+    });
 
     /***
      * TEST CODE BELOW REMOVE AFTER USE

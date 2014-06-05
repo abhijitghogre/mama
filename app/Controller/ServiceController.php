@@ -22,9 +22,9 @@ class ServiceController extends AppController {
         if($current_day == "Sun"){
             if($current_slot >= 9 && $current_slot<12){
                 $callslot = 1;
-            }elseif($current_slot >= 12 && $current_slot<13){
+            }elseif($current_slot >= 12 && $current_slot<15){
                 $callslot = 2;
-            }elseif($current_slot >= 13 && $current_slot<18){
+            }elseif($current_slot >= 15 && $current_slot<18){
                 $callslot = 3;
             }elseif($current_slot >= 18 && $current_slot<21){
                 $callslot = 4;
@@ -55,9 +55,9 @@ class ServiceController extends AppController {
             }
             $date2 = $current_time;
             $presentgestage = $this->datediff('ww', $date1, $date2, true) + $gest_age ;
-            $call_flag = json_decode($r["UserCallflags"]["flag"], true);
+            $call_flag = json_decode($r["UserCallflag"]["flag"], true);
             $slot = $r["User"]["call_slots"];
-            $intro_call_flag = $r["UserCallflags"]["intro_call"];
+            $intro_call_flag = $r["UserCallflag"]["intro_call"];
             $gestage = "";
             //intro call
             if((date("d-m-y",strtotime($r["User"]["entry_date"])) == date("d-m-y",$date2)) && ($intro_call_flag == 0)){
@@ -347,7 +347,7 @@ class ServiceController extends AppController {
         }
         echo "<pre>";
         print_r($callsarray);
-        //$this->outbound($callsarray);
+        $this->outbound($callsarray);
         exit;
     }
     public function get_missedcall_info(){
@@ -383,7 +383,7 @@ class ServiceController extends AppController {
             }
             $date2 = $current_time;
             $presentgestage = $this->datediff('ww', $date1, $date2, true) + $gest_age ;
-            $call_flag = json_decode($r["UserCallflags"]["flag"], true);
+            $call_flag = json_decode($r["UserCallflag"]["flag"], true);
             $slot = $r["User"]["call_slots"];
             $gestage = "";
             //STAGE 1
@@ -530,9 +530,9 @@ class ServiceController extends AppController {
         
         preg_match("/^(Success).*/", $response, $success);
         if($success){
-            $data = explode(':', $response);
+            $data = explode(',', $response);
             $reason = 0;
-            $tid = $data[2];
+            $tid = $data[1];
         }else{
             $reason = 1;
             $tid = 0;
@@ -540,63 +540,136 @@ class ServiceController extends AppController {
         $this->DialerLogs->makeEntry($startdatetime, $phoneno, $gest_age, $reason, $userid, $tid);
     }
     public function update(){
-        if (isset($_GET)) {
-            $phoneno = $_GET['phoneno'];
-            $result = $this->DialerLogs->getTid($phoneno);
-            $tid = $result[0]["dialer_logs"]["tid"];
-            $callsummary = $this->call_summary($tid);
-            $callstatus = $callsummary['status'];
-            $msisdn = $callsummary['msisdn'];
-            $duration = $callsummary['callduration'];
-            $startdatetime = date("Y-m-d H:i:s",strtotime($callsummary['answered_on']));
-            $enddatetime = date("Y-m-d H:i:s",strtotime($callsummary['released_on']));
-            
-            ini_set("memory_limit", "256M");
-            set_time_limit(0);
-            date_default_timezone_set('Asia/Calcutta'); 
-            $current_time = time();
-            $current_day = date("D", $current_time);
-            $languages = array("1"=>"english","2"=>"hindi", "3"=>"marathi");
-            $project = array("1"=>"dfid","2"=>"glenmark");
-            $r = $this->User->find('first', array('conditions' => array('User.phone_no' => $phoneno),array('contain' => array('UserCallflags'))));
+        date_default_timezone_set('Asia/Calcutta');
+        $body = file_get_contents('php://input');
+        $xml = simplexml_load_string($body);
+        $json = json_encode($xml);
+        $array = json_decode($json,TRUE);
+        $callsummary = $array['evt-notification']['evt-info'];
+        $phoneno = $_GET['phoneno'];
+        $tid = $callsummary['esbtransid'];
+        $callstatus = $callsummary['drop-type'];
+        $duration = $callsummary['call-duration'];
+        $startdatetime = date("Y-m-d H:i:s",strtotime($callsummary['answered-on']));
+        $enddatetime = date("Y-m-d H:i:s",strtotime($callsummary['released-on']));
 
-            if(isset($r["User"]["lmp"])){
-                $date1 = strtotime($r["User"]["lmp"]);
-                $gest_age = 0;
-            }else{
-                $date1 = strtotime($r["User"]["registration_date"]);
-                $gest_age = $r["User"]["enroll_gest_age"];
-            }
-            $date2 = $current_time;
-            $presentgestage = $this->datediff('ww', $date1, $date2, true) + $gest_age ;
-            $decodedflag = json_decode($r["UserCallflags"]["flag"], true);
-            $slot = $r["User"]["call_slots"];
-            $intro_call_flag = $r["UserCallflags"]["intro_call"];
-            $userid =  $r["User"]["id"];
-            //intro call
-            if((date("d-m-y",strtotime($r["User"]["entry_date"])) == date("d-m-y",$date2)) && ($intro_call_flag == 0)){
-                $intro_call_flag = 1;
-            //First Call after registration RGFC
-            }elseif($intro_call_flag == 1){
+        ini_set("memory_limit", "256M");
+        set_time_limit(0);
+        date_default_timezone_set('Asia/Calcutta'); 
+        $current_time = time();
+        $current_day = date("D", $current_time);
+        $languages = array("1"=>"english","2"=>"hindi", "3"=>"marathi");
+        $project = array("1"=>"dfid","2"=>"glenmark");
+        $r = $this->User->find('first', array('conditions' => array('User.phone_no' => $phoneno),array('contain' => array('UserCallflags'))));
+
+        if(isset($r["User"]["lmp"])){
+            $date1 = strtotime($r["User"]["lmp"]);
+            $gest_age = 0;
+        }else{
+            $date1 = strtotime($r["User"]["registration_date"]);
+            $gest_age = $r["User"]["enroll_gest_age"];
+        }
+        $date2 = $current_time;
+        $presentgestage = $this->datediff('ww', $date1, $date2, true) + $gest_age ;
+        $decodedflag = json_decode($r["UserCallflag"]["flag"], true);
+        $slot = $r["User"]["call_slots"];
+        $intro_call_flag = $r["UserCallflag"]["intro_call"];
+        $userid =  $r["User"]["id"];
+        //intro call
+        if((date("d-m-y",strtotime($r["User"]["entry_date"])) == date("d-m-y",$date2)) && ($intro_call_flag == 0)){
+            $intro_call_flag = 1;
+        //First Call after registration RGFC
+        }elseif($intro_call_flag == 1){
+            if($callstatus == 0){
                 $intro_call_flag = 2;
-                //STAGE 1
-                if($r["User"]["delivery"] == 0 && $presentgestage >0 && $presentgestage <= 39){
+            }
+            //STAGE 1
+            if($r["User"]["delivery"] == 0 && $presentgestage >0 && $presentgestage <= 39){
+                //first call
+                if($current_day == "Mon"){
+                        if($callstatus == 0){
+                            $decodedflag[0][$presentgestage]["first_call"]["flag"] = 1;
+                        }else{
+                            $decodedflag[0][$presentgestage]["first_call"]["attempts"]++;
+                        }
+                //second call
+                }elseif($current_day == "Thu"){
+                    if($callstatus == 0){
+                        $decodedflag[0][$presentgestage]["second_call"]["flag"] = 1;
+                    }  else {
+                        $decodedflag[0][$presentgestage]["second_call"]["attempts"]++;
+                    }
+                }
+            }elseif($r["User"]["delivery"] == 1 ){
+                $date1 = strtotime($r["User"]["delivery_date"]);
+                $date2 = $current_time;
+                $daydiff = $this->datediff('d',$date1 , $date2, true) + 1;
+                $weekdiff = $this->datediff('ww',$date1 , $date2, true) +1;
+                $monthdiff = $this->datediff('m',$date1 , $date2, true) +1;
+                $yeardiff = $this->datediff('yyyy',$date1 , $date2, true) +1;
+                //STAGE 5
+                if($monthdiff > 12 && $yeardiff <= 5){
+                    if($callstatus == 0){
+                        $decodedflag[1][3][$monthdiff]["flag"] = 1;
+                    } else {
+                        $decodedflag[1][3][$monthdiff]["attempts"]++;
+                    }
+                //STAGE 4
+                }elseif($monthdiff > 4 && $monthdiff <= 12){
+                    $gestage = "w".$monthdiff;
+                    if($current_day == "Mon" || $current_day == "Thu"){
+                        if($callstatus == 0){
+                            $decodedflag[1][2][$weekdiff]["flag"] = 1;
+                        }else{
+                            $decodedflag[1][2][$weekdiff]["attempts"]++;
+                        }
+                    }
+                //STAGE 3
+                }elseif($weekdiff <= 12 && $weekdiff > 1){
                     //first call
                     if($current_day == "Mon"){
-                            if($callstatus == 0){
-                                $decodedflag[0][$presentgestage]["first_call"]["flag"] = 1;
-                            }else{
-                                $decodedflag[0][$presentgestage]["first_call"]["attempts"]++;
-                            }
+                        if($callstatus == 0){
+                            $decodedflag[1][1][$weekdiff]["first_call"]["flag"] = 1;
+                        } else {
+                            $decodedflag[1][1][$weekdiff]["first_call"]["attempts"]++;
+                        }
                     //second call
                     }elseif($current_day == "Thu"){
                         if($callstatus == 0){
-                            $decodedflag[0][$presentgestage]["second_call"]["flag"] = 1;
-                        }  else {
-                            $decodedflag[0][$presentgestage]["second_call"]["attempts"]++;
+                            $decodedflag[1][1][$weekdiff]["second_call"]["flag"] = 1;
+                        } else {
+                            $decodedflag[1][1][$weekdiff]["second_call"]["attempts"]++;
                         }
                     }
-                }elseif($r["User"]["delivery"] == 1 ){
+                //STAGE 2
+                }elseif($weekdiff == 1){
+                    if($callstatus == 0){
+                        $decodedflag[1][0][$daydiff]["flag"] = 1;
+                    }else{
+                        $decodedflag[1][0][$daydiff]["attempts"]++;
+                    }
+                }
+            }
+        // Call schecdule
+        }else{
+            //STAGE 1
+            if($r["User"]["delivery"] == 0 && $presentgestage >0 && $presentgestage <= 39){
+                //first call
+                if((($current_day == "Sun" || $current_day == "Mon") && ($slot == 1 || $slot == 2 || $slot == 3)) || (($current_day == "Tue" || $current_day == "Wed") && ($slot == 4))){
+                    if($callstatus == 0){
+                        $decodedflag[0][$presentgestage]["first_call"]["flag"] = 1;
+                    }else{
+                        $decodedflag[0][$presentgestage]["first_call"]["attempts"]++;
+                    }
+                //second call
+                }elseif((($current_day == "Wed" || $current_day == "Thu") && ($slot == 1)) || (($current_day == "Thu" || $current_day == "Fri") && ($slot == 2)) || (($current_day == "Fri" || $current_day == "Sat") && ($slot == 3)) || (($current_day == "Sat" || $current_day == "Sun") && ($slot == 4))){
+                    if($callstatus == 0){
+                        $decodedflag[0][$presentgestage]["second_call"]["flag"] = 1;
+                    }  else {
+                        $decodedflag[0][$presentgestage]["second_call"]["attempts"]++;
+                    }
+                }
+            }elseif($r["User"]["delivery"] == 1 ){
                     $date1 = strtotime($r["User"]["delivery_date"]);
                     $date2 = $current_time;
                     $daydiff = $this->datediff('d',$date1 , $date2, true) + 1;
@@ -613,7 +686,7 @@ class ServiceController extends AppController {
                     //STAGE 4
                     }elseif($monthdiff > 4 && $monthdiff <= 12){
                         $gestage = "w".$monthdiff;
-                        if($current_day == "Mon" || $current_day == "Thu"){
+                        if((($current_day == "Sun" || $current_day == "Mon") && ($slot == 1)) || (($current_day == "Mon" || $current_day == "Tue") && ($slot == 2)) || (($current_day == "Tue" || $current_day == "Wed") && ($slot == 3)) || (($current_day == "Wed" || $current_day == "Thu") && ($slot == 4)) || (($current_day == "Thu" || $current_day == "Fri") && ($slot == 5)) || (($current_day == "Fri" || $current_day == "Sat") && ($slot == 6)) || (($current_day == "Sat" || $current_day == "Sun") && ($slot == 7))){
                             if($callstatus == 0){
                                 $decodedflag[1][2][$weekdiff]["flag"] = 1;
                             }else{
@@ -623,14 +696,14 @@ class ServiceController extends AppController {
                     //STAGE 3
                     }elseif($weekdiff <= 12 && $weekdiff > 1){
                         //first call
-                        if($current_day == "Mon"){
+                        if((($current_day == "Sun" || $current_day == "Mon") && ($slot == 1 || $slot == 2 || $slot == 3)) || (($current_day == "Tue" || $current_day == "Wed") && ($slot == 4))){
                             if($callstatus == 0){
                                 $decodedflag[1][1][$weekdiff]["first_call"]["flag"] = 1;
                             } else {
                                 $decodedflag[1][1][$weekdiff]["first_call"]["attempts"]++;
                             }
                         //second call
-                        }elseif($current_day == "Thu"){
+                        }elseif((($current_day == "Wed" || $current_day == "Thu") && ($slot == 1)) || (($current_day == "Thu" || $current_day == "Fri") && ($slot == 2)) || (($current_day == "Fri" || $current_day == "Sat") && ($slot == 3)) || (($current_day == "Sat" || $current_day == "Sun") && ($slot == 4))){
                             if($callstatus == 0){
                                 $decodedflag[1][1][$weekdiff]["second_call"]["flag"] = 1;
                             } else {
@@ -646,86 +719,14 @@ class ServiceController extends AppController {
                         }
                     }
                 }
-            // Call schecdule
-            }else{
-                //STAGE 1
-                if($r["User"]["delivery"] == 0 && $presentgestage >0 && $presentgestage <= 39){
-                    //first call
-                    if((($current_day == "Sun" || $current_day == "Mon") && ($slot == 1 || $slot == 2 || $slot == 3)) || (($current_day == "Tue" || $current_day == "Wed") && ($slot == 4))){
-                        if($callstatus == 0){
-                            $decodedflag[0][$presentgestage]["first_call"]["flag"] = 1;
-                        }else{
-                            $decodedflag[0][$presentgestage]["first_call"]["attempts"]++;
-                        }
-                    //second call
-                    }elseif((($current_day == "Wed" || $current_day == "Thu") && ($slot == 1)) || (($current_day == "Thu" || $current_day == "Fri") && ($slot == 2)) || (($current_day == "Fri" || $current_day == "Sat") && ($slot == 3)) || (($current_day == "Sat" || $current_day == "Sun") && ($slot == 4))){
-                        if($callstatus == 0){
-                            $decodedflag[0][$presentgestage]["second_call"]["flag"] = 1;
-                        }  else {
-                            $decodedflag[0][$presentgestage]["second_call"]["attempts"]++;
-                        }
-                    }
-                }elseif($r["User"]["delivery"] == 1 ){
-                        $date1 = strtotime($r["User"]["delivery_date"]);
-                        $date2 = $current_time;
-                        $daydiff = $this->datediff('d',$date1 , $date2, true) + 1;
-                        $weekdiff = $this->datediff('ww',$date1 , $date2, true) +1;
-                        $monthdiff = $this->datediff('m',$date1 , $date2, true) +1;
-                        $yeardiff = $this->datediff('yyyy',$date1 , $date2, true) +1;
-                        //STAGE 5
-                        if($monthdiff > 12 && $yeardiff <= 5){
-                            if($callstatus == 0){
-                                $decodedflag[1][3][$monthdiff]["flag"] = 1;
-                            } else {
-                                $decodedflag[1][3][$monthdiff]["attempts"]++;
-                            }
-                        //STAGE 4
-                        }elseif($monthdiff > 4 && $monthdiff <= 12){
-                            $gestage = "w".$monthdiff;
-                            if((($current_day == "Sun" || $current_day == "Mon") && ($slot == 1)) || (($current_day == "Mon" || $current_day == "Tue") && ($slot == 2)) || (($current_day == "Tue" || $current_day == "Wed") && ($slot == 3)) || (($current_day == "Wed" || $current_day == "Thu") && ($slot == 4)) || (($current_day == "Thu" || $current_day == "Fri") && ($slot == 5)) || (($current_day == "Fri" || $current_day == "Sat") && ($slot == 6)) || (($current_day == "Sat" || $current_day == "Sun") && ($slot == 7))){
-                                if($callstatus == 0){
-                                    $decodedflag[1][2][$weekdiff]["flag"] = 1;
-                                }else{
-                                    $decodedflag[1][2][$weekdiff]["attempts"]++;
-                                }
-                            }
-                        //STAGE 3
-                        }elseif($weekdiff <= 12 && $weekdiff > 1){
-                            //first call
-                            if((($current_day == "Sun" || $current_day == "Mon") && ($slot == 1 || $slot == 2 || $slot == 3)) || (($current_day == "Tue" || $current_day == "Wed") && ($slot == 4))){
-                                if($callstatus == 0){
-                                    $decodedflag[1][1][$weekdiff]["first_call"]["flag"] = 1;
-                                } else {
-                                    $decodedflag[1][1][$weekdiff]["first_call"]["attempts"]++;
-                                }
-                            //second call
-                            }elseif((($current_day == "Wed" || $current_day == "Thu") && ($slot == 1)) || (($current_day == "Thu" || $current_day == "Fri") && ($slot == 2)) || (($current_day == "Fri" || $current_day == "Sat") && ($slot == 3)) || (($current_day == "Sat" || $current_day == "Sun") && ($slot == 4))){
-                                if($callstatus == 0){
-                                    $decodedflag[1][1][$weekdiff]["second_call"]["flag"] = 1;
-                                } else {
-                                    $decodedflag[1][1][$weekdiff]["second_call"]["attempts"]++;
-                                }
-                            }
-                        //STAGE 2
-                        }elseif($weekdiff == 1){
-                            if($callstatus == 0){
-                                $decodedflag[1][0][$daydiff]["flag"] = 1;
-                            }else{
-                                $decodedflag[1][0][$daydiff]["attempts"]++;
-                            }
-                        }
-                    }
-                }   
-                $encondedflag = json_encode($decodedflag);
-                $this->UserCallflags->updateFlag($encondedflag, $current_time, $intro_call_flag, $userid);
-                $this->DialerLogs->updateEntry($startdatetime, $enddatetime, $duration, $tid, $callstatus);
-                /*$filename = WWW_ROOT."mamaLog.txt";
-                $curdatetime = date("d m Y H:i:s");
-                $logstring = "";
-                $logstring .= $callstatus . " : " . $msisdn ." : ".$callduration." : ".$pulse." \n";
-                $logstring = "Update callback url".$phoneno. " \n"; 
-                file_put_contents($filename, $logstring."\n",FILE_APPEND);*/
-        }
+            }   
+            $encondedflag = json_encode($decodedflag);
+            $this->UserCallflags->updateFlag($encondedflag, $current_time, $intro_call_flag, $userid);
+            $this->DialerLogs->updateEntry($startdatetime, $enddatetime, $duration, $tid, $callstatus);
+
+            $filename = WWW_ROOT."mamaLog.txt";
+            $curdatetime = date("d m Y H:i:s");
+            file_put_contents($filename, "Raw XML String: ".$body." XML object: ".$xml." Time: ".$curdatetime." phoneno: ".$phoneno."\n",FILE_APPEND);
     }
     public function call_summary($tid)
     {
