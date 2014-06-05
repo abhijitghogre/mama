@@ -8,6 +8,7 @@
         <?php echo $this->Html->charset(); ?>
         <?php
         echo $this->Html->css('bootstrap.min');
+        echo $this->Html->css('dataTables.bootstrap');
         echo $this->Html->css('theme');
         echo $this->Html->css('style');
 
@@ -121,6 +122,13 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li>
+                                <?php
+                                //if ($role == 'superadmin' || $role == 'admin') {
+                                    echo $this->Html->link('<i class="glyphicon glyphicon-th-list"></i> Logs', array('controller' => 'logs'), array('escape' => false));
+                                //}
+                                ?>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -135,6 +143,8 @@
         <?php
         echo $this->Html->script('jquery');
         echo $this->Html->script('bootstrap.min');
+        echo $this->Html->script('jquery.dataTables.min');
+        echo $this->Html->script('dataTables.bootstrap');
         echo $this->Html->script('theme');
         echo $this->Html->script('script');
 
