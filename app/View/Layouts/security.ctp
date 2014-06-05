@@ -26,57 +26,7 @@
 
     </head>
     <body>
-        <div class="header">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-8">
-                        <!-- Logo -->
-                        <div class="logo">
-                            <h1>
-                                <?php
-                                echo $this->Html->link($this->Html->image('logo.png', array('alt' => 'Mama Logo', 'class' => 'logo')), array('controller' => 'home', 'action' => 'index'), array('escape' => false));
-                                ?>
-                            </h1>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="navbar navbar-inverse" role="banner">
-                            <nav class="collapse navbar-collapse bs-navbar-collapse navbar-right" role="navigation">
-                                <ul class="nav navbar-nav">
-                                    <li class="dropdown">
-                                        <?php
-                                        if ($this->Session->read('Auth.User')) {
-                                            $manager = $this->Session->read('Auth.User.username');
 
-                                            echo $this->Html->link('Welcome ' . $manager . ' <b class="caret"></b>', array('controller' => 'managers', 'action' => 'view'), array('escape' => FALSE, 'class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'));
-                                        } else {
-                                            echo $this->Html->link('Login', array('controller' => 'managers', 'action' => 'login'));
-                                        }
-                                        ?>
-                                        <ul class="dropdown-menu animated fadeInUp">
-                                            <li>
-                                                <?php
-                                                if ($this->Session->read('Auth.User')) {
-                                                    echo $this->Html->link('Profile', array('controller' => 'managers', 'action' => 'view'));
-                                                }
-                                                ?>
-                                            </li>
-                                            <li>
-                                                <?php
-                                                if ($this->Session->read('Auth.User')) {
-                                                    echo $this->Html->link('Logout', array('controller' => 'managers', 'action' => 'logout'));
-                                                }
-                                                ?>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="page-content">
             <?php echo $this->fetch('content'); ?>
         </div>
@@ -88,7 +38,7 @@
         echo $this->Html->script('script');
 
         echo $this->fetch('script');
-        ?>
+        ?>              
 
     </body>
 </html>

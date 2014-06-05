@@ -8,6 +8,7 @@
         <?php echo $this->Html->charset(); ?>
         <?php
         echo $this->Html->css('bootstrap.min');
+        echo $this->Html->css('morris');
         echo $this->Html->css('theme');
         echo $this->Html->css('style');
 
@@ -85,7 +86,7 @@
                             <!-- Main menu -->
                             <li>
                                 <?php
-                                echo $this->Html->link('<i class="glyphicon glyphicon-home"></i> Projects', array('controller' => 'projects', 'action' => 'listProjects'), array('escape' => false));
+                                echo $this->Html->link('<i class="glyphicon glyphicon-home"></i> Manage Projects', array('controller' => 'projects', 'action' => 'listProjects'), array('escape' => false));
                                 ?>
                             </li>
                             <li class="submenu">
@@ -135,8 +136,10 @@
         <?php
         echo $this->Html->script('jquery');
         echo $this->Html->script('bootstrap.min');
+        echo $this->Html->script('morris');
         echo $this->Html->script('theme');
         echo $this->Html->script('script');
+        echo $this->Html->script('stats');
 
         echo $this->fetch('script');
         ?>
