@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-8">
         <div class="form-group formField">
             <label for="mand-name" class="col-sm-2 control-label">Name*:</label>
             <div class="col-sm-10">

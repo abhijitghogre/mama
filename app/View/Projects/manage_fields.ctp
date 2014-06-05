@@ -27,7 +27,7 @@
                         </div>
                         <div class="tab-pane active" id="tab2">
                             <div class="row">
-                                <div class="col-md-10">
+                                <div class="col-md-8">
                                     <div class="add-button custom-field-add" data-toggle="modal" data-target="#custom-field-modal">+</div>
                                 </div>
                             </div>
