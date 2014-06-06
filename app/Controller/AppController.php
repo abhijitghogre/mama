@@ -109,7 +109,10 @@ class AppController extends Controller {
                                         <div class="col-sm-10">
                                             <input value="' . $field['value'] . '" name="' . $field['name'] . '" id="' . $field['name'] . '" class="form-control custom-field-input" type="text" ' . ($field['required'] === 'true' ? 'required' : '') . '>
                                         </div>
-                                        ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
+                                        ' . ($showRemoveButton ? '<div class="edit-button" data-type="customField"><i class="glyphicon glyphicon-edit"></i></div>
+                                            <div class="close-button" data-type="customField"><i class="glyphicon glyphicon-remove"></i></div>
+                                            ' : "") . '
+                                                
                                     </div>';
                     break;
                 case "radio":
@@ -125,7 +128,9 @@ class AppController extends Controller {
                                             </div>';
                     }
                     $dom = $dom . '</div>
-                                        ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
+                                        ' . ($showRemoveButton ? '<div class="edit-button" data-type="customField"><i class="glyphicon glyphicon-edit"></i></div>
+                                            <div class="close-button" data-type="customField"><i class="glyphicon glyphicon-remove"></i></div>
+                                            ' : "") . '
                                 </div>';
 
                     break;
@@ -142,7 +147,9 @@ class AppController extends Controller {
                                             </div>';
                     }
                     $dom = $dom . '</div>
-                                    ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
+                                    ' . ($showRemoveButton ? '<div class="edit-button" data-type="customField"><i class="glyphicon glyphicon-edit"></i></div>
+                                            <div class="close-button" data-type="customField"><i class="glyphicon glyphicon-remove"></i></div>
+                                            ' : "") . '
                                 </div>';
                     break;
                 case "select":
@@ -156,7 +163,9 @@ class AppController extends Controller {
                     }
                     $dom = $dom . '</select> 
                                     </div>
-                                    ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
+                                    ' . ($showRemoveButton ? '<div class="edit-button" data-type="customField"><i class="glyphicon glyphicon-edit"></i></div>
+                                            <div class="close-button" data-type="customField"><i class="glyphicon glyphicon-remove"></i></div>
+                                            ' : "") . '
                                 </div>';
                     break;
                 case "textarea":
@@ -167,7 +176,9 @@ class AppController extends Controller {
                                         <div class="col-sm-10">
                                             <textarea type="textarea" class="form-control custom-field-input" name="' . $field['name'] . '" rows="' . $field['rows'] . '" cols="' . $field['cols'] . '" ' . ($field['disabled'] === 'true' ? 'disabled="disabled"' : '') . '>' . $field['value'] . '</textarea>
                                         </div>
-                                        ' . ($showRemoveButton ? '<div class="edit-button">Edit</div><div class="close-button" title="Remove this field" data-type="customField">X</div>' : "") . '
+                                        ' . ($showRemoveButton ? '<div class="edit-button" data-type="customField"><i class="glyphicon glyphicon-edit"></i></div>
+                                            <div class="close-button" data-type="customField"><i class="glyphicon glyphicon-remove"></i></div>
+                                            ' : "") . '
                                     </div>';
                     break;
             }

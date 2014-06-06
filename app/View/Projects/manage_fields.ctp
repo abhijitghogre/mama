@@ -6,38 +6,33 @@
                 <div class="panel-title">Manage Fields</div>
             </div>
             <div class="panel-body">
-                <div id="rootwizard">
-                    <div class="navbar">
-                        <div class="navbar-inner">
-                            <div class="container">
-                                <ul class="nav nav-pills">
-                                    <li><a href="#tab1" data-toggle="tab">Mandatory Fields</a></li>
-                                    <li class="active"><a href="#tab2" data-toggle="tab">Custom Fields</a></li>
-                                </ul>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs">
+                    <li><a href="#tab1" data-toggle="tab">Mandatory Fields</a></li>
+                    <li class="active"><a href="#tab2" data-toggle="tab">Custom Fields</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane" id="tab1">
+                        <form class="form-horizontal" role="form">
+                            <div id="mand-field-cont">
+                                <?php echo $this->element('mandatory_fields'); ?>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                    <div class="tab-content">
-                        <div class="tab-pane" id="tab1">
-                            <form class="form-horizontal" role="form">
-                                <div id="mand-field-cont">
-                                    <?php echo $this->element('mandatory_fields'); ?>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="tab-pane active" id="tab2">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="add-button custom-field-add" data-toggle="modal" data-target="#custom-field-modal">+</div>
-                                </div>
+                    <div class="tab-pane active" id="tab2">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="add-button custom-field-add btn btn-primary btn-sm" data-toggle="modal" data-target="#custom-field-modal"><i class="glyphicon glyphicon-plus-sign"></i> Add Fields</div>
                             </div>
-                            <form class="form-horizontal" role="form">
-                                <div class="custom-fields-cont">
-                                    <?php echo $custom_fields; ?>
-                                </div>
-                            </form>
                         </div>
-                    </div>	
+                        <form class="form-horizontal" role="form">
+                            <div class="custom-fields-cont">
+                                <?php echo $custom_fields; ?>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -128,7 +123,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="add-button" data-type="checkbox">+</div>
+                                <a class="add-button custom-field-add btn btn-primary btn-sm" data-type="checkbox"><i class="glyphicon glyphicon-plus-sign"></i> Add More</a>
                             </div>
                         </div>
                     </div>
@@ -166,7 +161,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="add-button" data-type="radio">+</div>
+                                <a class="add-button custom-field-add btn btn-primary btn-sm" data-type="radio"><i class="glyphicon glyphicon-plus-sign"></i> Add More</a>
                             </div>
                         </div>
                     </div>
@@ -204,7 +199,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="add-button" data-type="select">+</div>
+                                <a class="add-button custom-field-add btn btn-primary btn-sm" data-type="select"><i class="glyphicon glyphicon-plus-sign"></i> Add More</a>
                             </div>
                         </div>
                     </div>
