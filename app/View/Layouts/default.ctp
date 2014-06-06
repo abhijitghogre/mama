@@ -126,7 +126,14 @@
                             <li>
                                 <?php
                                 //if ($role == 'superadmin' || $role == 'admin') {
-                                echo $this->Html->link('<i class="glyphicon glyphicon-th-list"></i> Logs', array('controller' => 'logs'), array('escape' => false));
+                                echo $this->Html->link('<i class="glyphicon glyphicon-th-list"></i> Logs', array('controller' => 'logs', 'action' => 'index'), array('escape' => false));
+                                //}
+                                ?>
+                            </li>
+                            <li>
+                                <?php
+                                //if ($role == 'superadmin' || $role == 'admin') {
+                                echo $this->Html->link('<i class="glyphicon glyphicon-stats"></i> Statistics', array('controller' => 'logs', 'action' => 'statistics'), array('escape' => false));
                                 //}
                                 ?>
                             </li>
