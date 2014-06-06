@@ -1,6 +1,6 @@
 var BASE_URL = document.location.origin;
-if (BASE_URL === "http://localhost") {
-    BASE_URL = "http://localhost/mama";
+if (BASE_URL === "http://localhost" || BASE_URL === "http://192.168.0.143") {
+    BASE_URL = "http://192.168.0.143/mama";
 } else {
     BASE_URL = "http://herohelpline.org/mMitra-MAMA";
 }
