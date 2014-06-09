@@ -1,7 +1,7 @@
-<div class="content-box-large">
-    <div class="panel-heading">
-        <div class="panel-title">List of users</div>
-    </div>
+<div class="content-box-header">
+    <div class="panel-title">List of users</div>
+</div>
+<div class="content-box-large padding-10 box-with-header">
     <div class="panel-body">
         <div class="row">
             <div class="col-md-6">
@@ -27,24 +27,24 @@
                                             'View', array(
                                         'controller' => 'users',
                                         'action' => 'view', $user['User']['id'], $projectId
-                                            )
+                                            ), array('class' => 'btn btn-success btn-xs')
                                     );
                                     ?>
                                     <?php
-                                    echo " | " . $this->Html->link(
+                                    echo $this->Html->link(
                                             'Edit', array(
                                         'controller' => 'users',
                                         'action' => 'edit', $user['User']['id'], $projectId
-                                            )
+                                            ), array('class' => 'btn btn-primary btn-xs')
                                     );
                                     ?>
                                     <?php
                                     if ($role == 'superadmin') {
-                                        echo " | " . $this->Html->link(
+                                        echo $this->Html->link(
                                                 'Delete', array(
                                             'controller' => 'users',
                                             'action' => 'delete', $user['User']['id']
-                                                )
+                                                ), array('class' => 'btn btn-danger btn-xs')
                                         );
                                     }
                                     ?>

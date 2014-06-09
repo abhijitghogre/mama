@@ -1,10 +1,10 @@
 <input type="hidden" value="<?php echo $project[0]['Project']['id']; ?>" class="project_id">
 <div class="row">
     <div class="col-md-12">
-        <div class="content-box-large">
-            <div class="panel-heading">
-                <div class="panel-title">Manage Fields</div>
-            </div>
+        <div class="content-box-header">
+            <div class="panel-title">Manage Fields</div>
+        </div>
+        <div class="content-box-large padding-10 box-with-header">
             <div class="panel-body">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs">
@@ -74,19 +74,21 @@
                         </div>
                     </div>
                     <div class="form-group formField custom-field show-for-textarea show-for-text show-for-radio show-for-checkbox show-for-select">
-                        <div class="col-sm-offset-2 col-sm-10">
+                        <label class="col-sm-2 control-label">Required?</label>
+                        <div class="col-sm-10">
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" class="field-required"> Required
+                                    <input type="checkbox" class="field-required"> 
                                 </label>
                             </div>
                         </div>
                     </div>
                     <div class="form-group formField custom-field show-for-textarea show-for-text">
-                        <div class="col-sm-offset-2 col-sm-10">
+                        <label class="col-sm-2 control-label">Disabled?</label>
+                        <div class="col-sm-10">
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" class="field-disabled"> Disabled
+                                    <input type="checkbox" class="field-disabled">
                                 </label>
                             </div>
                         </div>
@@ -118,7 +120,7 @@
                                         <input type="checkbox" class="field-checkbox-disabled">
                                         Disabled? </label>
                                 </div>
-                                <div class="close-button" data-type="checkbox">X</div>
+                                <div class="close-button" data-type="checkbox"><i class="glyphicon glyphicon-remove"></i></div>
                             </div>
                         </div>
                         <div class="row">
@@ -142,7 +144,7 @@
                                         <input type="checkbox" class="field-radios-disabled">
                                         Disabled? </label>
                                 </div>
-                                <div class="close-button" data-type="radio">X</div>
+                                <div class="close-button" data-type="radio"><i class="glyphicon glyphicon-remove"></i></div>
                             </div>
                             <div class="row field-radios">
                                 <div class="col-md-6">
@@ -156,7 +158,7 @@
                                         <input type="checkbox" class="field-radios-disabled">
                                         Disabled? </label>
                                 </div>
-                                <div class="close-button" data-type="radio">X</div>
+                                <div class="close-button" data-type="radio"><i class="glyphicon glyphicon-remove"></i></div>
                             </div>
                         </div>
                         <div class="row">
@@ -180,7 +182,7 @@
                                         <input type="checkbox" class="field-select-disabled">
                                         Disabled? </label>
                                 </div>
-                                <div class="close-button" data-type="select">X</div>
+                                <div class="close-button" data-type="select"><i class="glyphicon glyphicon-remove"></i></div>
                             </div>
                             <div class="row field-select">
                                 <div class="col-md-6">
@@ -194,7 +196,7 @@
                                         <input type="checkbox" class="field-select-disabled">
                                         Disabled? </label>
                                 </div>
-                                <div class="close-button" data-type="select">X</div>
+                                <div class="close-button" data-type="select"><i class="glyphicon glyphicon-remove"></i></div>
                             </div>
                         </div>
                         <div class="row">

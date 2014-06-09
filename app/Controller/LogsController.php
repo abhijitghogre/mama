@@ -10,6 +10,7 @@ class LogsController extends AppController {
     }
 
     public function index() {
+        $this->set('logsActive', 1);
         $current_week_monday = date('Y-m-d', strtotime('monday this week'));
         $projects = $this->Project->find('all');
         $users = $this->User->find('all', array('conditions' => array('User.deleted <>' => 1), 'order' => array('User.name')));
@@ -79,6 +80,7 @@ class LogsController extends AppController {
     }
 
     public function statistics() {
+        $this->set('statsActive', 1);
         $projects = $this->Project->getAllProjects();
         $this->set('projects', $projects);
         

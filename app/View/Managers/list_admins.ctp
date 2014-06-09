@@ -1,7 +1,7 @@
-<div class="content-box-large">
-    <div class="panel-heading">
-        <div class="panel-title"> List of admins</div>
-    </div>
+<div class="content-box-header">
+    <div class="panel-title"> List of admins</div>
+</div>
+<div class="content-box-large padding-10 box-with-header">
     <div class="panel-body">
         <div class="row">
             <div class="col-md-6">
@@ -24,23 +24,23 @@
                                 <td>
                                     <?php
                                     echo $this->Html->link(
-                                            'Edit', array(
-                                        'controller' => 'managers',
-                                        'action' => 'edit', $admin['Manager']['id']
-                                            )
-                                    );
-
-                                    echo " | " . $this->Html->link(
-                                            'Delete', array(
-                                        'controller' => 'managers',
-                                        'action' => 'delete', $admin['Manager']['id']
-                                            )
-                                    );
-                                    echo " | " . $this->Html->link(
                                             'Promote', array(
                                         'controller' => 'managers',
                                         'action' => 'promoteAdmin', $admin['Manager']['id']
-                                            )
+                                            ), array('class' => 'btn btn-warning btn-xs')
+                                    );
+                                    echo $this->Html->link(
+                                            'Edit', array(
+                                        'controller' => 'managers',
+                                        'action' => 'edit', $admin['Manager']['id']
+                                            ), array('class' => 'btn btn-primary btn-xs')
+                                    );
+
+                                    echo $this->Html->link(
+                                            'Delete', array(
+                                        'controller' => 'managers',
+                                        'action' => 'delete', $admin['Manager']['id']
+                                            ), array('class' => 'btn btn-danger btn-xs')
                                     );
                                     ?> 
                                 </td>

@@ -5,6 +5,7 @@ class ProjectsController extends AppController {
     public function beforeFilter() {
         parent::beforeFilter();
         //$this->Auth->allow('index');
+        $this->set('projectsActive', 1);
     }
 
     public function add() {
@@ -38,6 +39,7 @@ class ProjectsController extends AppController {
 
     public function listProjects() {
         $projects = $this->Project->getAllProjects();
+//        var_dump($projects);exit;
         $this->set('projects', $projects);
     }
 

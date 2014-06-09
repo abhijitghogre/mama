@@ -2,13 +2,12 @@
     <div class="formMessage">
         <?php echo $this->Session->flash(); ?>
     </div>
-
-    <div class="content-box-large">
-        <div class="panel-heading">
-            <div class="panel-title formTitle">
-                <?php echo __('Edit manager'); ?>
-            </div>
+    <div class="content-box-header">
+        <div class="panel-title formTitle">
+            <?php echo __('Edit manager'); ?>
         </div>
+    </div>
+    <div class="content-box-large padding-10 box-with-header">
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-6">

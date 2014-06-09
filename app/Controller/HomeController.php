@@ -8,7 +8,7 @@ class HomeController extends AppController {
     }
 
     public function index() {
-        
+        return $this->redirect(array('controller' => 'projects', 'action' => 'listProjects'));
     }
 
 }

@@ -14,8 +14,10 @@ class UsersController extends AppController {
         if ($this->request->is('post')) {
             $formData = array();
             parse_str($this->request->data['formData'], $formData);
-            $customFields = $this->request->data['customFields'];
-
+            $customFields = array();
+            if (isset($this->request->data['customFields'])) {
+                $customFields = $this->request->data['customFields'];
+            }
             $savedata = array();
 
             if (isset($this->request->data['user_id'])) {
@@ -42,7 +44,9 @@ class UsersController extends AppController {
             $savedata["User"]["entry_date"] = date('Y-m-d H:i:s');
             $savedata["User"]["deleted"] = 0;
             $savedata["User"]["phone_type"] = $formData['mand-phone-type'];
-            $savedata["User"]["phone_code"] = $formData['mand-phone-code'];
+            if (isset($formData['mand-phone-code'])) {
+                $savedata["User"]["phone_code"] = $formData['mand-phone-code'];
+            }
             $savedata["UserMeta"]["age"] = $formData['mand-age'];
             $savedata["UserMeta"]["education"] = $formData['mand-education'];
             if ($formData['mand-phone-owner'] === 'other') {

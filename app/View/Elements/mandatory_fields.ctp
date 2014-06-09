@@ -173,10 +173,10 @@
             <label class="col-md-2 control-label">Language*:</label>
             <div class="col-md-10">
                 <div class="radio">
-                    <label><input type="radio" value="1" name="mand-language" checked/>Hindi</label>
+                    <label><input type="radio" value="2" name="mand-language" checked/>Hindi</label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" value="2" name="mand-language"/>Marathi</label>
+                    <label><input type="radio" value="3" name="mand-language"/>Marathi</label>
                 </div>
             </div>
         </div>

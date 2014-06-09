@@ -4,6 +4,7 @@ App::uses('AppModel', 'Model');
 
 class Project extends AppModel {
 
+    public $hasMany = 'User';
     public $validate = array(
         'project_name' => array(
             'required' => array(
@@ -19,12 +20,14 @@ class Project extends AppModel {
 
     public function getAllProjects() {
 
-        return $this->find('all', array(
-                    'fields' => array(
-                        '`id` AS `id`',
-                        '`project_name` AS `Name`'
-                    )
-        ));
+//        return $this->find('all', array(
+//                    'fields' => array(
+//                        'Project.id AS id',
+//                        'Project.project_name AS Name',
+//                    )
+//        ));
+        return $this->query("SELECT Project.id, Project.project_name AS Name, count(User.id) AS count FROM users User LEFT JOIN projects Project on Project.id = User.project_id GROUP BY Project.id"
+        );
     }
 
     public function getProjectDetails($id) {

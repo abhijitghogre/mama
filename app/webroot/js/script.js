@@ -1,6 +1,6 @@
 var BASE_URL = document.location.origin;
-if (BASE_URL === "http://localhost" || BASE_URL === "http://192.168.0.143") {
-    BASE_URL = "http://192.168.0.143/mama";
+if (BASE_URL === "http://localhost" || BASE_URL === "http://localhost") {
+    BASE_URL = "http://localhost/mama";
 } else {
     BASE_URL = "http://herohelpline.org/mMitra-MAMA";
 }
@@ -563,11 +563,14 @@ $(document).ready(function() {
             $('.loader').hide();
         });
     });
+    
+    //ajaxify add project
+//    $('')
 
     /***
      * TEST CODE BELOW REMOVE AFTER USE
      */
-    /*
+    
      $('input[name="mand-name"]').val('Jane Doe');
      $('input[name="mand-age"]').val(42);
      $('input[name="mand-phone"]').val(8898132628);
@@ -581,7 +584,7 @@ $(document).ready(function() {
      $('input[name="mand-lmp"]').val("2014-05-16");
      $('input[name="mand-reg-date"]').val("2014-05-16");
      $('input[name="mand-gest-age"]').val(42);
-     */
+     
 });//ready ends
 
 //converts something like "Hello, This is my text." into "hello-this-is-my-text"
