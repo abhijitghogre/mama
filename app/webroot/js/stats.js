@@ -1,103 +1,86 @@
 $(document).ready(function() {
-    var now = new Date();
-    var day = ("0" + now.getDate()).slice(-2);
-    var month = ("0" + (now.getMonth() + 1)).slice(-2);
-    var today = now.getFullYear() + "-" + (month) + "-" + (day);
-    $('#statsdate').val(today);
-    $('#stats-title').html(today.toString());
-    $('#day').addClass('active');
-    var projectId = $('#project_id').val();
-    var statsDate = $('#statsdate').val();
-    var filter = $('#filter').val();
-    $.post(BASE_URL + '/logs/statistics', {projectId: projectId, statsDate: statsDate, filter: filter}, function(data) {
-        dailystats();
-    });
-    /*$('#project_id,#statsdate,#filter').on('change change.dfhdatepicker', function(data) {
+    var $url = document.URL ;
+    
+    $('#statsdate').datepicker({
+        dateFormat: 'dd-mm-yy'
+    }).datepicker("setDate", new Date());
+    // default view i.e; current day stats on load 
+    if($url.indexOf('logs/statistics') > 0){
+        $('#day').addClass('active');
         var projectId = $('#project_id').val();
         var statsDate = $('#statsdate').val();
         var filter = $('#filter').val();
-        $.post(BASE_URL + '/logs/statistics', {projectId: projectId, statsDate: statsDate, filter: filter}, function(data) {
-            alert(data);
-            dailystats(data);
+        var statstype = $('#day').val();
+        $.post(BASE_URL + '/logs/statistics', {projectId: projectId, statsDate: statsDate, filter: filter, statstype:statstype}, function(data) {
+            barChart(data);
         });
-    });*/
+    }
+    $('.statsbtn').on('click', function(data){
+        $('#bar-chart').remove();
+        $('.statsbtn').removeClass('active');
+        $(this).addClass('active');
+        var projectId = $('#project_id').val();
+        var statsDate = $('#statsdate').val();
+        var filter = $('#filter').val();
+        var statstype = $(this).val();
+        if(filter != 4){
+            $.post(BASE_URL + '/logs/statistics', {projectId: projectId, statsDate: statsDate, filter: filter, statstype:statstype}, function(data) {
+                $('#stats-box').html('<div id="bar-chart" style="height: 230px;"></div>');
+                barChart(data);
+            });
+        }else{
+            $.post(BASE_URL + '/logs/statistics', {projectId: projectId, statsDate: statsDate, filter: filter, statstype:statstype}, function(data) {
+                $('#bar-chart').remove();
+                $('#stats-box').html('<div id="stacked-chart" style="height: 230px;"></div>');
+                stackedChart(data);
+            });
+        }
+    });
+    $('#project_id,#statsdate,#filter').on('change', function(data){
+        $('#bar-chart').remove();
+        var projectId = $('#project_id').val();
+        var statsDate = $('#statsdate').val();
+        var filter = $('#filter').val();
+        var statstype = $('.statsbtn.active').val();
+        if(filter != 4){
+            $.post(BASE_URL + '/logs/statistics', {projectId: projectId, statsDate: statsDate, filter: filter, statstype:statstype}, function(data) {
+                $('#stats-box').html('<div id="bar-chart" style="height: 230px;"></div>');
+                barChart(data);
+            });
+        }else{
+            $.post(BASE_URL + '/logs/statistics', {projectId: projectId, statsDate: statsDate, filter: filter, statstype:statstype}, function(data) {
+                $('#bar-chart').remove();
+                $('#stats-box').html('<div id="stacked-chart" style="height: 230px;"></div>');
+                stackedChart(data);
+            });
+        }
+    });
 });
-function dailystats(){
+function barChart(data){
     Morris.Bar({
-        element: 'daily-stats',
-        data: [
-            {slot: '9:00 AM - 12:00 PM', calls: 6},
-            {slot: '12:00 PM - 3:00 PM', calls: 9},
-            {slot: '3:00 PM - 6:00 PM', calls: 4},
-            {slot: '6:00 PM - 9:00 PM', calls: 3},
-            {slot: '9:00 PM - 11:00 PM', calls: 2}
-        ],
+        element: 'bar-chart',
+        data: eval(data),
         xkey: 'slot',
-        ykeys: ['calls'],
-        labels: ['calls'],
+        ykeys: ['count'],
+        labels: ['count'],
         barRatio: 0.4,
         xLabelMargin: 10,
         hideHover: 'auto',
         barColors: ["#3d88ba"]
     });
 }
-function weeklystats(){
+function stackedChart(){
     Morris.Bar({
-        element: 'weekly-stats',
+        element: 'stacked-chart',
         data: [
-            {device: '1', sells: 6},
-            {device: '3G', sells: 9},
-            {device: '3GS', sells: 4},
-            {device: '4', sells: 3},
-            {device: '4S', sells: 2},
-            {device: '5', sells: 1}
+          {x: '2011 Q1', y: 3, z: 2, a: 3},
+          {x: '2011 Q2', y: 2, z: null, a: 1},
+          {x: '2011 Q3', y: 0, z: 2, a: 4},
+          {x: '2011 Q4', y: 2, z: 4, a: 3}
         ],
-        xkey: 'device',
-        ykeys: ['sells'],
-        labels: ['Sells'],
-        barRatio: 0.4,
-        xLabelMargin: 10,
-        hideHover: 'auto',
-        barColors: ["#3d88ba"]
-    });
-}
-function monthlystats(){
-    Morris.Bar({
-        element: 'monthly-stats',
-        data: [
-            {device: '1', sells: 6},
-            {device: '3G', sells: 9},
-            {device: '3GS', sells: 4},
-            {device: '4', sells: 3},
-            {device: '4S', sells: 2},
-            {device: '5', sells: 1}
-        ],
-        xkey: 'device',
-        ykeys: ['sells'],
-        labels: ['Sells'],
-        barRatio: 0.4,
-        xLabelMargin: 10,
-        hideHover: 'auto',
-        barColors: ["#3d88ba"]
-    });
-}
-function yearlystats(){
-    Morris.Bar({
-        element: 'yearly-stats',
-        data: [
-            {device: '1', sells: 6},
-            {device: '3G', sells: 9},
-            {device: '3GS', sells: 4},
-            {device: '4', sells: 3},
-            {device: '4S', sells: 2},
-            {device: '5', sells: 1}
-        ],
-        xkey: 'device',
-        ykeys: ['sells'],
-        labels: ['Sells'],
-        barRatio: 0.4,
-        xLabelMargin: 10,
-        hideHover: 'auto',
-        barColors: ["#3d88ba"]
+        xkey: 'x',
+        ykeys: ['y', 'z', 'a'],
+        labels: ['Y', 'Z', 'A'],
+        stacked: true
     });
 }

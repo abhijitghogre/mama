@@ -1,6 +1,6 @@
 var BASE_URL = document.location.origin;
-if (BASE_URL === "http://localhost" || BASE_URL === "http://192.168.0.143") {
-    BASE_URL = "http://192.168.0.143/mama";
+if (BASE_URL === "http://localhost") {
+    BASE_URL = "http://localhost/mama";
 } else {
     BASE_URL = "http://herohelpline.org/mMitra-MAMA";
 }
@@ -537,15 +537,13 @@ $(document).ready(function() {
 
     });
     // setting fromdate and todate in logs form
-    var now = new Date();
-    var day = ("0" + now.getDate()).slice(-2);
-    var month = ("0" + (now.getMonth() + 1)).slice(-2);
-    var today = now.getFullYear() + "-" + (month) + "-" + (day);
-    var fdate = new Date();
-    fdate = ("0" + (fdate.getDate() - fdate.getDay() + 1)).slice(-2);
-    var fromdate = now.getFullYear() + "-" + (month) + "-" + (fdate);
-    $('#LogsFromdate').val(fromdate);
-    $('#LogsTodate').val(today);
+    $('#LogsFromdate').datepicker({
+        dateFormat: 'dd-mm-yy'
+    }).datepicker("setDate",getPreviousDate());
+
+    $('#LogsTodate').datepicker({
+        dateFormat: 'dd-mm-yy'
+    }).datepicker("setDate", new Date());
 
     $('#generatereport').on('click', function(e) {
         e.preventDefault();
@@ -584,6 +582,11 @@ $(document).ready(function() {
      */
 });//ready ends
 
+function getPreviousDate(){
+    tdate = new Date();
+    tdate.setDate(tdate.getDate() - tdate.getDay()+1);
+    return tdate;
+}
 //converts something like "Hello, This is my text." into "hello-this-is-my-text"
 function cleanText(text) {
     return text.trim().toLowerCase()

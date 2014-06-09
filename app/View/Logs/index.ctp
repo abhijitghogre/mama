@@ -34,11 +34,11 @@
         </div>
         <div class="col-md-2 form-group">
             <label>From Date</label>
-            <input type="date" name ="fromdate" id="LogsFromdate" class="form-control" placeholder="Text input">
+            <input type="text" name ="fromdate" id="LogsFromdate" class="form-control" placeholder="Text input">
         </div>
         <div class="col-md-2 form-group">
             <label>To Date</label>
-            <input type="date" name ="todate" id="LogsTodate" class="form-control" placeholder="Text input">
+            <input type="text" name ="todate" id="LogsTodate" class="form-control" placeholder="Text input">
         </div>
         <div class="col-md-2 form-group">
             <div class="row">

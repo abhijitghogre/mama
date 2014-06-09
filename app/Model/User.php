@@ -5,6 +5,7 @@ App::uses('AppModel', 'Model');
 class User extends AppModel {
 
     public $hasOne = array('UserMeta', 'UserCallflag');
+    public $hasMany = array('DialerLogs');
 
     public function getUsersByProject($projectId) {
         return $this->find('all', array(
