@@ -1,7 +1,7 @@
-<div class="content-box-large">
-    <div class="panel-heading">
-        <div class="panel-title"> List of volunteers</div>
-    </div>
+<div class="content-box-header">
+    <div class="panel-title"> List of volunteers</div>
+</div>
+<div class="content-box-large padding-10 box-with-header">
     <div class="panel-body">
         <div class="row">
             <div class="col-md-6">
@@ -27,16 +27,16 @@
                                             'Edit', array(
                                         'controller' => 'managers',
                                         'action' => 'edit', $volunteer['Manager']['id']
-                                            )
+                                            ), array('class' => 'btn btn-primary btn-xs')
                                     );
                                     ?>
                                     <?php
                                     if ($role == 'superadmin') {
-                                        echo " | " . $this->Html->link(
+                                        echo " " . $this->Html->link(
                                                 'Delete', array(
                                             'controller' => 'managers',
                                             'action' => 'delete', $volunteer['Manager']['id']
-                                                )
+                                                ), array('class' => 'btn btn-danger btn-xs')
                                         );
                                     }
                                     ?>

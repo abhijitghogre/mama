@@ -1,1 +1,1 @@
-<div class="content-box-large"></div>
+<div class="content-box-large padding-10"></div>

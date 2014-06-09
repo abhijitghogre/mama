@@ -29,14 +29,14 @@
     </head>
     <body>
         <div class="header">
-            <div class="container">
+            <div class="">
                 <div class="row">
                     <div class="col-md-8">
                         <!-- Logo -->
                         <div class="logo">
-                            <h1>
+                            <h1 class="padding-left-10">
                                 <?php
-                                echo $this->Html->link($this->Html->image('logo.png', array('alt' => 'Mama Logo', 'class' => 'logo')), array('controller' => 'home', 'action' => 'index'), array('escape' => false));
+                                echo $this->Html->link('mMitra', array('controller' => 'home', 'action' => 'index'));
                                 ?>
                             </h1>
                         </div>
@@ -82,15 +82,15 @@
         <div class="page-content">
             <div class="row">
                 <div class="col-md-2">
-                    <div class="sidebar content-box" style="display: block;">
+                    <div class="sidebar content-box padding-10" style="display: block;">
                         <ul class="nav">
                             <!-- Main menu -->
-                            <li>
+                            <li class="<?php echo (isset($projectsActive) ? 'current' : ''); ?>">
                                 <?php
                                 echo $this->Html->link('<i class="glyphicon glyphicon-home"></i> Manage Projects', array('controller' => 'projects', 'action' => 'listProjects'), array('escape' => false));
                                 ?>
                             </li>
-                            <li class="submenu">
+                            <li class="submenu <?php echo (isset($volunteersActive) ? 'current' : ''); ?>">
                                 <a href="#">
                                     <i class="glyphicon glyphicon-user"></i> Volunteers
                                     <span class="caret pull-right"></span>
@@ -100,9 +100,9 @@
                                     <li class="">
                                         <?php
                                         if ($role == 'admin') {
-                                            echo $this->Html->link('Add volunteers', array('controller' => 'managers', 'action' => 'add'));
+                                            echo $this->Html->link(' - Add volunteers', array('controller' => 'managers', 'action' => 'add'));
                                         } elseif ($role == 'superadmin') {
-                                            echo $this->Html->link('Add volunteers/admins', array('controller' => 'managers', 'action' => 'add'));
+                                            echo $this->Html->link(' - Add volunteers/admins', array('controller' => 'managers', 'action' => 'add'));
                                         }
                                         ?>
 
@@ -110,27 +110,27 @@
                                     <li class="">
                                         <?php
                                         if ($role == 'superadmin' || $role == 'admin') {
-                                            echo $this->Html->link('View volunteers', array('controller' => 'managers', 'action' => 'listVolunteers'));
+                                            echo $this->Html->link(' - View volunteers', array('controller' => 'managers', 'action' => 'listVolunteers'));
                                         }
                                         ?>
                                     </li>
                                     <li class="">
                                         <?php
                                         if ($role == 'superadmin') {
-                                            echo $this->Html->link('View admins', array('controller' => 'managers', 'action' => 'listAdmins'));
+                                            echo $this->Html->link(' - View admins', array('controller' => 'managers', 'action' => 'listAdmins'));
                                         }
                                         ?>
                                     </li>
                                 </ul>
                             </li>
-                            <li>
+                            <li class="<?php echo (isset($logsActive) ? 'current' : ''); ?>">
                                 <?php
                                 //if ($role == 'superadmin' || $role == 'admin') {
                                 echo $this->Html->link('<i class="glyphicon glyphicon-th-list"></i> Logs', array('controller' => 'logs', 'action' => 'index'), array('escape' => false));
                                 //}
                                 ?>
                             </li>
-                            <li>
+                            <li class="<?php echo (isset($statsActive) ? 'current' : ''); ?>">
                                 <?php
                                 //if ($role == 'superadmin' || $role == 'admin') {
                                 echo $this->Html->link('<i class="glyphicon glyphicon-stats"></i> Statistics', array('controller' => 'logs', 'action' => 'statistics'), array('escape' => false));

@@ -5,6 +5,7 @@ class ManagersController extends AppController {
     public function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow('add', 'logout');
+        $this->set('volunteersActive', 1);
     }
 
     public function listVolunteers() {
