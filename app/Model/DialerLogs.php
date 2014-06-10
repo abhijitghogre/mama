@@ -1,9 +1,10 @@
 <?php 
 class DialerLogs extends AppModel {
     var $name = 'DialerLogs';
+    public $belongsTo = array('User');
     
     public function makeEntry($startdatetime, $phoneno, $gest_age, $reason, $userid, $tid){
-        $this->query("INSERT INTO dialer_logs (startdatetime, phoneno, gest_age, reason, userid, tid) VALUES ('$startdatetime', '$phoneno', '$gest_age', '$reason', '$userid', '$tid')");
+        $this->query("INSERT INTO dialer_logs (startdatetime, phoneno, gest_age, reason, user_id, tid) VALUES ('$startdatetime', '$phoneno', '$gest_age', '$reason', '$userid', '$tid')");
         return TRUE;
     }
     public function updateEntry($startdatetime, $enddatetime, $duration, $tid, $callstatus){
