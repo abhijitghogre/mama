@@ -96,5 +96,13 @@ class ProjectsController extends AppController {
             echo $this->_customFieldsArrayToDom($custom_fields);
         }
     }
+	
+	public function createStages($projectid)
+	{
+		$project_stages = $this->Project->getStages($projectid);
+		//print_r(json_decode($project_stages['Project']['stage_structure'],true));
+		$this->set('project_name',$project_stages['Project']['project_name']);
+		$this->set('stage_structure',json_decode($project_stages['Project']['stage_structure'],true));
+	}
 
 }

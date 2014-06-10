@@ -38,6 +38,18 @@ class Project extends AppModel {
                     )
         ));
     }
+	
+	 public function getStages($id) {
+
+        return $this->find('first', array(
+                    'fields' => array(
+                        'project_name','stage_structure',
+                    ),
+                    'conditions' => array(
+                        'id' => $id
+                    )
+        ));
+    }
 
     public function updateProjectDetails($id, $data) {
         $this->id = (int) $id;
