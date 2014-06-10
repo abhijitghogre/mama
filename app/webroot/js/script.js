@@ -420,7 +420,6 @@ $(document).ready(function() {
         if ($.inArray(data.User.phone_type, ["1", "2"]) > -1) {
             $('input[name="mand-phone-type"][value="' + data.User.phone_type + '"]').prop('checked', true);
         } else {
-            console.log('here');
             $('input[name="mand-phone-type"][value="' + data.User.phone_type + '"]').prop('checked', true).trigger('change');
             $('input[name="mand-phone-code"]').val(data.User.phone_code);
         }
@@ -582,6 +581,35 @@ $(document).ready(function() {
      $('input[name="mand-reg-date"]').val("2014-05-16");
      $('input[name="mand-gest-age"]').val(42);
      */
+	 
+	/*Edit stage functionality*/
+	$('.editstage').on('click', function(e){
+		e.preventDefault();
+		var delbutton = $(this).next('.delstage');
+		var container = $(this).parents('.content-box-header').next('.content-box-large');
+		var stagedata =  $.parseJSON(container.find('.stagecontent > .stagedata').attr('data-stage'));
+
+		var emptyform = $("#stageinfoformcont").clone();
+		
+		var preparedform = prepform(stagedata,emptyform);
+		
+		delbutton.addClass('canceleditstage').text('Cancel').removeClass('delstage');
+		container.prepend(preparedform.removeClass('hide')).find('.stagecontent').hide();
+		$(this).hide();
+		
+		
+	});
+	
+	/*Cancel when edit stage is activated functionality*/
+	$(document).on('click','.canceleditstage', function(e){
+		e.preventDefault();
+		var container = $(this).parents('.content-box-header').next('.content-box-large');
+		container.find('#stageinfoformcont').remove();
+		container.find('.stagecontent').show();
+		$(this).addClass('delstage').text('Delete').removeClass('canceleditstage');
+		$(this).parent('.panel-options').find('.editstage').show();
+	});
+	
 });//ready ends
 
 //converts something like "Hello, This is my text." into "hello-this-is-my-text"
@@ -623,4 +651,170 @@ function removeCustomField(field) {
             $('.custom-fields-cont').html(response);
         });
     }
+}
+
+
+//adds default current stage data to an empty form during edit stage operation
+function prepform(stagedata,emptyformcont)
+{
+	var filledformcont = emptyformcont;
+	var filledform = emptyformcont.find('.stageinform');
+	
+	
+	if(stagedata.type == 0)
+		filledform.find('#stagetype option[value="0"]').attr('select','selected');
+	else
+		filledform.find('#stagetype option[value="1"]').attr('select','selected');
+	
+	if(stagedata.callfrequency == "daily")
+	{	
+		filledform.find('.classfrequency[name=daily]').prop('checked',true);
+		filledform.find('select.day-select').removeClass('hide').addClass('show');
+		filledform.find('select#day-select-from option[value="'+stagedata.stageduration.start+'"]').attr('selected','selected');
+		filledform.find('select#day-select-to option[value="'+stagedata.stageduration.end+'"]').attr('selected','selected');
+	}
+	else if(stagedata.callfrequency == "weekly")
+	{	
+		filledform.find('.classfrequency[name=weekly]').prop('checked',true);
+		filledform.find('select.week-select').removeClass('hide').addClass('show');
+		filledform.find('select#week-select-from option[value="'+stagedata.stageduration.start+'"]').attr('selected','selected');
+		filledform.find('select#week-select-to option[value="'+stagedata.stageduration.end+'"]').attr('selected','selected');
+	}
+	else if(stagedata.callfrequency == "monthly")
+	{	
+		filledform.find('.classfrequency[name=monthly]').prop('checked',true);
+		filledform.find('select.month-select').removeClass('hide').addClass('show');
+		filledform.find('select#month-select-from option[value="'+stagedata.stageduration.start+'"]').attr('selected','selected');
+		filledform.find('select#month-select-to option[value="'+stagedata.stageduration.end+'"]').attr('selected','selected');
+	}
+	
+	
+	filledform.find('.callsperweek').val(stagedata.numberofcalls);
+	
+	if(stagedata.numberofcalls > 0)
+	{
+		var count = stagedata.numberofcalls;
+		for(i = 1;i <= count; i++)
+		{
+			filledform.find('.callschedulecont').append('<div class="row" id="callattempt'+i+'cont">'+
+							'<label class="col-sm-5 control-label">Call '+i+' (1st attempt):</label>'+
+							'<div class="col-sm-7">'+
+								'<select class="form-control" id="callattempt'+i+'select" >' +
+									'<option value="sun">Sunday</option>'+
+									'<option value="mon">Monday</option>'+
+									'<option value="tue">Tuesday</option>'+
+									'<option value="wed">Wednesday</option>'+
+									'<option value="thu">Thursday</option>'+
+									'<option value="fri">Friday</option>'+
+									'<option value="sat">Saturday</option>'+
+								'</select>'+
+							'</div>'+
+						'</div>');
+			filledform.find('#callattempt'+i+'select option[value='+stagedata.callvolume[i].attempt1+']').attr('selected','selected');
+			
+			filledform.find('#callattempt'+i+'cont').after('<div class="row">'+
+							'<label class="col-sm-5 control-label">Call '+i+' Recall '+i+':</label>'+
+							'<div class="col-sm-7">'+
+								'<select class="form-control" id="callrecall'+i+'">'+
+									'<option value="sun">Sunday</option>'+
+									'<option value="mon">Monday</option>'+
+									'<option value="tue">Tuesday</option>'+
+									'<option value="wed">Wednesday</option>'+
+									'<option value="thu">Thursday</option>'+
+									'<option value="fri">Friday</option>'+
+									'<option value="sat">Saturday</option>'+
+								'</select>'+
+							'</div>'+
+						'</div>'+
+						'<br>');
+						
+			filledform.find('#callrecall'+i+' option[value='+stagedata.callvolume[i].call1recall+']').attr('selected','selected');						
+		}
+	}
+
+	filledform.find('#noofcallslot').val(stagedata.callslotsnumber);
+	
+	if(stagedata.callslotsnumber > 0)
+	{
+		var struct = '';
+		
+		$.each(stagedata.callslotsdays, function( key, value ) {
+			struct += '<div class="row"><label class="col-sm-1 control-label">Sun:</label><div class="col-sm-11">';
+			$.each(value, function( k, v ) {
+				struct += '<div class="row">'+
+								'<label class="col-sm-3">'+
+									'Slot '+k+':  Start Time: '+
+								'</label>'+
+								'<div class="col-sm-4">'+
+								'<div class="row">'+
+									'<div class="col-sm-6">'+
+								'<select class="form-control">';
+									var sp = v.start.split("");
+									var sh = sp[0]+""+sp[1];
+									var sm = sp[2]+""+sp[3];
+									var ep = v.start.split("");
+									var eh = ep[0]+""+ep[1];
+									var em = ep[2]+""+ep[3];
+									var select = '';
+									
+									for(d=1;d <= 24; d++)
+									{
+										if(sh == d)
+											select = 'selected';
+										struct += '<option value="'+d+'" '+select+'>'+d+'</option>';
+										select = '';
+									}
+				struct +=		'</select></div><div class="col-sm-6">';	
+				struct +=		'<select class="form-control">';
+									for(d=1;d <= 60; d++)
+									{
+										if(sm == d)
+											select = 'selected';
+										struct += '<option value="'+d+'" '+select+'>'+d+'</option>';
+										select = '';
+									}					
+				struct += 		'</select></div></div>'+
+								'</div>'+
+								'<label class="col-sm-2">'+
+									'End Time: '+
+								'</label>'+
+								'<div class="col-sm-4">'+
+								'<div class="row">'+
+									'<div class="col-sm-6">'+
+									'<select class="form-control">';
+										var ep = v.start.split("");
+										var eh = ep[0]+""+ep[1];
+										var em = ep[2]+""+ep[3];
+										var select = '';
+										
+										for(d=1;d <= 24; d++)
+										{
+											if(eh == d)
+												select = 'selected';
+											struct += '<option value="'+d+'" '+select+'>'+d+'</option>';
+											select = '';
+										}
+					struct +=		'</select></div><div class="col-sm-6">';	
+					struct +=		'<select class="form-control">';
+										for(d=1;d <= 60; d++)
+										{
+											if(em == d)
+												select = 'selected';
+											struct += '<option value="'+d+'" '+select+'>'+d+'</option>';
+											select = '';
+										}					
+					struct += 		'</select></div>'+
+								'</div>'+
+								'</div>'+
+							'</div>';
+			});
+			
+			struct +=  '</div></div>';
+		});	
+		
+		filledform.find('.callslotschedulecont').append(struct);
+	}
+	
+	emptyformcont.find('.stageinform').replaceWith(filledform);
+	return emptyformcont;
 }
