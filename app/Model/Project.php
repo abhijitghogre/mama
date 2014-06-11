@@ -26,7 +26,7 @@ class Project extends AppModel {
 //                        'Project.project_name AS Name',
 //                    )
 //        ));
-        return $this->query("SELECT Project.id, Project.project_name AS Name, count(User.id) AS count FROM users User LEFT JOIN projects Project on Project.id = User.project_id GROUP BY Project.id"
+        return $this->query("SELECT Project.id, Project.project_name AS Name, count(User.id) AS count FROM users User RIGHT JOIN projects Project on Project.id = User.project_id GROUP BY Project.id"
         );
     }
 
