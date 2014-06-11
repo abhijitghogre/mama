@@ -12,5 +12,14 @@ class UserCallflags extends AppModel {
         $result = $this->query("UPDATE user_callflags SET flag = '$encondedflag', last_check = '$current_time', intro_call = $intro_call_flag WHERE user_id = $userid");
         return TRUE;
     }
+    /* New */
+    public function updateFlag1($encodedflag, $current_time, $intro_call, $user_id){
+        $result = $this->query("UPDATE user_callflags SET flag = '$encodedflag', last_check = '$current_time', intro_call = $intro_call_flag WHERE user_id = $userid");
+        return TRUE;
+    }
+    public function addFlag($encodedflag, $user_id){
+        $result = $this->query("UPDATE user_callflags SET flag = '$encodedflag' WHERE user_id = $user_id");
+        return TRUE;
+    }
 }
 ?>

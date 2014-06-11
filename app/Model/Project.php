@@ -4,7 +4,7 @@ App::uses('AppModel', 'Model');
 
 class Project extends AppModel {
 
-    public $hasMany = 'User';
+    public $hasMany = array('User');
     public $validate = array(
         'project_name' => array(
             'required' => array(
