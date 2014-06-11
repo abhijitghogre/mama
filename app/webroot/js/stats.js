@@ -69,8 +69,17 @@ function barChart(data) {
     });
 }
 function stackedChart(data) {
-    console.log(data);
-    $('#stats-box').html('<div id="bar-chart" style="height: 230px;"></div>');
+    console.log(JSON.parse(data).data.length);
+    $('#stats-box').html('<div id="bar-chart" style="height: 230px"></div>');
+    if (JSON.parse(data).data.length === 1) {
+        $('#stats-box').html('<div id="bar-chart" style="height: 230px;width:200px;"></div>');
+    }
+    if (JSON.parse(data).data.length === 2) {
+        $('#stats-box').html('<div id="bar-chart" style="height: 230px;width:400px;"></div>');
+    }
+    if (JSON.parse(data).data.length === 3) {
+        $('#stats-box').html('<div id="bar-chart" style="height: 230px;width:500px;"></div>');
+    }
     Morris.Bar({
         element: 'bar-chart',
         data: JSON.parse(data).data,

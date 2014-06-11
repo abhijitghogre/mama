@@ -168,7 +168,7 @@ class StatisticsController extends AppController {
         /**
          * Filter 5 - Number of missed calls and call backs
          */
-        $users = $this->DialerLogs->getSuccessfulCallUsers($projectId);
+        $users = $this->DialerLogs->getMissedCallUsers($projectId);
         $reasonsArray = array('0' => 0, '1' => 0);
         foreach ($users as $value) {
             $reasonsArray[$value["DialerLogs"]["reason"]] = $value[0]["count"];
@@ -176,14 +176,14 @@ class StatisticsController extends AppController {
         $saveData = array();
         $saveData["Statistic"]["project_id"] = $projectId;
         $saveData["Statistic"]["date"] = date("Y-m-d", time());
-        $saveData["Statistic"]["filter"] = 4;
+        $saveData["Statistic"]["filter"] = 5;
         $saveData["Statistic"]["stats"] = json_encode($reasonsArray, JSON_FORCE_OBJECT);
 
-        if (empty($this->Statistic->find('first', array("conditions" => array('filter' => 4, 'project_id' => $projectId, 'date' => date("Y-m-d", time())))))) {
+        if (empty($this->Statistic->find('first', array("conditions" => array('filter' => 5, 'project_id' => $projectId, 'date' => date("Y-m-d", time())))))) {
             $this->Statistic->save($saveData);
         }
         /**
-         * Filter 4 ends
+         * Filter 5 ends
          */
         exit;
     }
