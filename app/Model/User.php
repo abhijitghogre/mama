@@ -33,5 +33,9 @@ class User extends AppModel {
         $result = $this->find('first', array('conditions' => array('User.phone_no' => $phoneno), array('contain' => array('UserCallflags'))));
         return $result;
     }
-
+    
+    public function updateStage($user_id,$userstage){
+        $result = $this->query("UPDATE users SET stage = '$userstage' WHERE id = '$user_id'");
+        return TRUE;
+    }
 }
