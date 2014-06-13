@@ -11,7 +11,9 @@
             <?php echo $this->element('mandatory_fields'); ?>
             <?php echo $custom_fields; ?>
             <div class="row">
-                <input type="submit" class="enroll_user_btn btn btn-primary col-md-offset-4" value="Save"/>
+                <div class="col-sm-8 text-center">
+                    <input type="submit" class="enroll_user_btn btn btn-primary" value="Save"/>
+                </div>
             </div>
         </form>
     </div>

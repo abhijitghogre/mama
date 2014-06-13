@@ -122,59 +122,12 @@
                             <td><?php echo $r['d']['gest_age']; ?></td>
                             <td>
                                 <?php 
-                                    if($r['d']['gest_age'] != "intro"){
-                                        $gestage = explode('.',$r['d']['gest_age']);
-                                        $gest = $gestage[0];
-                                        $gestcallno = $gestage[1];
+                                    if($r['d']['gest_age'] == "intro"){
+                                        echo $attempts = 1;
+                                    }else{
+                                        $decodedflag = json_decode($r['uc']['flag'], TRUE);
+                                        echo $attempts = $decodedflag[$r['d']['gest_age']]['attempts']+1;
                                     }
-                                    date_default_timezone_set('Asia/Calcutta'); 
-                                    $current_time = strtotime($r["d"]["startdatetime"]);
-                                    $current_day = date("D", $current_time);
-                                    $decodedflag = json_decode($r['uc']['flag'], TRUE);
-
-                                    if(!empty($r["u"]["lmp"])){
-                                            $date1 = strtotime($r["u"]["lmp"]);
-                                            $gest_age = 0;
-                                    } else {
-                                            $date1 = strtotime($r["u"]["registration_date"]);
-                                            $gest_age = $r["u"]["enroll_gest_age"];
-                                    }
-                                    $date2 = strtotime($r['d']['startdatetime']);
-                                    $presentgestage = datediff('ww', $date1, $date2, true) + $gest_age ;
-                                    //check for intro call
-                                    if((date("d-m-y",strtotime($r["u"]["entry_date"])) == date("d-m-y",$date2)) && ($r['uc']['intro_call'] == 1) && ($decodedflag[0][$presentgestage]["first_call"]["attempts"] == 0)){
-                                        $attempts = 1;
-                                    } else{	
-                                        if($presentgestage > 0 && $presentgestage <= 39){
-                                            if($gestcallno == 1){
-                                                $attempts = $decodedflag[0][$presentgestage]["first_call"]["attempts"];
-                                            }elseif($gestcallno == 2){
-                                                $attempts = $decodedflag[0][$presentgestage]["second_call"]["attempts"];
-                                            }
-                                        }else{
-                                            $date1 = strtotime($r["u"]["delivery_date"]);
-                                            $date2 = strtotime($r["d"]["startdatetime"]);
-                                            $daydiff = datediff('d',$date1 , $date2, true) + 1;
-                                            $weekdiff = datediff('ww',$date1 , $date2, true)+1;
-                                            $monthdiff = datediff('m',$date1 , $date2, true)+1;
-                                            $yeardiff = datediff('yyyy',$date1 , $date2, true)+1;
-
-                                            if($monthdiff > 12 && $yeardiff <= 5){
-                                                $attempts = $decodedflag[1][3][$monthdiff]["attempts"];
-                                            } else if($monthdiff > 4 && $monthdiff <= 12) {
-                                                $attempts = $decodedflag[1][2][$weekdiff]["attempts"];
-                                            }  else if($weekdiff <= 12 && $weekdiff > 1){
-                                                if($gestcallno == 1){
-                                                    $attempts = $decodedflag[1][1][$weekdiff]["first_call"]["attempts"];
-                                                } elseif($gestcallno == 2){
-                                                    $attempts = $decodedflag[1][1][$weekdiff]["second_call"]["attempts"];
-                                                }
-                                            } else if($weekdiff <= 1){
-                                                $attempts = $decodedflag[1][0][$daydiff]["attempts"];
-                                            }
-                                        }
-                                    }
-                                    echo $attempts;
                                  ?>
                             </td>
                             <td>

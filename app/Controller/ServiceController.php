@@ -74,7 +74,6 @@ class ServiceController extends AppController {
             echo $user_id."-".$userstage."</br>";
             $this->User->updateStage($user_id,$userstage);
         }
-        echo "<pre>";
         exit;
     }
     /* list of calls to be made */
@@ -370,14 +369,15 @@ class ServiceController extends AppController {
                 $intro_call = 1;
             }
         }else{
-            if($callstatus == 0){
-                $callflag[$index]['reason'] = 1;
-                $callflag[$index]['startdatetime'] = $startdatetime;
-                $callflag[$index]['duration'] = $duration;
-            }else{
-                $callflag[$index]['attempts']++;
-            }
-            if($calltype == 2){
+            if($calltype == 1){
+                if($callstatus == 0){
+                    $callflag[$index]['reason'] = 1;
+                    $callflag[$index]['startdatetime'] = $startdatetime;
+                    $callflag[$index]['duration'] = $duration;
+                }else{
+                    $callflag[$index]['attempts']++;
+                }
+            }elseif($calltype == 2){
                 $callflag[$index]['missedcall']++;
             }
         }
