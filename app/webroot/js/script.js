@@ -419,7 +419,6 @@ $(document).ready(function() {
         if ($.inArray(data.User.phone_type, ["1", "2"]) > -1) {
             $('input[name="mand-phone-type"][value="' + data.User.phone_type + '"]').prop('checked', true);
         } else {
-            console.log('here');
             $('input[name="mand-phone-type"][value="' + data.User.phone_type + '"]').prop('checked', true).trigger('change');
             $('input[name="mand-phone-code"]').val(data.User.phone_code);
         }
