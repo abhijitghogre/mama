@@ -19,7 +19,7 @@ class Project extends AppModel {
     );
 
     public function getAllProjects() {
-        return $this->query("SELECT Project.id, Project.project_name AS Name, count(User.id) AS count FROM users User RIGHT JOIN projects Project on Project.id = User.project_id WHERE User.deleted = 0 GROUP BY Project.id"
+        return $this->query("SELECT Project.id, Project.project_name AS Name, count(User.id) AS count FROM projects Project LEFT JOIN users User ON Project.id = User.project_id AND User.deleted = 0 GROUP BY Project.id"
         );
     }
 
