@@ -550,7 +550,6 @@ $(document).ready(function() {
         var callCode = $('#LogsCallCode').val();
         var fromDate = $('#LogsFromdate').val();
         var toDate = $('#LogsTodate').val();
-        var other = $('#LogsOther').val();
         $('.loader').fadeIn();
         $.post(BASE_URL + '/logs/generate_report', {projectId: projectId, userId: userId, callCode: callCode, fromDate: fromDate, toDate: toDate}, function(data) {
             oTable.fnDestroy();
@@ -558,6 +557,18 @@ $(document).ready(function() {
             oTable = $('#report').dataTable({"aaSorting": [[6, "desc"]]});
             $('.loader').fadeOut();
         });
+    });
+    /* csv for call logs */
+    $('#generatecsv').on('click', function(e) {
+        e.preventDefault();
+        var projectId = $('#LogsProjectId').val();
+        var userId = $('#LogsUserId').val();
+        var callCode = $('#LogsCallCode').val();
+        var fromDate = $('#LogsFromdate').val();
+        var toDate = $('#LogsTodate').val();
+        
+        document.location.href=BASE_URL +'/logs/generate_csv/'+projectId+'/'+userId+'/'+callCode+'/'+fromDate+'/'+toDate;
+																 
     });
 
     //ajaxify add project

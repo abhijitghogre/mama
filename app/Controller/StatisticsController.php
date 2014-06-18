@@ -30,9 +30,9 @@ class StatisticsController extends AppController {
         $saveData["Statistic"]["month"] = $returnedData['month'];
         $saveData["Statistic"]["year"] = $returnedData['year'];
 
-        $existsFlag = empty($this->Statistic->find('first', array("conditions" => array('filter' => 2, 'project_id' => $projectId, 'date' => $yesterday))));
+        $existsFlag = $this->Statistic->find('first', array("conditions" => array('filter' => 2, 'project_id' => $projectId, 'date' => $yesterday)));
 
-        if ($existsFlag) {
+        if (empty($existsFlag)) {
             $this->Statistic->create();
             $this->Statistic->save($saveData);
         }
@@ -69,9 +69,9 @@ class StatisticsController extends AppController {
         $saveData["Statistic"]["month"] = $returnedData['month'];
         $saveData["Statistic"]["year"] = $returnedData['year'];
 
-        $existsFlag = empty($this->Statistic->find('first', array("conditions" => array('filter' => 2, 'project_id' => $projectId, 'date' => $yesterday))));
+        $existsFlag = $this->Statistic->find('first', array("conditions" => array('filter' => 2, 'project_id' => $projectId, 'date' => $yesterday)));
 
-        if ($existsFlag) {
+        if (empty($existsFlag)) {
             $this->Statistic->create();
             $this->Statistic->save($saveData);
         }
@@ -97,8 +97,8 @@ class StatisticsController extends AppController {
         $saveData["Statistic"]["month"] = $returnedData['month'];
         $saveData["Statistic"]["year"] = $returnedData['year'];
 
-        $existsFlag = empty($this->Statistic->find('first', array("conditions" => array('filter' => 3, 'project_id' => $projectId, 'date' => $yesterday))));
-        if ($existsFlag) {
+        $existsFlag = $this->Statistic->find('first', array("conditions" => array('filter' => 3, 'project_id' => $projectId, 'date' => $yesterday)));
+        if (empty($existsFlag)) {
             $this->Statistic->create();
             $this->Statistic->save($saveData);
         }
@@ -132,8 +132,8 @@ class StatisticsController extends AppController {
         $saveData["Statistic"]["month"] = $returnedData['month'];
         $saveData["Statistic"]["year"] = $returnedData['year'];
 
-        $existsFlag = empty($this->Statistic->find('first', array("conditions" => array('filter' => 4, 'project_id' => $projectId, 'date' => $yesterday))));
-        if ($existsFlag) {
+        $existsFlag = $this->Statistic->find('first', array("conditions" => array('filter' => 4, 'project_id' => $projectId, 'date' => $yesterday)));
+        if (empty($existsFlag)) {
             $this->Statistic->create();
             $this->Statistic->save($saveData);
         }
@@ -159,8 +159,8 @@ class StatisticsController extends AppController {
         $saveData["Statistic"]["month"] = $returnedData['month'];
         $saveData["Statistic"]["year"] = $returnedData['year'];
 
-        $existsFlag = empty($this->Statistic->find('first', array("conditions" => array('filter' => 5, 'project_id' => $projectId, 'date' => $yesterday))));
-        if ($existsFlag) {
+        $existsFlag = $this->Statistic->find('first', array("conditions" => array('filter' => 5, 'project_id' => $projectId, 'date' => $yesterday)));
+        if (empty($existsFlag)) {
             $this->Statistic->create();
             $this->Statistic->save($saveData);
         }
