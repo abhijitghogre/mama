@@ -57,6 +57,11 @@
                 ?>
             </div>
         </div>
+        <div class="row padding-bottom-15">
+            <div class="col-md-2">
+                <button class="btn btn-primary" id="generatecsv">Generate CSV</button>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="report">
