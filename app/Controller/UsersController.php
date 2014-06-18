@@ -90,10 +90,10 @@ class UsersController extends AppController {
             $date2 = $current_time;
             $stageno = 1;
             foreach ($structure as $key => $struct) {
-                $callfrequency = $structure[$key]['callfrequency'];
+                $callfrequency = $struct['callfrequency'];
                 $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
-                $stagestart = $structure[$key]['stageduration']['start'];
-                $stageend = $structure[$key]['stageduration']['end'];
+                $stagestart = $struct['stageduration']['start'];
+                $stageend = $struct['stageduration']['end'];
                 if ($presentgestage >= $stagestart && $presentgestage <= $stageend) {
                     $userstage = $stageno;
                 }
