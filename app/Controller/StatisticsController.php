@@ -55,7 +55,7 @@ class StatisticsController extends AppController {
             if (isset($attemptsArray[$attempts])) {
                 $attemptsArray[$attempts] ++;
             } else {
-                $attemptsArray[$attempts] = 0;
+                $attemptsArray[$attempts] = 1;
             }
         }
         $saveData = array();
@@ -170,7 +170,104 @@ class StatisticsController extends AppController {
         exit;
     }
 
-    public function show() {
+    public function download() {
+        $requestData = $this->request->data;
+        $filter = $requestData['filter'];
+        $array = json_decode($requestData['jsondata'], true);
+        $this->response->type('csv');
+        //Optionally force file download
+        switch ((int) $filter) {
+            case 1: // filter 1 - Number of calls to be made
+                $csvarray = array();
+                //////-------PROCESS---------//////
+                foreach ($array as $a) {
+                    $tempArr = array();
+                    $tempArr['Period'] = $a["x"];
+                    $tempArr['No of Users'] = $a["count"];
+                    array_push($csvarray, $tempArr);
+                }
+                //////-------PROCESS---------//////
+                $body = $this->_array2csv($csvarray);
+                $this->response->body($body);
+                $this->response->download('Number_of_calls_to_be_made.csv');
+                break;
+            case 2: //filter 2 - Number of calls actually made and attempt
+                $csvarray = array();
+                //////-------PROCESS---------//////
+                foreach ($array['data'] as $a) {
+                    $tempArr = array();
+                    $tempArr['Period'] = $a["x"];
+                    for ($i = 1; $i <= 3; $i++) {
+                        if (isset($a[$i])) {
+                            $tempArr['Attempt ' . $i] = $a[$i];
+                        } else {
+                            $tempArr['Attempt ' . $i] = 0;
+                        }
+                    }
+                    array_push($csvarray, $tempArr);
+                }
+                //////-------PROCESS---------//////
+                $body = $this->_array2csv($csvarray);
+                $this->response->body($body);
+                $this->response->download('Number_of_calls_actually_made.csv');
+                break;
+            case 3: //filter 3 - reasons for not being called
+                $csvarray = array();
+                //////-------PROCESS---------//////
+                foreach ($array["data"] as $a) {
+                    $tempArr = array();
+                    $tempArr['Period'] = $a["x"];
+                    foreach ($a as $akey => $aval) {
+                        if ($akey !== "x") {
+                            $tempArr[$akey] = $aval;
+                        }
+                    }
+                    array_push($csvarray, $tempArr);
+                }
+                //////-------PROCESS---------//////
+                $body = $this->_array2csv($csvarray);
+                $this->response->body($body);
+                $this->response->download('Reasons_for_failure.csv');
+                break;
+            case 4: // filter 4 - Number of women listening to the message
+                $csvarray = array();
+                //////-------PROCESS---------//////
+                foreach ($array["data"] as $a) {
+                    $tempArr = array();
+                    $tempArr['Period'] = $a["x"];
+                    $tempArr['20%'] = $a[20];
+                    $tempArr['50%'] = $a[50];
+                    $tempArr['100%'] = $a[100];
+                    array_push($csvarray, $tempArr);
+                }
+                //////-------PROCESS---------//////
+                $body = $this->_array2csv($csvarray);
+                $this->response->body($body);
+                $this->response->download('Number_of_women_listening_the_message.csv');
+                break;
+            case 5: // filter 5 - Missed calls and callback
+                $csvarray = array();
+                //////-------PROCESS---------//////
+                foreach ($array["data"] as $a) {
+                    $tempArr = array();
+                    $tempArr['Period'] = $a["x"];
+                    $tempArr['Missed calls'] = $a[0];
+                    $tempArr['Call backs'] = $a[1];
+                    array_push($csvarray, $tempArr);
+                }
+                //////-------PROCESS---------//////
+                $body = $this->_array2csv($csvarray);
+                $this->response->body($body);
+                $this->response->download('Missed_calls_and_call_back.csv');
+                break;
+        }
+
+        // Return response object to prevent controller from trying to render
+        // a view
+        return $this->response;
+    }
+
+    public function show($csv) {
         $requestData = $this->request->data;
         $filter = $requestData['filter'];
         $type = $requestData['statstype'];
@@ -261,6 +358,9 @@ class StatisticsController extends AppController {
         exit;
     }
 
+    /**
+     * user functions
+     */
     public function _getFilter5StatsByType($requestData, $type) {
         $stats = $this->Statistic->getStoredFilterStats($requestData, $type);
         foreach ($stats as $key => $val) {
@@ -383,7 +483,7 @@ class StatisticsController extends AppController {
         }
         $labels = array();
         $keys = array();
-        for ($i = 0; $i <= $maxAttempts; $i++) {
+        for ($i = 1; $i <= $maxAttempts + 1; $i++) {
             if (!in_array('Attempt ' . $i, $labels)) {
                 array_push($labels, 'Attempt ' . $i);
             }
@@ -409,7 +509,11 @@ class StatisticsController extends AppController {
         $result = array();
         foreach ($stats as $stat) {
             $obj = array();
-            $obj['x'] = $stat["Statistic"]['date'];
+            if ($type === 'stats') {
+                $obj['x'] = date("d-m-Y", strtotime($stat["Statistic"]["date"]));
+            } else {
+                $obj['x'] = date("d-m-Y", strtotime($stat["Statistic"]["date"] . '- 1 ' . $type . ' + 1 day')) . ' to ' . date("d-m-Y", strtotime($stat["Statistic"]["date"]));
+            }
             $obj['count'] = $stat["Statistic"]['stats'];
             array_push($result, $obj);
         }
@@ -472,6 +576,20 @@ class StatisticsController extends AppController {
         }
 
         return json_encode($result, JSON_FORCE_OBJECT);
+    }
+
+    function _array2csv(array &$array) {
+        if (count($array) == 0) {
+            return null;
+        }
+        ob_start();
+        $df = fopen("php://output", 'w');
+        fputcsv($df, array_keys(reset($array)));
+        foreach ($array as $row) {
+            fputcsv($df, $row);
+        }
+        fclose($df);
+        return ob_get_clean();
     }
 
 }

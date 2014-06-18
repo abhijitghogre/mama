@@ -11,7 +11,7 @@ $(document).ready(function() {
         $('.statsbtn').removeClass('active');
         $(this).addClass('active');
         var statstype = $(this).val();
-        statsAjax(statstype);
+        statsAjax(statstype, 0);
 
     });
 
@@ -23,20 +23,46 @@ $(document).ready(function() {
     //ajax on filter change
     $('#project_id,#statsdatefrom,#statsdateto,#filter').on('change', function() {
         var statstype = $('.statsbtn.active').val();
-        statsAjax(statstype);
+        statsAjax(statstype, 0);
     });
 
-});// ready endss
+    //generate stats csv
+    $('.report-stats').on('click', function() {
+        var statstype = $('.statsbtn.active').val();
+        statsAjax(statstype, 1);
+    });
+
+});// ready ends
+
+function postData(action, method, input) {
+    "use strict";
+    var form;
+    form = $('<form />', {
+        action: action,
+        method: method,
+        style: 'display: none;'
+    });
+    if (typeof input !== 'undefined') {
+        $.each(input, function(name, value) {
+            $('<input />', {
+                type: 'hidden',
+                name: name,
+                value: value
+            }).appendTo(form);
+        });
+    }
+    form.appendTo('body').submit();
+}
 
 
-function statsAjax(statstype) {
+function statsAjax(statstype, csv) {
 
     var projectId = $('#project_id').val();
     var statsDateFrom = $('#statsdatefrom').val();
     var statsDateTo = $('#statsdateto').val();
     var filter = $('#filter').val();
 
-    $.post(BASE_URL + '/statistics/show', {
+    $.post(BASE_URL + '/statistics/show/' + csv, {
         projectId: projectId,
         statsDateFrom: statsDateFrom,
         statsDateTo: statsDateTo,
@@ -44,19 +70,28 @@ function statsAjax(statstype) {
         statstype: statstype
     },
     function(data) {
-        switch (parseInt(filter)) {
-            case 1:
-                barChart(data);
-                break;
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                stackedChart(data);
-                break;
+        if (csv === 0) {
+            switch (parseInt(filter)) {
+                case 1:
+                    barChart(data);
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    stackedChart(data);
+                    break;
+            }
+        } else {
+            postData(BASE_URL + "/statistics/download", 'post', {
+                jsondata: data,
+                filter: parseInt(filter)
+            });
         }
     });
 }
+
+
 
 function barChart(data) {
     console.log(JSON.parse(data));
