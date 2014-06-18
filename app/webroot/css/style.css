@@ -111,3 +111,6 @@ td{
 .user-details-table tbody tr td:first-child{
     font-weight: bold;
 }
+.float-right{
+    float: right;
+}

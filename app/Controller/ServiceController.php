@@ -26,8 +26,14 @@ class ServiceController extends AppController {
                 $callfrequency = $structure[$key]['callfrequency'];
                 $cf = $frequency[$callfrequency];
                 for ($diff = $stagestart; $diff <= $stageend; $diff++) {
-                    for ($msg = 1; $msg <= $structure[$key]['numberofcalls']; $msg++) {
-                        $index = $stageno . "." . $cf . $diff . "." . $msg;
+                    if ($structure[$key]['numberofcalls'] >= 2) {
+                        for ($msg = 1; $msg <= $structure[$key]['numberofcalls']; $msg++) {
+                            $index = $stageno . "." . $cf . $diff . "." . $msg;
+                            $flagvalue = array("reason" => 0, "attempts" => 0, "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+                            $resultarray[$index] = $flagvalue;
+                        }
+                    } else {
+                        $index = $stageno . "." . $cf . $diff;
                         $flagvalue = array("reason" => 0, "attempts" => 0, "startdatetime" => "", "duration" => 0, "missedcall" => 0);
                         $resultarray[$index] = $flagvalue;
                     }
@@ -62,15 +68,16 @@ class ServiceController extends AppController {
                     $gest_age = $u['User']['enroll_gest_age'];
                 }
             } elseif ($u['User']['delivery'] == 1) {
+                $gest_age = 0;
                 $date1 = strtotime($u['User']['delivery_date']);
             }
             $date2 = $current_time;
             $stageno = 1;
             foreach ($structure as $key => $struct) {
-                $callfrequency = $structure[$key]['callfrequency'];
+                $callfrequency = $struct['callfrequency'];
                 $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
-                $stagestart = $structure[$key]['stageduration']['start'];
-                $stageend = $structure[$key]['stageduration']['end'];
+                $stagestart = $struct['stageduration']['start'];
+                $stageend = $struct['stageduration']['end'];
                 if ($presentgestage >= $stagestart && $presentgestage <= $stageend) {
                     $userstage = $stageno;
                 }
@@ -83,111 +90,158 @@ class ServiceController extends AppController {
     }
 
     /* list of calls to be made */
-
     public function get_list() {
         date_default_timezone_set('Asia/Calcutta');
         $current_time = time();
         $current_slot = ((int) date("G", $current_time));
         $current_day = date("D", $current_time);
-        $result = $this->Project->find('all');
+        $result = $this->Project->find('all', array('recursive' => -1));
+        
         $resultarray = array();
         $index = "";
         $stdcode = "";
         $languages = array("1" => "english", "2" => "hindi", "3" => "marathi");
-        $project = array("1" => "dfid", "2" => "glenmark");
         $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
         $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
+        $filter = array();
         foreach ($result as $r) {
             $callsarray = array();
-            $structure = json_decode($r["Project"]["stage_structure"], true);
-            foreach ($r['User'] as $u) {
-                $stage = "stage" . $u['stage'];
-                $user_id = $u['id'];
-                $phoneno = $u['phone_no'];
-                if ($u["phone_type"] == 2) {
-                    $stdcode = "0";
-                } else if ($u["phone_type"] == 4) {
-                    $stdcode = $u["phone_code"];
-                }
-                $project_id = $u['project_id'];
-                $lang = $u['language'];
-                $entry_date = date("d-m-y", strtotime($u['entry_date']));
-                $callfrequency = $structure[$stage]['callfrequency'];
-                $cf = $frequency[$callfrequency];
-                if ($u['delivery'] == 0) {
-                    if (isset($u["lmp"])) {
-                        $date1 = strtotime($u["lmp"]);
-                        $gest_age = 0;
-                    } else {
-                        $date1 = strtotime($u["registration_date"]);
-                        $gest_age = $u["enroll_gest_age"];
-                    }
-                } elseif ($u['delivery'] == 1) {
-                    $date1 = strtotime($u['delivery_date']);
-                }
-                $date2 = $current_time;
-                $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
-                $uc = $this->UserCallflags->find('first', array('conditions' => array('UserCallflags.user_id' => $user_id)));
-                $intro_call = $uc['UserCallflags']['intro_call'];
-                $callflag = json_decode($uc['UserCallflags']['flag'], true);
-            }
-            $stagestart = $structure[$stage]['stageduration']['start'];
-            $stageend = $structure[$stage]['stageduration']['end'];
-            if ($r['Project']['id'] == $project_id && $presentgestage >= $stagestart && $presentgestage <= $stageend) {
+            $pid = $r['Project']['id'];
+            $structure = json_decode($r['Project']['stage_structure'], true);
+            $stageno = 1;
+            foreach ($structure as $key => $struct) {
+                $callfrequency = $struct['callfrequency'];
+                $no_of_call = $struct['numberofcalls'];
+                $no_of_slot = $struct['callslotsnumber'];
+                $callvolume = $struct['callvolume'];
                 $timearray = explode(':', date('H:i', $current_time));
-                $current_slot = $timearray[0] . $timearray[1];
-                $stage_day = $structure[$stage]['callslotsdays'][$current_day];
-                foreach ($stage_day as $key => $day) {
-                    if ($current_slot >= $day['start'] && $current_slot < $day['end'] && $u['call_slots'] == $key) {
-                        if (($entry_date == date("d-m-y", $current_time)) && ($intro_call == 0)) {
-                            $index = "intro";
+                $slot_time = $timearray[0] . $timearray[1];
+
+                $stage_day = $struct['callslotsdays'][$current_day];
+                foreach ($callvolume as $callno => $call) {
+                    foreach ($call as $slotno => $slot) {
+                        if (($no_of_call <= 1) && ($slot_time >= $stage_day[$slotno]['start'] && $slot_time < $stage_day[$slotno]['end'])) {
+                            array_push($filter, array('pid' => $pid, 'stage' => $stageno, 'slot' => $slotno));
+                        } else {
+                            if (($slot['attempt' . $callno] == $current_day || $slot['recall' . $callno] == $current_day) && ($slot_time >= $stage_day[$slotno]['start'] && $slot_time < $stage_day[$slotno]['end'])) {
+                                array_push($filter, array('pid' => $pid, 'stage' => $stageno, 'slot' => $slotno));
+                            }
+                        }
+                    }
+                }
+                $stageno++;
+            }
+        }
+        $cond = array();
+        foreach ($filter as $f) {
+            $cond['OR'][] = array(
+                array('User.project_id' => $f['pid']),
+                array('User.stage' => $f['stage']),
+                array('User.call_slots' => $f['slot'])
+            );
+        }
+        $user = $this->User->find('all', array('conditions' => $cond, 'recursive' => 0));
+        foreach ($user as $u) {
+            $stage = "stage" . $u['User']['stage'];
+            $user_id = $u['User']['id'];
+            $phoneno = $u['User']['phone_no'];
+
+            if ($u['User']["phone_type"] == 2) {
+                $stdcode = '0';
+            } else if ($u['User']['phone_type'] == 4) {
+                $stdcode = $u['User']['phone_code'];
+            }
+            $project_name = $u['Project']['project_name'];
+            $lang = $u['User']['language'];
+            $entry_date = date("d-m-y", strtotime($u['User']['entry_date']));
+            $structure = json_decode($u['Project']['stage_structure'], true);
+            $no_of_call = $structure[$stage]['numberofcalls'];
+            $callfrequency = $structure[$stage]['callfrequency'];
+            $cf = $frequency[$callfrequency];
+            if ($u['User']['delivery'] == 0) {
+                if (isset($u['User']['lmp'])) {
+                    $date1 = strtotime($u['User']['lmp']);
+                    $gest_age = 0;
+                } else {
+                    $date1 = strtotime($u['User']['registration_date']);
+                    $gest_age = $u['User']['enroll_gest_age'];
+                }
+            } elseif ($u['User']['delivery'] == 1) {
+                $gest_age = 0;
+                $date1 = strtotime($u['User']['delivery_date']);
+            }
+            $date2 = $current_time;
+            $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
+            $intro_call = $u['UserCallflag']['intro_call'];
+            $callflag = json_decode($u['UserCallflag']['flag'], true);
+            if (($entry_date == date("d-m-y", $current_time)) && ($intro_call == 0)) {
+                $index = "intro";
+                $callsarray[] = array(
+                    "gest_age" => $index,
+                    "user_id" => $user_id,
+                    "phoneno" => $stdcode . $phoneno,
+                    "media" => $project_name . $languages[$lang] . $index
+                );
+            } else {
+                if ($no_of_call >= 2) {
+                    foreach ($structure[$stage]['callvolume'] as $callno => $call) {
+                        $newflag = array();
+                        if ($call[$u['User']['call_slots']]['attempt' . $callno] == $current_day || $call[$u['User']['call_slots']]['recall' . $callno] == $current_day) {
+                            $index = $u['User']['stage'] . "." . $cf . $presentgestage . "." . $callno;
+                            if (array_key_exists($index, $callflag)) {
+                                if ($callflag[$index]['reason'] == 0) {
+                                    $callsarray[] = array(
+                                        "gest_age" => $index,
+                                        "user_id" => $user_id,
+                                        "phoneno" => $stdcode . $phoneno,
+                                        "media" => $project_name . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage . $callno
+                                    );
+                                }
+                            } else {
+                                $callsarray[] = array(
+                                    "gest_age" => $index,
+                                    "user_id" => $user_id,
+                                    "phoneno" => $stdcode . $phoneno,
+                                    "media" => $project_name . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage . $callno
+                                );
+                                $newflag = array("reason" => 0, "attempts" => 0, "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+                                $callflag[$index] = $newflag;
+                                $encodedflag = json_encode($callflag);
+                                $this->UserCallflags->addFlag($encodedflag, $user_id);
+                            }
+                        }
+                    }
+                } else {
+                    $index = $u['User']['stage'] . "." . $cf . $presentgestage;
+                    if (array_key_exists($index, $callflag)) {
+                        if ($callflag[$index]['reason'] == 0) {
                             $callsarray[] = array(
                                 "gest_age" => $index,
                                 "user_id" => $user_id,
                                 "phoneno" => $stdcode . $phoneno,
-                                "media" => $project[$project_id] . $languages[$lang] . $index
+                                "media" => $project_name . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage
                             );
-                        } else {
-                            for ($i = 1; $i <= $structure[$stage]['numberofcalls']; $i++) {
-                                if (($structure[$stage]['callvolume']['call' . $i]['attempt' . $i] == $current_day) || ($structure[$stage]['callvolume']['call' . $i]['recall' . $i] == $current_day)) {
-                                    $index = $u['stage'] . "." . $cf . $presentgestage . "." . $i;
-                                    $newflag = array();
-                                    if (array_key_exists($index, $callflag)) {
-                                        if ($callflag[$index]['reason'] == 0 && $callflag[$index]['attempts'] < 6) {
-                                            $callsarray[] = array(
-                                                "gest_age" => $index,
-                                                "user_id" => $user_id,
-                                                "phoneno" => $stdcode . $phoneno,
-                                                "media" => $project[$project_id] . $languages[$lang] . $u['stage'] . $cf . $presentgestage . $i
-                                            );
-                                        }
-                                    } else {
-                                        $callsarray[] = array(
-                                            "gest_age" => $index,
-                                            "user_id" => $user_id,
-                                            "phoneno" => $stdcode . $phoneno,
-                                            "media" => $project[$project_id] . $languages[$lang] . $u['stage'] . $cf . $presentgestage . $i
-                                        );
-                                        $newflag = array("reason" => 0, "attempts" => 0, "startdatetime" => "", "duration" => 0, "missedcall" => 0);
-                                        $callflag[$index] = $newflag;
-                                        $encodedflag = json_encode($callflag);
-                                        $this->UserCallflags->addFlag($encodedflag, $user_id);
-                                    }
-                                }
-                            }
                         }
-                        foreach ($callsarray as $callarr) {
-                            array_push($resultarray, $callarr);
-                        }
+                    } else {
+                        $callsarray[] = array(
+                            "gest_age" => $index,
+                            "user_id" => $user_id,
+                            "phoneno" => $stdcode . $phoneno,
+                            "media" => $project_name . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage
+                        );
+                        $newflag = array("reason" => 0, "attempts" => 0, "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+                        $callflag[$index] = $newflag;
+                        $encodedflag = json_encode($callflag);
+                        $this->UserCallflags->addFlag($encodedflag, $user_id);
                     }
                 }
             }
         }
         echo "<pre>";
-        print_r($resultarray);
+        print_r($callsarray);
         $calltype = 1;
         $mid = 0;
-        $this->outbound($resultarray, $calltype, $mid);
+        //$this->outbound($callsarray, $calltype, $mid);
         exit;
     }
 
@@ -202,7 +256,6 @@ class ServiceController extends AppController {
         $current_day = date("D", $current_time);
 
         $languages = array("1" => "english", "2" => "hindi", "3" => "marathi");
-        $project = array("1" => "dfid", "2" => "glenmark");
         $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
         $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
         $resultarray = array();
@@ -219,7 +272,7 @@ class ServiceController extends AppController {
             $stage = "stage" . $u['User']['stage'];
             $user_id = $u['User']['id'];
             $phoneno = $u['User']['phone_no'];
-            $project_id = $u['User']['project_id'];
+            $project_name = $u['Project']['project_name'];
             $lang = $u['User']['language'];
             $entry_date = date("d-m-y", strtotime($u['User']['entry_date']));
             $structure = json_decode($u['Project']['stage_structure'], true);
@@ -235,7 +288,8 @@ class ServiceController extends AppController {
                     $date1 = strtotime($u['User']["registration_date"]);
                     $gest_age = $u['User']["enroll_gest_age"];
                 }
-            } elseif ($u['delivery'] == 1) {
+            } elseif ($u['User']['delivery'] == 1) {
+                $gest_age = 0;
                 $date1 = strtotime($u['User']['delivery_date']);
             }
             $date2 = $current_time;
@@ -249,19 +303,27 @@ class ServiceController extends AppController {
                         "gest_age" => $index,
                         "user_id" => $user_id,
                         "phoneno" => $stdcode . $phoneno,
-                        "media" => $project[$project_id] . $languages[$lang] . $index
+                        "media" => $project_name . $languages[$lang] . $index
                     );
                 } else {
-                    for ($i = 1; $i <= $structure[$stage]['numberofcalls']; $i++) {
-                        if (($structure[$stage]['callvolume']['call' . $i]['attempt' . $i] == $current_day) || ($structure[$stage]['callvolume']['call' . $i]['recall' . $i] == $current_day)) {
+                    if ($structure[$stage]['numberofcalls'] >= 2) {
+                        for ($i = 1; $i <= $structure[$stage]['numberofcalls']; $i++) {
                             $index = $u['User']['stage'] . "." . $cf . $presentgestage . "." . $i;
                             $resultarray[] = array(
                                 "gest_age" => $index,
                                 "user_id" => $user_id,
                                 "phoneno" => $stdcode . $phoneno,
-                                "media" => $project[$project_id] . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage . $i
+                                "media" => $project_name . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage . $i
                             );
                         }
+                    }else{
+                        $index = $u['User']['stage'] . "." . $cf . $presentgestage;
+                        $resultarray[] = array(
+                            "gest_age" => $index,
+                            "user_id" => $user_id,
+                            "phoneno" => $stdcode . $phoneno,
+                            "media" => $project_name . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage
+                        );
                     }
                 }
             }
@@ -386,10 +448,10 @@ class ServiceController extends AppController {
                     $callflag[$index]['startdatetime'] = $startdatetime;
                     $callflag[$index]['duration'] = $duration;
                 } else {
-                    $callflag[$index]['attempts'] ++;
+                    $callflag[$index]['attempts']++;
                 }
             } elseif ($calltype == 2) {
-                $callflag[$index]['missedcall'] ++;
+                $callflag[$index]['missedcall']++;
             }
         }
         $encodedflag = json_encode($callflag);

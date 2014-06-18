@@ -91,7 +91,6 @@ class UsersController extends AppController {
             $stageno = 1;
             $userstage = 0;
             foreach ($structure as $key => $struct) {
-                var_dump($struct);exit;
                 $callfrequency = $struct['callfrequency'];
                 $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
                 $stagestart = $struct['stageduration']['start'];

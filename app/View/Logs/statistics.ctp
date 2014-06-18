@@ -37,7 +37,7 @@
                     <label class="control-label">To:</label>
                     <input type="text" id="statsdateto" class="form-control">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="control-label">&nbsp;</label></br>
                     <div class="btn-group">
                         <button type="button" value="1" class="btn btn-default statsbtn" id="day">Day</button>
@@ -45,6 +45,7 @@
                         <button type="button" value="3" class="btn btn-default statsbtn" id="month">Month</button>
                         <button type="button" value="4" class="btn btn-default statsbtn" id="year">Year</button>
                     </div>
+                    <input type="button" class="btn btn-primary report-stats float-right" value="Generate CSV"/>
                 </div>
             </div>
         </form>
