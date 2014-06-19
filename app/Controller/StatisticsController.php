@@ -2,11 +2,19 @@
 
 class StatisticsController extends AppController {
 
-    public $uses = array('DialerLogs', 'UserCallflags', 'Statistic');
+    public $uses = array('DialerLogs', 'UserCallflags', 'Statistic', 'Project');
 
     public function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow('calculate');
+    }
+
+    public function cronjob() {
+        $projects = $this->Project->find('all', array('fields' => array('id'), 'recursive' => 0));
+        $ids = array_column(array_column($projects, 'Project'), 'id');
+        foreach ($ids as $projectId) {
+            $this->calculate($projectId);
+        }
     }
 
     public function calculate($projectId) {
