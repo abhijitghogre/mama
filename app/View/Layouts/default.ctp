@@ -14,6 +14,8 @@
         echo $this->Html->css('theme');
         echo $this->Html->css('style');
         echo $this->Html->css('jquery-ui-1.10.3.custom.min');
+        echo $this->Html->css('validationEngine.jquery');
+        echo $this->Html->css('chosen');
         echo $this->fetch('css');
         ?>
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -156,9 +158,11 @@
         echo $this->Html->script('jquery.dataTables.min');
         echo $this->Html->script('dataTables.bootstrap');
         echo $this->Html->script('theme');
-        echo $this->Html->script('script');
         echo $this->Html->script('stats');
         echo $this->Html->script('jquery-ui-1.10.3.custom.min');
+        echo $this->Html->script('jquery.validationEngine');
+        echo $this->Html->script('chosen.jquery.min');
+        echo $this->Html->script('script');
         echo $this->fetch('script');
         ?>
 
