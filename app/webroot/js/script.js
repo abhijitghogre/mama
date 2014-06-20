@@ -629,7 +629,7 @@ $(document).ready(function() {
 
         var pos = $(this).attr('data-stage-pos');
         var stagemaincont = $('#stagesmaincont');
-        var stagetemplate = '<div class="col-md-12 panel-warning stageoutermaincont newstagemaincont"><div class="content-box-header panel-heading"><div class="panel-title stageheader">New Stage</div><div class="panel-options"><a href="/mama/projects/edit/7" class="btn btn-danger btn-xs remstage">Remove</a></div></div><div class="content-box-large box-with-header"><div class="row stagecontent"></div>';
+        var stagetemplate = '<div class="col-md-12 panel-warning stageoutermaincont newstagemaincont"><div class="content-box-header panel-heading"><div class="panel-title stageheader">New Stage</div><div class="panel-options rightbuttons"><a href="/mama/projects/edit/7" class="btn btn-danger btn-xs remstage">Remove</a></div></div><div class="content-box-large box-with-header"><div class="row stagecontent"></div>';
         var emptyform = $("#stageinfoformcont").clone();
         var randomnumber = Math.floor(Math.random() * 10000)
         emptyform.find('.stageinform').attr('id', 'form' + randomnumber);
@@ -681,20 +681,23 @@ $(document).ready(function() {
         // });
     });
 
-    $(document).on('click', '.removeslot', function(e) {
+    /*$(document).on('click', '.removeslot', function(e) {
         e.preventDefault();
-        var mainparent = $(this).parents('.callslotschedulecont');
-        var daykey = mainparent.attr('data-day-val');
+        var mainparent = $(this).parents('.slotouttercont');
+		var slotcont = $(this).parents('.slotcontmon');
+        var slotkey = mainparent.attr('data-slot-number');
         console.log(daykey);
-        /*if(mainparent.find('.slotouttercont').find('.slotcont'+daykey).length > 1)
+		
+		
+        if(mainparent.find('.slotouttercont').find('.slotcont'+daykey).length > 1)
          {
          mainparent.find('.slotouttercont').remove();
          }
          else
          {
          $(this).parents('.slotouttercont').css('visibility','hidden');
-         }*/
-    });
+         }
+    });*/
 
     $(document).on('click', '.addcall', function(e) {
         e.preventDefault();
@@ -737,6 +740,7 @@ $(document).ready(function() {
         var callval = parseInt($(this).val())
         var callslotmaincont = $(this).parents('.form-group').next('.form-group').find('.callslotschedulecont');
         var slotouttercont = callslotmaincont.find('.slotouttercont');
+		var callschedulemaincont = $(this).parents('.stageinform').find('.callshcedulemaincont');
 
         slotouttercont.each(function(index, element) {
             var selecttag = $(element).find('.slotdropdown').append('<option>');
@@ -747,23 +751,47 @@ $(document).ready(function() {
             }
         });
         $('.chosen-select').trigger('chosen:updated');
+		
+		callschedulemaincont.find('.callschedslotmaincont').html('');
+		for (i = 1; i <= callval; i++)
+		{
+			var ele = callscheduleslotelement(i);
+			callschedulemaincont.find('.callschedslotmaincont').append(ele);
+		}
     });
 
     $(document).on('change', '.chosen-select', function(evt, params) {
         console.log(params);
+		var slotoutercont = $(this).parents('.slotouttercont');
+		var slotcont = slotoutercont.find('.slotcont');
 
-        if (typeof params.selected !== 'undefined')
+        if(typeof params.selected !== 'undefined')
         {
             var slotelement = createslotelement(params.selected);
-            prevslotcont = $(this).parents('.slotouttercont').find('.slotcont[data-slot-number=' + (params.selected - 1) + ']');
-            if (typeof prevslotcont === 'undefined')
-            {
-                $(this).parents('.slotouttercont').find('.slotcont').last().append(slotelement);
-            }
-            else
-            {
-                prevslotcont.after(slotelement)
-            }
+
+            //console.log(prevslotcont);
+			
+			if(slotcont.length > 0)
+			{
+				slotcont.each(function(index,element){
+					var slotno = $(element).attr('data-slot-number');
+					
+					if(params.selected < slotno)
+					{
+						$(element).before(slotelement);
+						return false;
+					}
+					else if(index == (slotcont.length -1))
+					{
+						$(element).after(slotelement);
+					}
+
+				});
+			}
+			else
+			{
+				slotoutercont.append(slotelement);
+			}
         }
         else
         {
@@ -1230,7 +1258,18 @@ function addcallelement(mainparent)
 function createslotelement(index)
 {
     var element = '';
-    element = '<div class="row slotcontsun slotcont" data-slot-number="' + index + '"><label class="col-sm-3">Slot ' + index + ':  Start Time: </label><div class="col-sm-4"><div class="row"><div class="col-sm-6"><select class="form-control" id="slot' + index + 'starttimehour" name="slot' + index + 'starttimehour"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option></select></div><div class="col-sm-6"><select class="form-control" id="slot' + index + 'starttimemin" name="slot' + index + 'starttimemin"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option><option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option><option value="40">40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option><option value="60">60</option></select></div></div></div><label class="col-sm-3">End Time: </label><div class="col-sm-4"><div class="row"><div class="col-sm-6"><select class="form-control" id="slot' + index + 'starttimehour" name="slot' + index + 'starttimehour"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option></select></div><div class="col-sm-6"><select class="form-control" id="slot' + index + 'starttimemin" name="slot' + index + 'starttimemin"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option><option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option><option value="40">40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option><option value="60">60</option></select></div></div><div class="close-button removeslot show"><i class="glyphicon glyphicon-remove"></i></div></div></div>';
+    element = '<div class="row slotcontsun slotcont margin-bottom-5" data-slot-number="' + index + '"><label class="col-sm-3">Slot ' + index + ':  Start Time: </label><div class="col-sm-3"><div class="row"><div class="col-sm-6"><select class="form-control" id="slot' + index + 'starttimehour" name="slot' + index + 'starttimehour"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option></select></div><div class="col-sm-6"><select class="form-control" id="slot' + index + 'starttimemin" name="slot' + index + 'starttimemin"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option><option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option><option value="40">40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option><option value="60">60</option></select></div></div></div><label class="col-sm-2">End Time: </label><div class="col-sm-3"><div class="row"><div class="col-sm-6"><select class="form-control" id="slot' + index + 'starttimehour" name="slot' + index + 'starttimehour"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option></select></div><div class="col-sm-6"><select class="form-control" id="slot' + index + 'starttimemin" name="slot' + index + 'starttimemin"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option><option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option><option value="40">40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option><option value="60">60</option></select></div></div><!--<div class="close-button removeslot show"><i class="glyphicon glyphicon-remove"></i></div>--></div></div>';
 
     return element;
+}
+
+
+function callscheduleslotelement(index)
+{
+	var element = '';
+	
+	element = '<div class="row callschedslotcont"><label class="col-sm-2 control-label">Slot '+index+':</label><div class="col-sm-8"><div class="row margin-top-5" id="callattempt'+index+'cont"><label class="col-sm-5 control-label">(1st attempt):</label><div class="col-sm-7"><select class="form-control" id="callattempt'+index+'select" name="callattempt'+index+'select"><option value="sun" selected="selected">Sunday</option><option value="mon">Monday</option><option value="tue">Tuesday</option><option value="wed">Wednesday</option><option value="thu">Thursday</option><option value="fri">Friday</option><option value="sat">Saturday</option></select></div></div><div class="row margin-top-5"><label class="col-sm-5 control-label">Recall 1:</label><div class="col-sm-7"><select class="form-control" id="callrecall'+index+'" name="callrecall'+index+'"><option value="sun">Sunday</option><option value="mon">Monday</option><option value="tue" selected="selected">Tuesday</option>	<option value="wed">Wednesday</option><option value="thu">Thursday</option><option value="fri">Friday</option><option value="sat">Saturday</option></select></div></div></div></div>';
+	
+	return element;
+
 }
