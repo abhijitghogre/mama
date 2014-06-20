@@ -11,7 +11,7 @@ class DialerLogs extends AppModel {
     }
 
     public function updateEntry($startdatetime, $enddatetime, $duration, $tid, $callstatus, $dropreason) {
-        $result = $this->query("UPDATE dialer_logs SET startdatetime = '$startdatetime', enddatetime = '$enddatetime', duration = '$duration', callstatus = $callstatus, dropreason='$dropreason' WHERE tid = '$tid'");
+        $result = $this->query("UPDATE dialer_logs SET startdatetime = '$startdatetime', enddatetime = '$enddatetime', duration = '$duration', callstatus = '$callstatus', dropreason='$dropreason' WHERE tid = '$tid'");
         return TRUE;
     }
 

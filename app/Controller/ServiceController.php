@@ -6,7 +6,7 @@ class ServiceController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('get_list', 'update', 'outbound', 'missedcall');
+        $this->Auth->allow('get_user', 'update', 'outbound', 'missedcall');
     }
 
     /* stage structure for each project */
@@ -76,10 +76,13 @@ class ServiceController extends AppController {
             foreach ($structure as $key => $struct) {
                 $callfrequency = $struct['callfrequency'];
                 $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
+                $type = $struct['type'];
                 $stagestart = $struct['stageduration']['start'];
                 $stageend = $struct['stageduration']['end'];
-                if ($presentgestage >= $stagestart && $presentgestage <= $stageend) {
+                if ($presentgestage >= $stagestart && $presentgestage <= $stageend && $type == $u['User']['delivery']) {
                     $userstage = $stageno;
+                }else{
+                    $userstage = 0;
                 }
                 $stageno++;
             }
@@ -90,7 +93,7 @@ class ServiceController extends AppController {
     }
 
     /* list of calls to be made */
-    public function get_list() {
+    public function get_user() {
         date_default_timezone_set('Asia/Calcutta');
         $current_time = time();
         $current_slot = ((int) date("G", $current_time));
@@ -241,7 +244,7 @@ class ServiceController extends AppController {
         print_r($callsarray);
         $calltype = 1;
         $mid = 0;
-        //$this->outbound($callsarray, $calltype, $mid);
+        $this->outbound($callsarray, $calltype, $mid);
         exit;
     }
 
@@ -258,7 +261,6 @@ class ServiceController extends AppController {
         $languages = array("1" => "english", "2" => "hindi", "3" => "marathi");
         $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
         $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
-        $resultarray = array();
         $index = "";
         $resultarray = array();
         $u = $this->User->find('first', array('conditions' => array('User.phone_no' => $phoneno), 'recursive' => 0));
@@ -425,7 +427,6 @@ class ServiceController extends AppController {
         $phoneno = $_GET['phoneno'];
         $index = $_GET['index'];
         $calltype = $_GET['calltype'];
-        $callstatus = 0;
         $tid = $callsummary['esbtransid'];
         $callstatus = $callsummary['drop-type'];
         $dropreason = $callsummary['drop-reason'];
@@ -437,7 +438,7 @@ class ServiceController extends AppController {
         $user_id = $r['User']['id'];
         $intro_call = $r['UserCallflag']['intro_call'];
         $callflag = json_decode($r['UserCallflag']['flag'], true);
-        if ($index == "index") {
+        if ($index == "intro") {
             if ($callstatus == 0) {
                 $intro_call = 1;
             }
