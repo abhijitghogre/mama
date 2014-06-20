@@ -100,9 +100,21 @@ class ProjectsController extends AppController {
 	public function createStages($projectid)
 	{
 		$project_stages = $this->Project->getStages($projectid);
+		if($project_stages['Project']['stage_structure'] == null || empty($project_stages['Project']['stage_structure']))
+		{
+			$project_stages['Project']['stage_structure'] = $this->Project->getStagestemplate();
+		}
 		//print_r(json_decode($project_stages['Project']['stage_structure'],true));
 		$this->set('project_name',$project_stages['Project']['project_name']);
+		$this->set('projectid',$projectid);
 		$this->set('stage_structure',json_decode($project_stages['Project']['stage_structure'],true));
 	}
-
+	
+	public function saveallstages()
+	{
+		$this->autoRender = false;
+		$data = $_POST['data'];
+		$projectid = $_POST['projectid'];
+		$this->Project->saveallstages($projectid,$data);
+	}
 }

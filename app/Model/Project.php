@@ -79,5 +79,14 @@ class Project extends AppModel {
                     )
         ));
     }
+	
+	public function saveallstages($pid,$data) {
+		$this->id = (int) $pid;
+		$this->saveField('stage_structure',$data);
+	}
+	
+	public function getStagestemplate() {
+		return '{"1":{"type":"0","callfrequency":"weekly","stageduration":{"start":"1","end":"10"},"numberofcalls":"1","callvolume":{"1":{"attempt1":"sun","call1recall":"tue"}},"callslotsnumber":"1","callslotsdays":{"sun":{"1":{"start":"11","end":"1230"}},"mon":{"1":{"start":"11","end":"1230"}},"tue":{"1":{"start":"11","end":"1230"}},"wed":{"1":{"start":"11","end":"1230"}},"thu":{"1":{"start":"11","end":"1230"}},"fri":{"1":{"start":"11","end":"1230"}},"sat":{"1":{"start":"11","end":"1230"}}}},"2":{"type":"0","callfrequency":"weekly","stageduration":{"start":"11","end":"39"},"numberofcalls":"2","callvolume":{"1":{"attempt1":"sun","call1recall":"tue"},"2":{"attempt1":"wed","call2recall":"undefined"}},"callslotsnumber":"1","callslotsdays":{"sun":{"1":{"start":"11","end":"1230"}}}}}';
+	}
 
 }
