@@ -120,3 +120,18 @@ td{
 .margin-top-5{
     margin-top: 5px !important;
 }
+.margin-bottom-5{
+    margin-bottom: 5px !important;
+}
+.addstagedropdown
+{
+	position:absolute;
+	right:20px;
+	top:3px;
+}
+.rightbuttons
+{
+	position:absolute;
+	right:20px;
+	top:-1px;
+}
