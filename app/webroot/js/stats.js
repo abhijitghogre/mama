@@ -45,9 +45,13 @@ function statsAjax(statstype) {
     },
     function(data) {
         switch (parseInt(filter)) {
+            case 1:
+                barChart(data);
+                break;
             case 2:
             case 3:
             case 4:
+            case 5:
                 stackedChart(data);
                 break;
         }
@@ -55,21 +59,56 @@ function statsAjax(statstype) {
 }
 
 function barChart(data) {
+    console.log(JSON.parse(data));
     $('#stats-box').html('<div id="bar-chart" style="height: 230px;"></div>');
-    Morris.Bar({
-        element: 'bar-chart',
-        data: eval(data),
-        xkey: 'slot',
-        ykeys: ['count'],
-        labels: ['count'],
-        barRatio: 0.4,
-        xLabelMargin: 10,
-        hideHover: 'auto',
-        barColors: ["#3d88ba"]
-    });
+    if (JSON.parse(data).length === 1) {
+        $('#stats-box').html('<div id="bar-chart" style="height: 230px;width:200px;"></div>');
+    }
+    if (JSON.parse(data).length === 2) {
+        $('#stats-box').html('<div id="bar-chart" style="height: 230px;width:400px;"></div>');
+    }
+    if (JSON.parse(data).length === 3) {
+        $('#stats-box').html('<div id="bar-chart" style="height: 230px;width:500px;"></div>');
+    }
+    if (JSON.parse(data).length == 0) {
+        $('#bar-chart').html('No data available');
+    } else {
+        Morris.Bar({
+            element: 'bar-chart',
+            data: JSON.parse(data),
+            xkey: 'x',
+            ykeys: ['count'],
+            labels: ['count'],
+            barRatio: 0.4,
+            xLabelMargin: 10,
+            hideHover: 'auto',
+            barColors: ["#3d88ba"]
+        });
+    }
+    /**
+     * 
+     * Morris.Bar({
+     element: 'hero-bar',
+     data: [
+     {x: '1', count: 136},
+     {x: '3G', count: 1037},
+     {x: '3GS', count: 275},
+     {x: '4', count: 380},
+     {x: '4S', count: 655},
+     {x: '5', count: 1571}
+     ],
+     xkey: 'x',
+     ykeys: ['count'],
+     labels: ['count'],
+     barRatio: 0.4,
+     xLabelMargin: 10,
+     hideHover: 'auto',
+     barColors: ["#3d88ba"]
+     });
+     */
 }
 function stackedChart(data) {
-    console.log(JSON.parse(data).data.length);
+    console.log(JSON.parse(data));
     $('#stats-box').html('<div id="bar-chart" style="height: 230px"></div>');
     if (JSON.parse(data).data.length === 1) {
         $('#stats-box').html('<div id="bar-chart" style="height: 230px;width:200px;"></div>');
@@ -80,14 +119,20 @@ function stackedChart(data) {
     if (JSON.parse(data).data.length === 3) {
         $('#stats-box').html('<div id="bar-chart" style="height: 230px;width:500px;"></div>');
     }
-    Morris.Bar({
-        element: 'bar-chart',
-        data: JSON.parse(data).data,
-        xkey: 'x',
-        ykeys: JSON.parse(data).keys,
-        labels: JSON.parse(data).labels,
-        stacked: true
-    });
+    if (JSON.parse(data).data.length == 0) {
+        $('#bar-chart').html('No data available');
+    } else {
+        Morris.Bar({
+            element: 'bar-chart',
+            data: JSON.parse(data).data,
+            xkey: 'x',
+            ykeys: JSON.parse(data).keys,
+            labels: JSON.parse(data).labels,
+            stacked: true,
+            hideHover: true
+        });
+    }
+
 
     /**
      * element: 'stacked-chart',
