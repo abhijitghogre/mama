@@ -1,4 +1,4 @@
-<div class="formMessage">
+<div class="formMessage error-box">
     <?php echo $this->Session->flash(); ?>
 </div>
 <div class="content-box-header">

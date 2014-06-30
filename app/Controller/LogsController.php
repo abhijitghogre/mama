@@ -13,7 +13,7 @@ class LogsController extends AppController {
         $this->set('logsActive', 1);
         $current_week_monday = date('Y-m-d', strtotime('monday this week'));
         $projects = $this->Project->find('all');
-        $users = $this->User->find('all', array('conditions' => array('User.deleted <>' => 1), 'order' => array('User.name')));
+        $users = $this->User->find('all', array('conditions' => array('User.deleted' => 0), 'order' => array('User.name')));
         $this->set('$projects', $projects);
         $this->set('users', $users);
 

@@ -1,13 +1,14 @@
 .logo{
     height: 34px;
 }
-.formMessage{
+.error-box{
     text-align: center;
     line-height: 40px;
-    background-color: rgb(207, 50, 50);
-    color: white;
-    border-radius: 10px;
+    color: rgb(99, 77, 77);
     cursor: pointer;
+    border-left: 4px solid;
+    background-color: #FFD2D2;
+    border-color: #FF6C69;
 }
 .close-button{
     position: absolute;
@@ -106,4 +107,7 @@ i{
 }
 td{
     text-align: center;
+}
+.user-details-table tbody tr td:first-child{
+    font-weight: bold;
 }

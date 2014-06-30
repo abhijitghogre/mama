@@ -2,7 +2,7 @@
 <input type="hidden" value="<?php echo $user_id; ?>" class="user_id"/>
 <input type="hidden" value="<?php echo $user_meta_id; ?>" class="user_meta_id"/>
 <input type="hidden" value="<?php echo $user_callflag_id; ?>" class="user_callflag_id"/>
-<div class="formMessage">
+<div class="formMessage error-box">
     <?php echo $this->Session->flash(); ?>
 </div>
 <div class="content-box-header">
