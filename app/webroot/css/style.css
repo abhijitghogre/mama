@@ -70,9 +70,6 @@ i{
 .padding-10{
     padding: 10px !important;
 }
-.btn{
-    margin: 3px;
-}
 .padding-left-10{
     padding-left: 10px !important;
 }
@@ -83,4 +80,30 @@ i{
     position: absolute;
     top: 10px;
     right: 10px;
+}
+.spinner{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -5px;
+    margin-top: -5px;
+}
+.loader{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: white;
+    opacity: 0.8;
+    display: none;
+}
+.btn-xs{
+    margin: 3px;
+}
+#stats-box{
+    margin-top: 30px;
+}
+td{
+    text-align: center;
 }

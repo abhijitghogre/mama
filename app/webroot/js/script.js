@@ -552,12 +552,12 @@ $(document).ready(function() {
         var fromDate = $('#LogsFromdate').val();
         var toDate = $('#LogsTodate').val();
         var other = $('#LogsOther').val();
-        $('.loader').show();
+        $('.loader').fadeIn();
         $.post(BASE_URL + '/logs/generate_report', {projectId: projectId, userId: userId, callCode: callCode, fromDate: fromDate, toDate: toDate}, function(data) {
             oTable.fnDestroy();
             $('#report').replaceWith(data);
             oTable = $('#report').dataTable({"aaSorting": [[6, "desc"]]});
-            $('.loader').hide();
+            $('.loader').fadeOut();
         });
     });
 

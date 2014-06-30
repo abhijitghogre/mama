@@ -89,6 +89,13 @@ class AppController extends Controller {
 
         $projects = $this->Project->getAllProjects();
         $this->set('projects', $projects);
+
+        date_default_timezone_set('Asia/Calcutta');
+        
+        /**
+         * Message length array
+         */
+        
     }
 
     /**
@@ -184,7 +191,7 @@ class AppController extends Controller {
             }
         }
 
-        return $dom.'</div></div>';
+        return $dom . '</div></div>';
     }
 
 }

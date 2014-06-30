@@ -15,7 +15,9 @@
                         <tr>
                             <th>Name</th>
                             <th>Women Registered</th>
-                            <th>Actions</th>
+                            <th>User Actions</th>
+                            <th>Form Fields Actions</th>
+                            <th>Project Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,12 +41,20 @@
                                         'action' => 'listUsers', $project['Project']['id']
                                             ), array('class' => 'btn btn-info btn-xs')
                                     );
+                                    ?>
+                                </td>     
+                                <td>     
+                                    <?php
                                     echo $this->Html->link(
                                             'Manage Fields', array(
                                         'controller' => 'projects',
                                         'action' => 'manageFields', $project['Project']['id']
                                             ), array('class' => 'btn btn-success btn-xs')
                                     );
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
                                     echo $this->Html->link(
                                             'Edit Project', array(
                                         'controller' => 'projects',

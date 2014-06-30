@@ -10,6 +10,7 @@
         echo $this->Html->css('bootstrap.min');
         echo $this->Html->css('morris');
         echo $this->Html->css('dataTables.bootstrap');
+        echo $this->Html->css('loader');
         echo $this->Html->css('theme');
         echo $this->Html->css('style');
         echo $this->Html->css('jquery-ui-1.10.3.custom.min');
