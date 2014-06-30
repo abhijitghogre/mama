@@ -5,7 +5,7 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-6">
-                <table class="table table-striped">
+                <table class="table table-bordered user-details-table">
                     <tbody>
                         <tr><td>Name</td><td><?php echo $user[0]['User']['name']; ?></td></tr>
                         <tr><td>Phone no.</td><td><?php echo $user[0]['User']['phone_no']; ?></td></tr>
