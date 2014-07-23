@@ -110,14 +110,46 @@
 				<div class="form-group stagedurationcont">
 					<label class="col-sm-2 control-label">Stage Duration:</label>
 					<label class="col-sm-1 control-label">From:</label>
-					<div class="col-sm-3">
-						<select class="form-control hide day-select validate[required]" id="day-select-from" name="dayselectfrom">
+					<div class="col-sm-3 fromduration" id="prebirthfromduration">
+						
+						<select class="form-control month-select validate[required]" id="month-select-from"  name="monselectfrom">
 						<?php 
-							for($i=1;$i<=2093;$i++) {
-								echo "<option value='day".$i."'>Day ".$i."</option>";
+							for($i=1;$i<=9;$i++) {
+								echo "<option value='month".$i."'>Month ".$i."</option>";
 							}
 						?>
 						</select>
+						
+						<select class="form-control week-select validate[required]" id="week-select-from" name="weekselectfrom">
+						<?php 
+							$month = 1;
+							for($i=1;$i<=36;$i++) {
+								echo "<option value='".$i."' data-month='".$month."'>Week ".$i."</option>";
+								$month = (($i%4) == 0) ? $month+1 : $month;
+							}
+						?>
+						</select>
+						
+						<select class="form-control day-select validate[required]" id="day-select-from" name="dayselectfrom">
+						<?php 
+							$week = 1;
+							for($i=1;$i<=252;$i++) {
+								echo "<option value='day".$i."'  data-week='".$week."'>Day ".$i."</option>";
+								$week = (($i%7) == 0) ? $week+1 : $week;
+							}
+						?>
+						</select>
+					</div>
+					<div class="col-sm-3 hide fromduration" id="postbirthfromduration">
+						
+						<select class="form-control month-select validate[required]" id="month-select-from"  name="monselectfrom">
+						<?php 
+							for($i=1;$i<=60;$i++) {
+								echo "<option value='month".$i."'>Month ".$i."</option>";
+							}
+						?>
+						</select>
+						
 						<select class="form-control week-select validate[required]" id="week-select-from" name="weekselectfrom">
 						<?php 
 							for($i=1;$i<=299;$i++) {
@@ -125,24 +157,27 @@
 							}
 						?>
 						</select>
-						<select class="form-control hide month-select validate[required]" id="month-select-from"  name="monselectfrom">
+						
+						<select class="form-control day-select validate[required]" id="day-select-from" name="dayselectfrom">
 						<?php 
-							for($i=1;$i<=69;$i++) {
-								echo "<option value='month".$i."'>Month ".$i."</option>";
+							for($i=1;$i<=1841;$i++) {
+								echo "<option value='day".$i."'>Day ".$i."</option>";
 							}
 						?>
 						</select>
 					</div>
 					
 					<label class="col-sm-2 control-label">To:</label>
-					<div class="col-sm-3">
-						<select class="form-control hide day-select validate[required]" id="day-select-to"  name="dayselectto">
+					<div class="col-sm-3 toduration" id="prebirthtoduration">
+						
+						<select class="form-control month-select validate[required]" id="month-select-to" name="monselectto">
 						<?php 
-							for($i=1;$i<=2093;$i++) {
-								echo "<option  value='day".$i."'>Day ".$i."</option>";
+							for($i=1;$i<=69;$i++) {
+								echo "<option value='month".$i."'>Month ".$i."</option>";
 							}
 						?>
 						</select>
+						
 						<select class="form-control week-select validate[required]" id="week-select-to" name="weekselectto">
 						<?php 
 							for($i=1;$i<=299;$i++) {
@@ -150,10 +185,37 @@
 							}
 						?>
 						</select>
-						<select class="form-control hide month-select validate[required]" id="month-select-to" name="monselectto">
+						
+						<select class="form-control day-select validate[required]" id="day-select-to"  name="dayselectto">
 						<?php 
-							for($i=1;$i<=69;$i++) {
+							for($i=1;$i<=2093;$i++) {
+								echo "<option  value='day".$i."'>Day ".$i."</option>";
+							}
+						?>
+						</select>
+					</div>
+					<div class="col-sm-3 toduration hide" id="postbirthtoduration"">
+						
+						<select class="form-control month-select validate[required]" id="month-select-to" name="monselectto">
+						<?php 
+							for($i=1;$i<=60;$i++) {
 								echo "<option value='month".$i."'>Month ".$i."</option>";
+							}
+						?>
+						</select>
+						
+						<select class="form-control week-select validate[required]" id="week-select-to" name="weekselectto">
+						<?php 
+							for($i=1;$i<=263;$i++) {
+								echo "<option value='".$i."'>Week ".$i."</option>";
+							}
+						?>
+						</select>
+						
+						<select class="form-control day-select validate[required]" id="day-select-to"  name="dayselectto">
+						<?php 
+							for($i=1;$i<=1841;$i++) {
+								echo "<option  value='day".$i."'>Day ".$i."</option>";
 							}
 						?>
 						</select>
@@ -211,7 +273,7 @@
 									echo '<div class="col-sm-3">';
 									echo '<div class="row">';
 									echo '<div class="col-sm-6">';
-									echo '<select class="form-control" id="slot'.$s.'starttimehour" name="slot'.$s.'starttimehour">';
+									echo '<select class="form-control" id="slot'.$s.'endtimehour" name="slot'.$s.'endtimehour">';
 									for($i=1;$i<=24;$i++)
 									{
 										echo '<option value="'.$i.'">'.$i.'</option>';
@@ -220,7 +282,7 @@
 									echo '</div>';
 									
 									echo '<div class="col-sm-6">';
-									echo '<select class="form-control" id="slot'.$s.'starttimemin" name="slot'.$s.'starttimemin">';
+									echo '<select class="form-control" id="slot'.$s.'endtimemin" name="slot'.$s.'endtimemin">';
 									for($i=1;$i<=60;$i++)
 									{
 										echo '<option value="'.$i.'">'.$i.'</option>';
@@ -247,11 +309,11 @@
 					<label class="col-sm-2 control-label">Call Schedule:</label>
 					<div class="col-sm-9 callschedulecont">
 						<div class="row callattempt">
-							<label class="col-sm-2 control-label">Call 1:</label>
+							<label class="col-sm-2 control-label callnolabel">Call 1:</label>
 							<div class="col-sm-10 callschedslotmaincont">
 								<div class="row callschedslotcont">
 									<label class="col-sm-2 control-label">Slot 1:</label>
-									<div class="col-sm-8">
+									<div class="col-sm-8 slotsubcont">
 										<div class="row margin-top-5" id="callattempt1cont">
 											<label class="col-sm-5 control-label">(1st attempt):</label>
 											<div class="col-sm-7">
@@ -266,19 +328,20 @@
 												</select>
 											</div>
 										</div>
-										<div class="row margin-top-5">
+										<div class="row margin-top-5 recalls" id="recall1cont">
 											<label class="col-sm-5 control-label">Recall 1:</label>
-											<div class="col-sm-7">
+											<div class="col-sm-5 recallsubcont" id="recall1">
 												<select class="form-control" id="callrecall1" name="callrecall1">
 													<option value="sun">Sunday</option>
-													<option value="mon">Monday</option>
-													<option value="tue" selected="selected">Tuesday</option>
+													<option value="mon" selected="selected">Monday</option>
+													<option value="tue">Tuesday</option>
 													<option value="wed">Wednesday</option>
 													<option value="thu">Thursday</option>
 													<option value="fri">Friday</option>
 													<option value="sat">Saturday</option>
 												</select>
 											</div>
+											<button class="btn btn-primary addrecall"><span class="glyphicon glyphicon-plus"></span></button>
 										</div>
 									</div>
 								</div>
@@ -294,8 +357,8 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<div class="col-sm-offset-2 col-sm-10">
-						<button type="submit" class="btn btn-primary stagesaveall" data-project-id="<?php echo $projectid; ?>">Update</button>
+					<div class="col-sm-offset-10 col-sm-2">
+						<button type="submit" class="btn btn-primary stagesaveall" data-project-id="<?php echo $projectid; ?>">Update Stage</button>
 					</div>
 				</div>
 			</form>
@@ -442,6 +505,7 @@
 											<thead>
 												<tr>
 													<th>Call #</th>
+													<th>Slots</th>
 													<th>Call Day</th>
 													<th>Recall Attempt</th>
 												</tr>
@@ -453,6 +517,7 @@
 												{	
 													echo "<tr>";
 													echo "<td>Call".$i."</td>";
+													echo "<td>Slots</td>";
 													echo "<td>".$v['attempt1']."</td>";
 													echo "<td>".$v['call'.$i.'recall']."</td>";
 													echo "</tr>";

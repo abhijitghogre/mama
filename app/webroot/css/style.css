@@ -12,8 +12,8 @@
 }
 .close-button{
     position: absolute;
-    right: 0;
-    top: 0;
+    right: 4px;
+    top: -6px;
     cursor: pointer;
     color: white;
     font-size: 16px;
@@ -134,4 +134,9 @@ td{
 	position:absolute;
 	right:20px;
 	top:-1px;
+}
+
+.addrecall
+{
+	margin: 0 0 0 20px;
 }
