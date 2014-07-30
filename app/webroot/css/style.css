@@ -135,3 +135,8 @@ td{
 	right:20px;
 	top:-1px;
 }
+
+#generatecsv, #reportcsv{
+    font-size: 24px;
+    cursor: pointer;
+}

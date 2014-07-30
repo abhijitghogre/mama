@@ -543,6 +543,7 @@ $(document).ready(function() {
         dateFormat: 'dd-mm-yy'
     }).datepicker("setDate", new Date());
 
+    /* call logs report */
     $('#generatereport').on('click', function(e) {
         e.preventDefault();
         var projectId = $('#LogsProjectId').val();
@@ -570,7 +571,45 @@ $(document).ready(function() {
         document.location.href = BASE_URL + '/logs/generate_csv/' + projectId + '/' + userId + '/' + callCode + '/' + fromDate + '/' + toDate;
 
     });
+    /*Reports page */
+    var rTable = $('#reportTable').dataTable();
+    // setting fromdate and todate in reports form
+    $('#ReportsFromdate').datepicker({
+        dateFormat: 'dd-mm-yy'
+    }).datepicker("setDate", getPreviousDate());
 
+    $('#ReportsTodate').datepicker({
+        dateFormat: 'dd-mm-yy'
+    }).datepicker("setDate", new Date());
+    
+    /* Reports */
+    $('#reportbtn').on('click', function(e) {
+        e.preventDefault();
+        var projectId = $('#ReportsProjectId').val();
+        var channelId = $('#ReportsChannelId').val();
+        var other = $('#ReportsFilter').val();
+        var fromDate = $('#ReportsFromdate').val();
+        var toDate = $('#ReportsTodate').val();
+        $('.loader').fadeIn();
+        $.post(BASE_URL + '/reports/report_data', {projectId: projectId, channelId: channelId, other: other, fromDate: fromDate, toDate: toDate}, function(data) {
+            rTable.fnDestroy();
+            $('#reportTable').replaceWith(data);
+            rTable = $('#reportTable').dataTable();
+            $('.loader').fadeOut();
+        });
+    });
+    /* csv for reports */
+    $('#reportcsv').on('click', function(e) {
+        e.preventDefault();
+        var projectId = $('#LogsProjectId').val();
+        var userId = $('#LogsUserId').val();
+        var callCode = $('#LogsCallCode').val();
+        var fromDate = $('#LogsFromdate').val();
+        var toDate = $('#LogsTodate').val();
+
+        document.location.href = BASE_URL + '/logs/generate_csv/' + projectId + '/' + userId + '/' + callCode + '/' + fromDate + '/' + toDate;
+
+    });
     //ajaxify add project
 //    $('')
 

@@ -2,6 +2,7 @@
 
 class ProjectsController extends AppController {
 
+    public $uses = array('Project', 'Channel');
     public function beforeFilter() {
         parent::beforeFilter();
         //$this->Auth->allow('index');
@@ -59,6 +60,9 @@ class ProjectsController extends AppController {
         $custom_fields = json_decode($project[0]['Project']['custom_fields'], true);
         $custom_fields_dom = $this->_customFieldsArrayToDom($custom_fields);
         $this->set(array('project' => $project, 'custom_fields' => $custom_fields_dom));
+        
+        $channels = $this->Channel->getAllChannels();
+        $this->set('channels', $channels);
     }
 
     public function addField($id) {

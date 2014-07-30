@@ -6,7 +6,7 @@ class ServiceController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('get_user', 'update', 'outbound', 'missedcall');
+        $this->Auth->allow('get_user', 'update', 'outbound', 'missedcall1', 'missedcall2');
     }
 
     /* stage structure for each project */
@@ -248,7 +248,7 @@ class ServiceController extends AppController {
         exit;
     }
 
-    public function missedcall() {
+    public function missedcall_old() {
         date_default_timezone_set('Asia/Calcutta');
         $phoneno = $_GET['msisdn'];
         $missedcalltime = date('Y-m-d H:i:s');
@@ -341,7 +341,181 @@ class ServiceController extends AppController {
         print_r($resultarray);
         exit;
     }
+    /* Missedcall No1. - 4071012038 for callback */
+    public function missedcall1() {
+        date_default_timezone_set('Asia/Calcutta');
+        
+        $phoneno = $_GET['msisdn'];
+        $serviceName = $_GET['serviceName'];
+        $missedcalltime = date('Y-m-d H:i:s');
+        $missedcallno = 1;
 
+        $current_time = time();
+        $current_slot = ((int) date("G", $current_time));
+        $current_day = date("D", $current_time);
+
+        $languages = array("1" => "english", "2" => "hindi", "3" => "marathi");
+        $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
+        $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
+        $index = "";$mobileno ="";$media="";
+        $resultarray = array();
+        $u = $this->User->find('first', array('conditions' => array('User.phone_no' => $phoneno), 'recursive' => 0));
+        // Regitered User
+        if (!empty($u)) {
+            $stdcode = "";
+            if ($u["User"]["phone_type"] == 2) {
+                $stdcode = "0";
+            } else if ($u["User"]["phone_type"] == 4) {
+                $stdcode = $u["User"]["phone_code"];
+            }
+            $stage = "stage" . $u['User']['stage'];
+            $user_id = $u['User']['id'];
+            $phoneno = $u['User']['phone_no'];
+            $project_name = $u['Project']['project_name'];
+            $lang = $u['User']['language'];
+            $entry_date = date("d-m-y", strtotime($u['User']['entry_date']));
+            $structure = json_decode($u['Project']['stage_structure'], true);
+            $stagestart = $structure[$stage]['stageduration']['start'];
+            $stageend = $structure[$stage]['stageduration']['end'];
+            $callfrequency = $structure[$stage]['callfrequency'];
+            $cf = $frequency[$callfrequency];
+            if ($u['User']['delivery'] == 0) {
+                if (isset($u['User']["lmp"])) {
+                    $date1 = strtotime($u['User']["lmp"]);
+                    $gest_age = 0;
+                } else {
+                    $date1 = strtotime($u['User']["registration_date"]);
+                    $gest_age = $u['User']["enroll_gest_age"];
+                }
+            } elseif ($u['User']['delivery'] == 1) {
+                $gest_age = 0;
+                $date1 = strtotime($u['User']['delivery_date']);
+            }
+            $date2 = $current_time;
+            $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
+            $intro_call = $u['UserCallflag']['intro_call'];
+            $callflag = json_decode($u['UserCallflag']['flag'], true);
+            if ($presentgestage >= $stagestart && $presentgestage <= $stageend) {
+                if (($entry_date == date("d-m-y", $current_time)) && ($intro_call == 0)) {
+                    $index = "intro";
+                    $mobileno = $stdcode . $phoneno;
+                    $media = $project_name . $languages[$lang] . $index;
+                } else {
+                    if ($structure[$stage]['numberofcalls'] >= 2) {
+                        for ($i = 1; $i <= $structure[$stage]['numberofcalls']; $i++) {
+                            $index = $u['User']['stage'] . "." . $cf . $presentgestage . "." . $i;
+                            $mobileno = $stdcode . $phoneno;
+                            $media = $project_name . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage . $i;
+                        }
+                    }else{
+                        $index = $u['User']['stage'] . "." . $cf . $presentgestage;
+                        $mobileno = $stdcode . $phoneno;
+                        $media = $project_name . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage;
+                    }
+                }
+            }
+            $calltype = 2;
+            $result = $this->Missedcall->registeredUser($phoneno, $missedcalltime, $missedcallno, $index);
+            $mid = $result['mid'];
+        // Unregistered user
+        } else {
+            $index = 0;
+            $this->Missedcall->unregisteredUser($phoneno, $missedcalltime, $missedcallno, $index);
+            $media = "";
+        }
+        /* api call */
+        $absolutepath = 'http://herohelpline.org/mMitra-MAMA/media/';
+        $media = 'test.wav';
+        echo 0;
+        header('Content-Type: text/dtmf');
+        header('URL: http://IP:PORT/ServiceTest/IVRS/IVRAppoinment.aspx?mobileno=$mobileno');
+        header('X-IMI-IVRS-filerecording:'.$absolutepath.$media);
+        exit;
+    }
+    /* Missedcall No1. - 4071012032 to register abortions, mis carrages etc */
+    public function missedcall2() {
+        date_default_timezone_set('Asia/Calcutta');
+        
+        $phoneno = $_GET['msisdn'];
+        $serviceName = $_GET['serviceName'];
+        $missedcalltime = date('Y-m-d H:i:s');
+        $missedcallno = 2;
+
+        $current_time = time();
+        $current_slot = ((int) date("G", $current_time));
+        $current_day = date("D", $current_time);
+
+        $languages = array("1" => "english", "2" => "hindi", "3" => "marathi");
+        $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
+        $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
+        $index = "";$mobileno ="";$media="";
+        $resultarray = array();
+        $u = $this->User->find('first', array('conditions' => array('User.phone_no' => $phoneno), 'recursive' => 0));
+        // Regitered User
+        if (!empty($u)) {
+            $stdcode = "";
+            if ($u["User"]["phone_type"] == 2) {
+                $stdcode = "0";
+            } else if ($u["User"]["phone_type"] == 4) {
+                $stdcode = $u["User"]["phone_code"];
+            }
+            $stage = "stage" . $u['User']['stage'];
+            $user_id = $u['User']['id'];
+            $phoneno = $u['User']['phone_no'];
+            $project_name = $u['Project']['project_name'];
+            $lang = $u['User']['language'];
+            $entry_date = date("d-m-y", strtotime($u['User']['entry_date']));
+            $structure = json_decode($u['Project']['stage_structure'], true);
+            $stagestart = $structure[$stage]['stageduration']['start'];
+            $stageend = $structure[$stage]['stageduration']['end'];
+            $callfrequency = $structure[$stage]['callfrequency'];
+            $cf = $frequency[$callfrequency];
+            if ($u['User']['delivery'] == 0) {
+                if (isset($u['User']["lmp"])) {
+                    $date1 = strtotime($u['User']["lmp"]);
+                    $gest_age = 0;
+                } else {
+                    $date1 = strtotime($u['User']["registration_date"]);
+                    $gest_age = $u['User']["enroll_gest_age"];
+                }
+            } elseif ($u['User']['delivery'] == 1) {
+                $gest_age = 0;
+                $date1 = strtotime($u['User']['delivery_date']);
+            }
+            $date2 = $current_time;
+            $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
+            $intro_call = $u['UserCallflag']['intro_call'];
+            $callflag = json_decode($u['UserCallflag']['flag'], true);
+            if ($presentgestage >= $stagestart && $presentgestage <= $stageend) {
+                if (($entry_date == date("d-m-y", $current_time)) && ($intro_call == 0)) {
+                    $index = "intro";
+                    $mobileno = $stdcode . $phoneno;
+                    $media = $project_name . $languages[$lang] . $index;
+                } else {
+                    if ($structure[$stage]['numberofcalls'] >= 2) {
+                        for ($i = 1; $i <= $structure[$stage]['numberofcalls']; $i++) {
+                            $index = $u['User']['stage'] . "." . $cf . $presentgestage . "." . $i;
+                            $mobileno = $stdcode . $phoneno;
+                            $media = $project_name . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage . $i;
+                        }
+                    }else{
+                        $index = $u['User']['stage'] . "." . $cf . $presentgestage;
+                        $mobileno = $stdcode . $phoneno;
+                        $media = $project_name . $languages[$lang] . $u['User']['stage'] . $cf . $presentgestage;
+                    }
+                }
+            }
+            $calltype = 2;
+            $result = $this->Missedcall->registeredUser($phoneno, $missedcalltime, $missedcallno, $index);
+            $mid = $result['mid'];
+        // Unregistered user
+        } else {
+            $index = 0;
+            $this->Missedcall->unregisteredUser($phoneno, $missedcalltime, $missedcallno, $index);
+            $media = "";
+        }
+    }
+    
     public function outbound($resultarray, $calltype, $mid) {
         foreach ($resultarray as $call) {
             // Resource URL of the API
@@ -351,9 +525,9 @@ class ServiceController extends AppController {
             $key = 'd4a0bbc5-b665-4df7-813c-77eb035da0a3';
 
             $address = $call["phoneno"];
-
+            $tid = md5(time());
             //Optional Parameters
-            $callbackurl = "http://herohelpline.org/mMitra-MAMA/service/update?phoneno=" . $address . "&index=" . $call['gest_age'] . "&calltype=" . $calltype;
+            $callbackurl = "http://herohelpline.org/mMitra-MAMA/service/update?phoneno=" . $address . "&index=" . $call['gest_age'] . "&calltype=" . $calltype . "&tid=" . $tid;
 
             //If Mode is media,uncomment the below line 
             $rawdata = "address=!address!&mode=Media&callbackurl=!callbackurl!&medianame=!medianame!";
@@ -388,11 +562,11 @@ class ServiceController extends AppController {
             echo "</br>Response        : " . $response;
             echo "</br>=================================================================";
 
-            $this->dialer_entry($call, $response, $calltype, $mid);
+            $this->dialer_entry($call, $response, $calltype, $mid, $tid);
         }
     }
 
-    public function dialer_entry($call, $response, $calltype, $mid) {
+    public function dialer_entry($call, $response, $calltype, $mid, $tid) {
         $user_id = $call["user_id"];
         $startdatetime = date('Y-m-d H:i:s');
         $gest_age = $call["gest_age"];
@@ -402,7 +576,7 @@ class ServiceController extends AppController {
         if ($success) {
             $data = explode(',', $response);
             $reason = 0;
-            $tid = $data[1];
+            //$tid = $data[1];
             $message = "";
         } else {
             $reason = 1;
@@ -427,7 +601,8 @@ class ServiceController extends AppController {
         $phoneno = $_GET['phoneno'];
         $index = $_GET['index'];
         $calltype = $_GET['calltype'];
-        $tid = $callsummary['esbtransid'];
+        $tid = $_GET['tid'];
+        //$tid = $callsummary['esbtransid'];
         $callstatus = $callsummary['drop-type'];
         $dropreason = $callsummary['drop-reason'];
         $duration = $callsummary['call-duration'];
