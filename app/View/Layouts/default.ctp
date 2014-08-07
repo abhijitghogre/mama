@@ -160,6 +160,7 @@
         echo $this->Html->script('theme');
         echo $this->Html->script('stats');
         echo $this->Html->script('jquery-ui-1.10.3.custom.min');
+        echo $this->Html->script('jquery.hc-sticky.min');
         echo $this->Html->script('jquery.validationEngine');
         echo $this->Html->script('chosen.jquery.min');
         echo $this->Html->script('script');

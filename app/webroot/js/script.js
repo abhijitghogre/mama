@@ -5,6 +5,8 @@ if (BASE_URL === "http://localhost") {
     BASE_URL = "http://herohelpline.org/mMitra-MAMA";
 }
 $(document).ready(function() {
+
+
 //initialize custom fields
     $('.custom-field').hide();
     $('.show-for-text').show();
@@ -606,7 +608,8 @@ $(document).ready(function() {
 
         delbutton.addClass('canceleditstage').text('Cancel').removeClass('delstage');
         container.prepend(preparedform[0].removeClass('hide')).find('.stagecontent').hide();
-        container.parents('.stageoutermaincont').attr('data-form-no', preparedform[1]);
+        container.parents('.stageoutermaincont').attr('data-form-no', preparedform[1]).find('.callslotschedulecont .chosen-select').chosen();;
+		
         $(this).hide();
 
 
@@ -661,7 +664,7 @@ $(document).ready(function() {
     if ($('.addstage').length)
     {
         $('.stageheader').each(function(index) {
-            $('#addstagedropdown').append('<li data-stage-pos="' + $(this).text().toLowerCase() + '" class="addstageli"><a href="#">After ' + $(this).text() + '</a></li>')
+            $('#addstagedropdownul').append('<li data-stage-pos="' + $(this).text().toLowerCase() + '" class="addstageli"><a href="#">After ' + $(this).text() + '</a></li>')
         });
     }
 
@@ -968,9 +971,23 @@ $(document).ready(function() {
 		var addrecallbtn = slotparemtele.find('.recalls').last().find('.addrecall').clone();
 		
 		slotparemtele.find('.recalls').last().remove();
-		slotparemtele.find('.recalls').last().append(addrecallbtn);
-		
-		
+		slotparemtele.find('.recalls').last().append(addrecallbtn);		
+	});
+	
+	$(document).on('click','.classfrequency',function(e){
+		var val = $(this).val();
+		console.log(val);
+		var parentstagecont = $(this).parents('.stagecontent');
+		var cfreqn = 'Week';
+			
+		if(val == 'daily')
+			cfreqn = 'Day';
+		else if(val == 'weekly')
+			cfreqn = 'Week';
+		else
+			cfreqn = 'Month';
+			
+		parentstagecont.find('.callcount label').text('Calls Per '+cfreqn+':');
 	});
 
 });//ready ends
@@ -1027,6 +1044,7 @@ function prepform(stagedata, emptyformcont)
 {
     var filledformcont = emptyformcont;
     var filledform = emptyformcont.find('.stageinform');
+	var daysofweek = {sun:"Sunday", mon:"Monday", tue:"Tuesday", wed:"Wednesday", thu:"Thursday", fri:"Friday", sat:"Saturday"};
 
     var randomnumber = Math.floor(Math.random() * 10000)
     filledform.attr('id', 'form' + randomnumber);
@@ -1066,61 +1084,118 @@ function prepform(stagedata, emptyformcont)
     {
         filledform.find('.callschedulecont').html('');
         var count = stagedata.numberofcalls;
+		var callshedulhtml = '';
+		
+		//iterates for number of calls
         for (i = 1; i <= count; i++)
         {
-            filledform.find('.callschedulecont').append('<div class="row callattempt"><div class="col-sm-12"><div class="row margin-top-5" id="callattempt' + i + 'cont">' +
-                    '<label class="col-sm-5 control-label">Call ' + i + ' (1st attempt):</label>' +
-                    '<div class="col-sm-7">' +
-                    '<select class="form-control" id="callattempt' + i + 'select" name="callattempt' + i + 'select">' +
-                    '<option value="sun">Sunday</option>' +
-                    '<option value="mon">Monday</option>' +
-                    '<option value="tue">Tuesday</option>' +
-                    '<option value="wed">Wednesday</option>' +
-                    '<option value="thu">Thursday</option>' +
-                    '<option value="fri">Friday</option>' +
-                    '<option value="sat">Saturday</option>' +
-                    '</select>' +
-                    '</div>' +
-                    '</div>');
-            filledform.find('#callattempt' + i + 'select option[value=' + stagedata.callvolume[i].attempt1 + ']').attr('selected', 'selected');
+			callshedulhtml += '<div class="row callattempt">';
+			callshedulhtml += '<label class="col-sm-2 control-label callnolabel">Call '+i+':</label>';
+			callshedulhtml += '<div class="col-sm-10 callschedslotmaincont">';
+			
+			//iterates for number of slots for each call
+			for(j=1;j <= stagedata.callslotsnumber; j++)
+			{
+				callshedulhtml += '<div class="row callschedslotcont margin-bottom-10">' +
+									'<label class="col-sm-2 control-label">Slot '+ j +':</label>' +
+									'<div class="col-sm-8 slotsubcont"><div class="row margin-top-5" id="callattempt'+j+'cont">' +
+									'<label class="col-sm-5 control-label">(1st attempt):</label>'+
+									'<div class="col-sm-7">' +
+									'<select class="form-control" id="callattempt'+j+'select" name="callattempt'+j+'select">';
+									
+									$.each(daysofweek, function(k, v) {
+									//console.log(stagedata.callvolume[i][j].attempt1);
+										var selected = (stagedata.callvolume[i][j].attempt1 == k) ? 'selected=selected' : '';
+										callshedulhtml += '<option value="'+k+'" '+selected+'>'+v+'</option>';
+									});
+									callshedulhtml += '</select></div><div class="close-button removecall show"><i class="glyphicon glyphicon-remove"></i></div></div>';
+									
+									var len = Object.keys(stagedata.callvolume[i][j].recalls).length;
+									$.each(stagedata.callvolume[i][j].recalls, function(k, v) {
+											callshedulhtml += '<div class="row margin-top-5 recalls" id="recall'+k+'cont">';
+											callshedulhtml += '<label class="col-sm-5 control-label">Recall '+k+':</label>';
+											
+											if(k != len)
+											{
+												callshedulhtml += '<div class="col-sm-5 recallsubcont" id="recall'+k+'">';
+												callshedulhtml += '<select class="form-control" id="callrecall'+k+'" name="callrecall'+k+'">';
+												
+												$.each(daysofweek, function(a, b) {
+													var selected = ( a == v) ? 'selected=selected' : '';
+													callshedulhtml += '<option value="'+a+'" '+selected+'>'+b+'</option>';
+												});
+												
+												callshedulhtml += '</select>';
+												if(k > 1)
+												callshedulhtml += '<div class="close-button removerecall show"><i class="glyphicon glyphicon-remove"></i></div>';
+												
+												callshedulhtml += '</div>';
+											}
+											else
+											{
+												callshedulhtml += '<div class="col-sm-5 recallsubcont" id="recall'+k+'">';
+												callshedulhtml += '<select class="form-control" id="callrecall'+k+'" name="callrecall'+k+'">';
+												
+												$.each(daysofweek, function(a, b) {
+													var selected = ( a == v) ? 'selected=selected' : '';
+													callshedulhtml += '<option value="'+a+'" '+selected+'>'+b+'</option>';
+												});
+												
+												callshedulhtml += '</select>';
+												if(k > 1)
+												callshedulhtml += '<div class="close-button removerecall show"><i class="glyphicon glyphicon-remove"></i></div>';
+												
+												callshedulhtml += '</div>';
+												
+												callshedulhtml += '<button class="btn btn-primary addrecall"><span class="glyphicon glyphicon-plus"></span></button>';
+											}
+											
+											callshedulhtml += '</div>';
+									});
+									
+									callshedulhtml += '</div></div>';
+			}
 
-            filledform.find('#callattempt' + i + 'cont').after('<div class="row">' +
-                    '<label class="col-sm-5 control-label">Call ' + i + ' Recall ' + i + ':</label>' +
-                    '<div class="col-sm-7">' +
-                    '<select class="form-control" id="callrecall' + i + '" name="callrecall' + i + '">' +
-                    '<option value="sun">Sunday</option>' +
-                    '<option value="mon">Monday</option>' +
-                    '<option value="tue">Tuesday</option>' +
-                    '<option value="wed">Wednesday</option>' +
-                    '<option value="thu">Thursday</option>' +
-                    '<option value="fri">Friday</option>' +
-                    '<option value="sat">Saturday</option>' +
-                    '</select>' +
-                    '</div>' +
-                    '</div></div></div>');
-            filledform.find('.callschedulecont').append('<div class="row margin-top-5"><div class="col-sm-7"></div><div class="col-sm-5"><a href="#" class="btn btn-info btn-xs addcall">Add Call</a></div></div>');
-            filledform.find('#callrecall' + i + ' option[value=' + stagedata.callvolume[i].call1recall + ']').attr('selected', 'selected');
+			callshedulhtml += '</div></div>';
         }
+		
+		filledform.find('.callschedulecont').html(callshedulhtml);
     }
 
     filledform.find('#noofcallslot').val(stagedata.callslotsnumber);
 
     if (stagedata.callslotsnumber > 0)
     {
-        var struct = '';
+        var struct = '<div class="row">';
 
         $.each(stagedata.callslotsdays, function(key, value) {
             var i = 1;
-            struct += '<div class="row"><label class="col-sm-1 control-label daylabel' + i + '" data-day-val="' + key + '">' + key + ':</label><div class="col-sm-11">';
+            struct += '<label class="col-sm-1 control-label daylabel' + i + '" data-day-val="' + key + '">' + key + ':</label><div class="col-sm-11 slotouttercont margin-bottom-5">';
+			
+			struct += '<div class="row slotdropdowncont">' +
+							'<div class="col-sm-12">' +
+							'<select data-placeholder="Select slots" class="chosen-select col-sm-12 slotdropdown" multiple>';
+							
+							$.each(value, function(k, v) {
+								struct += '<option value="'+k+'" selected>Slot '+k+'</option>';
+							});
+			
+			struct +=		'</select>' +
+							'</div>' +
+						  '</div><br>';
+						  
+			//iterate over the slots
             $.each(value, function(k, v) {
-                struct += '<div class="row">' +
-                        '<label class="col-sm-3">' +
-                        'Slot ' + k + ':  Start Time: ' +
-                        '</label>' +
-                        '<div class="col-sm-4">' +
-                        '<div class="row">' +
-                        '<div class="col-sm-6">' +
-                        '<select class="form-control" id="slot' + k + 'starttimehour" name="slot' + k + 'starttimehour">';
+			
+                struct += '<div class="row slotcont'+key+' slotcont margin-bottom-5" data-slot-number="'+k+'">' +
+							'<label class="col-sm-3">' +
+							'Slot ' + k + ':  Start Time: ' +
+							'</label>' +
+							'<div class="col-sm-3">' +
+							'<div class="row">' +
+							'<div class="col-sm-6">' +
+							'<select class="form-control" id="slot' + k + 'starttimehour" name="slot' + k + 'starttimehour">';
+							
                 var sp = v.start.split("");
                 var sh = sp[0] + "" + sp[1];
                 var sm = sp[2] + "" + sp[3];
@@ -1150,7 +1225,7 @@ function prepform(stagedata, emptyformcont)
                         '<label class="col-sm-2">' +
                         'End Time: ' +
                         '</label>' +
-                        '<div class="col-sm-4">' +
+                        '<div class="col-sm-3">' +
                         '<div class="row">' +
                         '<div class="col-sm-6">' +
                         '<select class="form-control"  id="slot' + k + 'endtimehour" name="slot' + k + 'endtimehour">';
@@ -1181,9 +1256,11 @@ function prepform(stagedata, emptyformcont)
                         '</div>';
             });
 
-            struct += '</div></div>';
+            struct += '</div>';
             i++;
         });
+		
+		struct += '</div>';
 
         filledform.find('.callslotschedulecont').html('').append(struct);
     }
@@ -1454,7 +1531,7 @@ function callscheduleslotelement(index)
 {
 	var element = '';
 	var deletebtn = (index == 1) ? '<div class="close-button removecall show"><i class="glyphicon glyphicon-remove"></i></div>' : '';
-	element = '<div class="row callschedslotcont"><label class="col-sm-2 control-label">Slot '+index+':</label><div class="col-sm-8"><div class="row margin-top-5" id="callattempt'+index+'cont"><label class="col-sm-5 control-label">(1st attempt):</label><div class="col-sm-7"><select class="form-control" id="callattempt'+index+'select" name="callattempt'+index+'select"><option value="sun" selected="selected">Sunday</option><option value="mon">Monday</option><option value="tue">Tuesday</option><option value="wed">Wednesday</option><option value="thu">Thursday</option><option value="fri">Friday</option><option value="sat">Saturday</option></select></div>' + deletebtn + '</div><div class="row margin-top-5"><label class="col-sm-5 control-label">Recall 1:</label><div class="col-sm-7"><select class="form-control" id="callrecall'+index+'" name="callrecall'+index+'"><option value="sun">Sunday</option><option value="mon">Monday</option><option value="tue" selected="selected">Tuesday</option>	<option value="wed">Wednesday</option><option value="thu">Thursday</option><option value="fri">Friday</option><option value="sat">Saturday</option></select></div></div></div></div>';
+	element = '<div class="row callschedslotcont margin-bottom-10"><label class="col-sm-2 control-label">Slot '+index+':</label><div class="col-sm-8"><div class="row margin-top-5" id="callattempt'+index+'cont"><label class="col-sm-5 control-label">(1st attempt):</label><div class="col-sm-7"><select class="form-control" id="callattempt'+index+'select" name="callattempt'+index+'select"><option value="sun" selected="selected">Sunday</option><option value="mon">Monday</option><option value="tue">Tuesday</option><option value="wed">Wednesday</option><option value="thu">Thursday</option><option value="fri">Friday</option><option value="sat">Saturday</option></select></div>' + deletebtn + '</div><div class="row margin-top-5"><label class="col-sm-5 control-label">Recall 1:</label><div class="col-sm-7"><select class="form-control" id="callrecall'+index+'" name="callrecall'+index+'"><option value="sun">Sunday</option><option value="mon">Monday</option><option value="tue" selected="selected">Tuesday</option>	<option value="wed">Wednesday</option><option value="thu">Thursday</option><option value="fri">Friday</option><option value="sat">Saturday</option></select></div></div></div></div>';
 	
 	return element;
 
