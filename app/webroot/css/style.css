@@ -12,8 +12,8 @@
 }
 .close-button{
     position: absolute;
-    right: 0;
-    top: 0;
+    right: 4px;
+    top: -6px;
     cursor: pointer;
     color: white;
     font-size: 16px;
@@ -123,12 +123,23 @@ td{
 .margin-bottom-5{
     margin-bottom: 5px !important;
 }
+
+.margin-bottom-10{
+    margin-bottom: 10px !important;
+}
+
 .addstagedropdown
 {
 	position:absolute;
 	right:20px;
 	top:3px;
 }
+
+#addstagedropdownul
+{
+	left:-55px;
+}
+
 .rightbuttons
 {
 	position:absolute;
@@ -139,4 +150,116 @@ td{
 #generatecsv, #reportcsv{
     font-size: 24px;
     cursor: pointer;
+}
+.addrecall
+{
+	margin: 0 0 0 5px;
+}
+
+#stagetimeline
+{
+	height:60px;width:1090px;position:relative;
+}
+
+#prepregstage
+{
+	height:30px;width:327px;float:left;
+}
+
+#postpregstage
+{
+	height:30px;width:762px;float:left;
+}
+
+.stype_seperator
+{
+	height:30px;width:1px;background:#000;float:left;
+}
+
+.moncont
+{
+	position:relative;float:left;
+}
+
+.weekcont
+{
+	float:left;
+}
+
+.daycont
+{
+	height:30px;
+	float:left;
+	background:#000;
+}
+
+.mon_marker
+{
+	position:absolute;top:30px;right:0px;z-index:10;
+}
+
+.mon_marker_tick
+{
+	position:relative;border-right:1px solid #ccc;
+}
+
+.mon_marker_count
+{
+	position:relative;font-size:10px;left:3px;
+}
+
+.stage_sep_cont
+{
+	position:absolute;
+}
+
+.stage_sep_tick
+{
+	position:relative;
+	border-left:1px solid #ccc;
+}
+
+.stage_sep_count
+{
+	position:relative;font-size:10px;
+	padding:2px;
+	font-weight:bold;
+}
+
+.stage_sep_count_odd
+{
+	top:-25px;
+}
+
+.stage_sep_count_odd .stage_sep_tick
+{
+	height:7px;
+}
+
+.stage_sep_count_even
+{
+	top:30px;
+}
+
+.stage_sep_count_even .stage_sep_tick
+{
+	height:45px;
+}
+
+.stage_sep_count:after {
+	left: 100%;
+	top: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.stage_sep_count:after {
+	border-color: rgba(136, 183, 213, 0);
+	border-left-color: inherit;
+	border-width: 9px;
+	margin-top: -9px;
 }

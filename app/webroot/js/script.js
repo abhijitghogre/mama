@@ -5,6 +5,8 @@ if (BASE_URL === "http://localhost") {
     BASE_URL = "http://herohelpline.org/mMitra-MAMA";
 }
 $(document).ready(function() {
+
+
 //initialize custom fields
     $('.custom-field').hide();
     $('.show-for-text').show();
@@ -651,7 +653,8 @@ $(document).ready(function() {
 
         delbutton.addClass('canceleditstage').text('Cancel').removeClass('delstage');
         container.prepend(preparedform[0].removeClass('hide')).find('.stagecontent').hide();
-        container.parents('.stageoutermaincont').attr('data-form-no', preparedform[1]);
+        container.parents('.stageoutermaincont').attr('data-form-no', preparedform[1]).find('.callslotschedulecont .chosen-select').chosen();;
+		
         $(this).hide();
 
 
@@ -706,7 +709,7 @@ $(document).ready(function() {
     if ($('.addstage').length)
     {
         $('.stageheader').each(function(index) {
-            $('#addstagedropdown').append('<li data-stage-pos="' + $(this).text().toLowerCase() + '" class="addstageli"><a href="#">After ' + $(this).text() + '</a></li>')
+            $('#addstagedropdownul').append('<li data-stage-pos="' + $(this).text().toLowerCase() + '" class="addstageli"><a href="#">After ' + $(this).text() + '</a></li>')
         });
     }
 
@@ -770,16 +773,28 @@ $(document).ready(function() {
         var addbutton = callschedulmaincont.find('.addcall');
         var mainparent = callschedulmaincont.find('.callschedulecont');
 
-        if (callval != callschval)
+        var diff = Math.abs(parseInt(callval - callschval));
+		
+		if (callval < callschval)
         {
-            var diff = Math.abs(parseInt(callval - callschval));
+            var closebtn = mainparent.find('.callattempt:eq(2)').find('.removecall ');
+			for (i = 1; i <= diff; i++)
+            {
+                closebtn.click();
+			}
+            
+			$(this).val(callval);
+        }
+		else if(callval > callschval)
+		{
             for (i = 1; i <= diff; i++)
             {
                 addcallelement(mainparent);
             }
-        }
+		}
     });
-
+	
+	//adds slot tags to Call slot schedule form element according val of no of call slots
     $(document).on('blur', '.noofcallslots', function(e) {
         e.preventDefault();
         var callval = parseInt($(this).val())
@@ -788,11 +803,16 @@ $(document).ready(function() {
 		var callschedulemaincont = $(this).parents('.stageinform').find('.callshcedulemaincont');
 
         slotouttercont.each(function(index, element) {
-            var selecttag = $(element).find('.slotdropdown').append('<option>');
-            selecttag.html('');
+            var selecttag = $(element).find('.slotdropdown');
+			var preselected = selecttag.find('option:selected').map(function() {
+			              return this.value
+						  }).get();
+
+			selecttag.html('');
             for (i = 1; i <= callval; i++)
             {
-                selecttag.append('<option value="' + i + '">Slot ' + i + '</option>');
+                var selected = ($.inArray(i.toString(),preselected) > -1) ? 'selected' : '';
+				selecttag.append('<option value="' + i + '" ' + selected + '>Slot ' + i + '</option>');
             }
         });
         $('.chosen-select').trigger('chosen:updated');
@@ -806,7 +826,7 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '.chosen-select', function(evt, params) {
-        console.log(params);
+        //console.log(params);
 		var slotoutercont = $(this).parents('.slotouttercont');
 		var slotcont = slotoutercont.find('.slotcont');
 
@@ -843,6 +863,177 @@ $(document).ready(function() {
             $(this).parents('.slotouttercont').find('.slotcont[data-slot-number=' + (params.deselected) + ']').remove();
         }
     });
+	
+	$(document).on('change','#stagetype',function(e){
+		var thisform = $(this).parents('.stageinform');
+		var thisstagecontainer = thisform.find('.stagedurationcont');
+		var val = $(this).val();
+		
+		if(val == 0)
+		{
+			thisstagecontainer.find('.fromduration').removeClass('hide');
+			thisstagecontainer.find('#postbirthfromduration').addClass('hide');
+			thisstagecontainer.find('.toduration').removeClass('hide');
+			thisstagecontainer.find('#postbirthtoduration').addClass('hide');
+		}
+		else(val == 1)
+		{
+			thisstagecontainer.find('.fromduration').removeClass('hide');
+			thisstagecontainer.find('#prebirthfromduration').addClass('hide');
+			thisstagecontainer.find('.toduration').removeClass('hide');
+			thisstagecontainer.find('#prebirthtoduration').addClass('hide');
+		}
+		
+		
+	});
+	
+	$(document).on('change','.month-select',function(e){
+		var monthval = $(this).val(); 
+		var thisform = $(this).parents('.stageinform');
+		var thisstagecontainer = thisform.find('.stagedurationcont');
+		var stagetype = thisform.find('#stagetype').val();
+		
+		monthval = parseInt(monthval.substr(5));
+		var reply = getfrommonth(monthval);
+		
+		//changes week and day select tags options according to the month selected
+		var selectcontid = '';
+		if(stagetype == 0)
+		{
+			selectcontid = '#prebirthfromduration';
+		}
+		else
+		{
+			selectcontid = '#postbirthfromduration';
+		}
+		
+		var week_from_select = thisstagecontainer.find(selectcontid).find('#week-select-from');		
+		
+		var selectinner = '';
+		for(i=0;i<4;i++)
+		{
+			selectinner += '<option value="'+(reply.week.start + i)+'" data-month="'+monthval+'">Week '+(reply.week.start + i)+'</option>';
+		}
+		week_from_select.html(selectinner);
+		week_from_select.val(reply.week.start);
+
+		selectinner = '';
+		
+		var day_from_select = thisstagecontainer.find(selectcontid).find('#day-select-from');
+		
+		for(i=0;i<7;i++)
+		{
+			selectinner += '<option value="day'+(reply.day.start + i)+'">Day '+(reply.day.start + i)+'</option>';
+		}
+		day_from_select.html(selectinner);
+		day_from_select.val('day'+reply.day.start);
+	});
+	
+	$(document).on('change','.week-select',function(e){
+		var weekval = $(this).val();
+		var thisform = $(this).parents('.stageinform');
+		var thisstagecontainer = thisform.find('.stagedurationcont');
+		var stagetype = thisform.find('#stagetype').val();
+		var reply = getfromweek(weekval);
+		
+		//changes month and day select tags options according to the week selected
+		var selectcontid = '';
+		if(stagetype == 0)
+		{
+			selectcontid = '#prebirthfromduration';
+		}
+		else
+		{
+			selectcontid = '#postbirthfromduration';
+		}
+		
+		thisstagecontainer.find(selectcontid).find('#month-select-from').val('month'+reply.month);
+		
+		var selectinner = '';
+		var day_from_select = thisstagecontainer.find(selectcontid).find('#day-select-from');
+		
+		for(i=0;i<7;i++)
+		{
+			selectinner += '<option value="day'+(reply.day.start + i)+'">Day '+(reply.day.start + i)+'</option>';
+		}
+		day_from_select.html(selectinner);
+		day_from_select.val('day'+reply.day.start);
+	});
+	
+	$(document).on('change','.day-select',function(e){
+		var dayval = $(this).val();
+		var thisform = $(this).parents('.stageinform');
+		var thisstagecontainer = thisform.find('.stagedurationcont');
+		var stagetype = thisform.find('#stagetype').val();
+		
+		dayval = parseInt(dayval.substr(3));
+		var reply = getfromday(dayval);
+		
+		//changes month and day select tags options according to the week selected
+		var selectcontid = '';
+		if(stagetype == 0)
+		{
+			selectcontid = '#prebirthfromduration';
+		}
+		else
+		{
+			selectcontid = '#postbirthfromduration';
+		}
+		
+		thisstagecontainer.find(selectcontid).find('#month-select-from').val('month'+reply.month);
+		
+		var week_from_select = thisstagecontainer.find(selectcontid).find('#week-select-from');		
+		
+		var selectinner = '';
+		for(i=0;i<4;i++)
+		{
+			selectinner += '<option value="'+(reply.week.start + i)+'" data-month="'+reply.month+'">Week '+(reply.week.start + i)+'</option>';
+		}
+		week_from_select.html(selectinner);
+		week_from_select.val(reply.week.current);
+	});
+	
+	//triggers when clicked on addrecall button
+	$(document).on('click','.addrecall',function(e){
+		e.preventDefault();
+		var thisparent = $(this).parents('.recalls');
+		var recallconthtml = $(this).parents('.recalls').clone();
+		var callschedslotcont = $(this).parents('.callschedslotcont');
+		var recallcount = callschedslotcont.find('.recalls').length;
+		var c = recallcount + 1;
+		
+		thisparent.find('.addrecall').remove();
+		recallconthtml.attr('id','recall'+c+'cont');
+		recallconthtml.find('.recallsubcont').attr('id','recall'+c).find('select').attr('id','callrecall'+c).attr('name','callrecall'+c).after('<div class="close-button removerecall show"><i class="glyphicon glyphicon-remove"></i></div>');
+		recallconthtml.find('label').text('Recall '+c+':');
+		thisparent.after(recallconthtml);
+	});
+	
+	
+	$(document).on('click','.removerecall',function(e){
+		e.preventDefault();
+		var slotparemtele = $(this).parents('.slotsubcont');
+		var addrecallbtn = slotparemtele.find('.recalls').last().find('.addrecall').clone();
+		
+		slotparemtele.find('.recalls').last().remove();
+		slotparemtele.find('.recalls').last().append(addrecallbtn);		
+	});
+	
+	$(document).on('click','.classfrequency',function(e){
+		var val = $(this).val();
+		console.log(val);
+		var parentstagecont = $(this).parents('.stagecontent');
+		var cfreqn = 'Week';
+			
+		if(val == 'daily')
+			cfreqn = 'Day';
+		else if(val == 'weekly')
+			cfreqn = 'Week';
+		else
+			cfreqn = 'Month';
+			
+		parentstagecont.find('.callcount label').text('Calls Per '+cfreqn+':');
+	});
 
 });//ready ends
 
@@ -898,6 +1089,7 @@ function prepform(stagedata, emptyformcont)
 {
     var filledformcont = emptyformcont;
     var filledform = emptyformcont.find('.stageinform');
+	var daysofweek = {sun:"Sunday", mon:"Monday", tue:"Tuesday", wed:"Wednesday", thu:"Thursday", fri:"Friday", sat:"Saturday"};
 
     var randomnumber = Math.floor(Math.random() * 10000)
     filledform.attr('id', 'form' + randomnumber);
@@ -937,61 +1129,118 @@ function prepform(stagedata, emptyformcont)
     {
         filledform.find('.callschedulecont').html('');
         var count = stagedata.numberofcalls;
+		var callshedulhtml = '';
+		
+		//iterates for number of calls
         for (i = 1; i <= count; i++)
         {
-            filledform.find('.callschedulecont').append('<div class="row callattempt"><div class="col-sm-12"><div class="row margin-top-5" id="callattempt' + i + 'cont">' +
-                    '<label class="col-sm-5 control-label">Call ' + i + ' (1st attempt):</label>' +
-                    '<div class="col-sm-7">' +
-                    '<select class="form-control" id="callattempt' + i + 'select" name="callattempt' + i + 'select">' +
-                    '<option value="sun">Sunday</option>' +
-                    '<option value="mon">Monday</option>' +
-                    '<option value="tue">Tuesday</option>' +
-                    '<option value="wed">Wednesday</option>' +
-                    '<option value="thu">Thursday</option>' +
-                    '<option value="fri">Friday</option>' +
-                    '<option value="sat">Saturday</option>' +
-                    '</select>' +
-                    '</div>' +
-                    '</div>');
-            filledform.find('#callattempt' + i + 'select option[value=' + stagedata.callvolume[i].attempt1 + ']').attr('selected', 'selected');
+			callshedulhtml += '<div class="row callattempt">';
+			callshedulhtml += '<label class="col-sm-2 control-label callnolabel">Call '+i+':</label>';
+			callshedulhtml += '<div class="col-sm-10 callschedslotmaincont">';
+			
+			//iterates for number of slots for each call
+			for(j=1;j <= stagedata.callslotsnumber; j++)
+			{
+				callshedulhtml += '<div class="row callschedslotcont margin-bottom-10">' +
+									'<label class="col-sm-2 control-label">Slot '+ j +':</label>' +
+									'<div class="col-sm-8 slotsubcont"><div class="row margin-top-5" id="callattempt'+j+'cont">' +
+									'<label class="col-sm-5 control-label">(1st attempt):</label>'+
+									'<div class="col-sm-7">' +
+									'<select class="form-control" id="callattempt'+j+'select" name="callattempt'+j+'select">';
+									
+									$.each(daysofweek, function(k, v) {
+									//console.log(stagedata.callvolume[i][j].attempt1);
+										var selected = (stagedata.callvolume[i][j].attempt1 == k) ? 'selected=selected' : '';
+										callshedulhtml += '<option value="'+k+'" '+selected+'>'+v+'</option>';
+									});
+									callshedulhtml += '</select></div><div class="close-button removecall show"><i class="glyphicon glyphicon-remove"></i></div></div>';
+									
+									var len = Object.keys(stagedata.callvolume[i][j].recalls).length;
+									$.each(stagedata.callvolume[i][j].recalls, function(k, v) {
+											callshedulhtml += '<div class="row margin-top-5 recalls" id="recall'+k+'cont">';
+											callshedulhtml += '<label class="col-sm-5 control-label">Recall '+k+':</label>';
+											
+											if(k != len)
+											{
+												callshedulhtml += '<div class="col-sm-5 recallsubcont" id="recall'+k+'">';
+												callshedulhtml += '<select class="form-control" id="callrecall'+k+'" name="callrecall'+k+'">';
+												
+												$.each(daysofweek, function(a, b) {
+													var selected = ( a == v) ? 'selected=selected' : '';
+													callshedulhtml += '<option value="'+a+'" '+selected+'>'+b+'</option>';
+												});
+												
+												callshedulhtml += '</select>';
+												if(k > 1)
+												callshedulhtml += '<div class="close-button removerecall show"><i class="glyphicon glyphicon-remove"></i></div>';
+												
+												callshedulhtml += '</div>';
+											}
+											else
+											{
+												callshedulhtml += '<div class="col-sm-5 recallsubcont" id="recall'+k+'">';
+												callshedulhtml += '<select class="form-control" id="callrecall'+k+'" name="callrecall'+k+'">';
+												
+												$.each(daysofweek, function(a, b) {
+													var selected = ( a == v) ? 'selected=selected' : '';
+													callshedulhtml += '<option value="'+a+'" '+selected+'>'+b+'</option>';
+												});
+												
+												callshedulhtml += '</select>';
+												if(k > 1)
+												callshedulhtml += '<div class="close-button removerecall show"><i class="glyphicon glyphicon-remove"></i></div>';
+												
+												callshedulhtml += '</div>';
+												
+												callshedulhtml += '<button class="btn btn-primary addrecall"><span class="glyphicon glyphicon-plus"></span></button>';
+											}
+											
+											callshedulhtml += '</div>';
+									});
+									
+									callshedulhtml += '</div></div>';
+			}
 
-            filledform.find('#callattempt' + i + 'cont').after('<div class="row">' +
-                    '<label class="col-sm-5 control-label">Call ' + i + ' Recall ' + i + ':</label>' +
-                    '<div class="col-sm-7">' +
-                    '<select class="form-control" id="callrecall' + i + '" name="callrecall' + i + '">' +
-                    '<option value="sun">Sunday</option>' +
-                    '<option value="mon">Monday</option>' +
-                    '<option value="tue">Tuesday</option>' +
-                    '<option value="wed">Wednesday</option>' +
-                    '<option value="thu">Thursday</option>' +
-                    '<option value="fri">Friday</option>' +
-                    '<option value="sat">Saturday</option>' +
-                    '</select>' +
-                    '</div>' +
-                    '</div></div></div>');
-            filledform.find('.callschedulecont').append('<div class="row margin-top-5"><div class="col-sm-7"></div><div class="col-sm-5"><a href="#" class="btn btn-info btn-xs addcall">Add Call</a></div></div>');
-            filledform.find('#callrecall' + i + ' option[value=' + stagedata.callvolume[i].call1recall + ']').attr('selected', 'selected');
+			callshedulhtml += '</div></div>';
         }
+		
+		filledform.find('.callschedulecont').html(callshedulhtml);
     }
 
     filledform.find('#noofcallslot').val(stagedata.callslotsnumber);
 
     if (stagedata.callslotsnumber > 0)
     {
-        var struct = '';
+        var struct = '<div class="row">';
 
         $.each(stagedata.callslotsdays, function(key, value) {
             var i = 1;
-            struct += '<div class="row"><label class="col-sm-1 control-label daylabel' + i + '" data-day-val="' + key + '">' + key + ':</label><div class="col-sm-11">';
+            struct += '<label class="col-sm-1 control-label daylabel' + i + '" data-day-val="' + key + '">' + key + ':</label><div class="col-sm-11 slotouttercont margin-bottom-5">';
+			
+			struct += '<div class="row slotdropdowncont">' +
+							'<div class="col-sm-12">' +
+							'<select data-placeholder="Select slots" class="chosen-select col-sm-12 slotdropdown" multiple>';
+							
+							$.each(value, function(k, v) {
+								struct += '<option value="'+k+'" selected>Slot '+k+'</option>';
+							});
+			
+			struct +=		'</select>' +
+							'</div>' +
+						  '</div><br>';
+						  
+			//iterate over the slots
             $.each(value, function(k, v) {
-                struct += '<div class="row">' +
-                        '<label class="col-sm-3">' +
-                        'Slot ' + k + ':  Start Time: ' +
-                        '</label>' +
-                        '<div class="col-sm-4">' +
-                        '<div class="row">' +
-                        '<div class="col-sm-6">' +
-                        '<select class="form-control" id="slot' + k + 'starttimehour" name="slot' + k + 'starttimehour">';
+			
+                struct += '<div class="row slotcont'+key+' slotcont margin-bottom-5" data-slot-number="'+k+'">' +
+							'<label class="col-sm-3">' +
+							'Slot ' + k + ':  Start Time: ' +
+							'</label>' +
+							'<div class="col-sm-3">' +
+							'<div class="row">' +
+							'<div class="col-sm-6">' +
+							'<select class="form-control" id="slot' + k + 'starttimehour" name="slot' + k + 'starttimehour">';
+							
                 var sp = v.start.split("");
                 var sh = sp[0] + "" + sp[1];
                 var sm = sp[2] + "" + sp[3];
@@ -1021,7 +1270,7 @@ function prepform(stagedata, emptyformcont)
                         '<label class="col-sm-2">' +
                         'End Time: ' +
                         '</label>' +
-                        '<div class="col-sm-4">' +
+                        '<div class="col-sm-3">' +
                         '<div class="row">' +
                         '<div class="col-sm-6">' +
                         '<select class="form-control"  id="slot' + k + 'endtimehour" name="slot' + k + 'endtimehour">';
@@ -1052,9 +1301,11 @@ function prepform(stagedata, emptyformcont)
                         '</div>';
             });
 
-            struct += '</div></div>';
+            struct += '</div>';
             i++;
         });
+		
+		struct += '</div>';
 
         filledform.find('.callslotschedulecont').html('').append(struct);
     }
@@ -1074,9 +1325,10 @@ function createnewstagejson()
     var stagejson = '';
     var allstagejson = '{';
 
+	var totstgcount = $('.stageoutermaincont').length;
     $('.stageoutermaincont').each(function(index) {
 
-        allstagejson += i == 1 ? '' : '},'
+        //allstagejson += i == 1 ? '' : '},'
         if ($(this).hasClass('newstagemaincont'))
         {
             stagejson = createjsonformdata($(this).find('.stageinform'));
@@ -1091,13 +1343,13 @@ function createnewstagejson()
         }
 
         allstagejson += '"' + i + '":' + stagejson;
-        ;
+		allstagejson += (index != (totstgcount-1)) ? ',' : '';
         i++;
     });
 
     allstagejson += '}';
 
-    //console.log(allstagejson);
+    console.log(allstagejson);
 
     var validateresults = validatestagetimeline(allstagejson);
 
@@ -1147,75 +1399,56 @@ function createjsonformdata(formelements)
             switch (th.attr('name'))
             {
                 case 'stagetype':
-                    json += '"type":"' + th.val() + '",'
+                    json += '"type":"' + th.val() + '",';
                     break;
 
                 case 'callfrequency':
                     if (th.is(':checked'))
                     {
-                        json += '"callfrequency":"' + th.val() + '",'
+                        json += '"callfrequency":"' + th.val() + '",';
                         callfrequency = th.val();
                     }
                     break;
-
+				
+				case 'monselectfrom':
+					if(!th.parent('.fromduration').hasClass('hide'))
+					json += '"stageduration":{"m_start":"' + th.val() + '",';
+					
+                    break;
+				
+				case 'weekselectfrom':
+					if(!th.parent('.fromduration').hasClass('hide'))
+					json += '"w_start":"' + th.val() + '",';
+                
+					break;
+					
                 case 'dayselectfrom':
-                    if (callfrequency == 'daily')
-                    {
-                        json += '"stageduration":{"start":"' + th.val() + '",'
-                    }
-                    break;
-
-                case 'weekselectfrom':
-                    if (callfrequency == 'weekly')
-                    {
-                        json += '"stageduration":{"start":"' + th.val() + '",'
-                    }
-                    break;
-
-                case 'monselectfrom':
-                    if (callfrequency == 'monthly')
-                    {
-                        json += '"stageduration":{"start":"' + th.val() + '",'
-                    }
-                    break;
-
-                case 'dayselectto':
-                    if (callfrequency == 'daily')
-                    {
-                        json += '"end":"' + th.val() + '"},'
-                    }
-                    break;
-
-                case 'weekselectto':
-                    if (callfrequency == 'weekly')
-                    {
-                        json += '"end":"' + th.val() + '"},'
-                    }
+					if(!th.parent('.fromduration').hasClass('hide'))
+                    json += '"d_start":"' + th.val() + '",';
+					
                     break;
 
                 case 'monselectto':
-                    if (callfrequency == 'monthly')
-                    {
-                        json += '"end":"' + th.val() + '"},'
-                    }
-                    break;
-
-                case 'callsperfreqn':
-                    var c = th.val();
-                    json += '"numberofcalls":"' + c + '","callvolume":{'
-
-                    for (i = 1; i <= c; i++)
-                    {
-                        json += '"' + i + '":{"attempt1":"' + $('#callattempt' + i + 'select').val() + '",';
-                        json += '"call' + i + 'recall":"' + $('#callrecall' + i).val() + '"}';
-                        json += i == c ? '' : ',';
-                    }
-                    json += '},'
-                    break;
+					if(!th.parent('.toduration').hasClass('hide'))
+                    json += '"m_end":"' + th.val() + '",';
+                    
+                break;
+					
+                case 'weekselectto':
+                    if(!th.parent('.toduration').hasClass('hide'))
+                    json += '"w_end":"' + th.val() + '",';
+                    
+                break;
+					
+                case 'dayselectto':
+					if(!th.parent('.toduration').hasClass('hide'))
+					json += '"d_end":"' + th.val() + '"},';
+                
+				break;
 
                 case 'noofcallslots':
                     var c = th.val();
-                    console.log(c);
+                    //console.log(c);
                     json += '"callslotsnumber":"' + c + '","callslotsdays":{';
 
                     for (var i = 1; i <= 7; i++)
@@ -1232,17 +1465,46 @@ function createjsonformdata(formelements)
                             json += i == 7 ? '' : '},';
                         }
                     }
-                    json += '}';
-                    break;
+                    json += '}},';
+                break;
+					
+				case 'callsperfreqn':
+                    var c = th.val();
+					var callshedcont = th.parents('.form-group').next('.callshcedulemaincont').find('.callschedulecont');
+					
+                    json += '"numberofcalls":"' + c + '","callvolume":{';
+
+                    for (i = 1; i <= c; i++)
+                    {
+						var currentslotsubcont = callshedcont.find('.callattempt:eq('+(i-1)+') .callschedslotmaincont .callschedslotcont .slotsubcont');
+						var l = currentslotsubcont.find('.recalls').size();
+						
+						json += '"' + i + '":{"attempt1":"' + currentslotsubcont.find('#callattempt' + i + 'select').val() + '",';
+						json += '"recalls":{';
+						
+						for(j = 1; j <= l; j++)
+						{
+							var currentrecallsel = currentslotsubcont.find('.recalls:eq('+j+') #callrecall'+j);
+							json += '"' +j+ '":"'+ currentrecallsel.val() +'"';
+							json += j == l ? '' : ',';
+						}
+						
+                        json += '}'
+						json += i == c ? '}' : '},';
+						
+                    }
+                    json += '}'
+                break;
 
                 case 'default':
-                    break;
+                break;
 
             }
         });
     });
 
     json += '}';
+	console.log(json);
     return json;
 }
 
@@ -1294,7 +1556,8 @@ function addcallelement(mainparent)
     var element = mainparent.find('.callattempt').first().clone();
     console.log(presentkey);
 
-    element.find('#callattempt1cont').attr('id', 'callattempt' + presentkey + 'cont').append('<div class="close-button removecall show"><i class="glyphicon glyphicon-remove"></i></div>').find('label').text('Call ' + presentkey + ' (1st attempt):');
+    element.find('.callnolabel').text('Call ' + presentkey + ':');
+	element.find('#callattempt1cont').attr('id', 'callattempt' + presentkey + 'cont').append('<div class="close-button removecall show"><i class="glyphicon glyphicon-remove"></i></div>');
     element.find('#callattempt1select').attr('id', 'callattempt' + presentkey + 'select').attr('name', 'callattempt' + presentkey + 'select')
     element.find('#callrecall1').attr('id', 'callrecall1' + presentkey).attr('name', 'callrecall1' + presentkey);
     mainparent.find('.callattempt').last().after(element);
@@ -1312,9 +1575,51 @@ function createslotelement(index)
 function callscheduleslotelement(index)
 {
 	var element = '';
-	
-	element = '<div class="row callschedslotcont"><label class="col-sm-2 control-label">Slot '+index+':</label><div class="col-sm-8"><div class="row margin-top-5" id="callattempt'+index+'cont"><label class="col-sm-5 control-label">(1st attempt):</label><div class="col-sm-7"><select class="form-control" id="callattempt'+index+'select" name="callattempt'+index+'select"><option value="sun" selected="selected">Sunday</option><option value="mon">Monday</option><option value="tue">Tuesday</option><option value="wed">Wednesday</option><option value="thu">Thursday</option><option value="fri">Friday</option><option value="sat">Saturday</option></select></div></div><div class="row margin-top-5"><label class="col-sm-5 control-label">Recall 1:</label><div class="col-sm-7"><select class="form-control" id="callrecall'+index+'" name="callrecall'+index+'"><option value="sun">Sunday</option><option value="mon">Monday</option><option value="tue" selected="selected">Tuesday</option>	<option value="wed">Wednesday</option><option value="thu">Thursday</option><option value="fri">Friday</option><option value="sat">Saturday</option></select></div></div></div></div>';
+	var deletebtn = (index == 1) ? '<div class="close-button removecall show"><i class="glyphicon glyphicon-remove"></i></div>' : '';
+	element = '<div class="row callschedslotcont margin-bottom-10"><label class="col-sm-2 control-label">Slot '+index+':</label><div class="col-sm-8"><div class="row margin-top-5" id="callattempt'+index+'cont"><label class="col-sm-5 control-label">(1st attempt):</label><div class="col-sm-7"><select class="form-control" id="callattempt'+index+'select" name="callattempt'+index+'select"><option value="sun" selected="selected">Sunday</option><option value="mon">Monday</option><option value="tue">Tuesday</option><option value="wed">Wednesday</option><option value="thu">Thursday</option><option value="fri">Friday</option><option value="sat">Saturday</option></select></div>' + deletebtn + '</div><div class="row margin-top-5"><label class="col-sm-5 control-label">Recall 1:</label><div class="col-sm-7"><select class="form-control" id="callrecall'+index+'" name="callrecall'+index+'"><option value="sun">Sunday</option><option value="mon">Monday</option><option value="tue" selected="selected">Tuesday</option>	<option value="wed">Wednesday</option><option value="thu">Thursday</option><option value="fri">Friday</option><option value="sat">Saturday</option></select></div></div></div></div>';
 	
 	return element;
 
+}
+
+function getfrommonth(val)
+{
+	var reply = {};
+	reply.week = {};
+	reply.day = {};
+	
+	reply.week.start = ((val * 4) - 3);
+	reply.week.end = (val * 4);
+	
+	reply.day.start = ((reply.week.start * 7) - 6);
+	reply.day.end = reply.week.start * 7;
+	
+	return reply;
+}
+
+function getfromweek(val)
+{
+	var reply = {};
+	reply.day = {};
+	
+	reply.month = val%4 == 0 ? Math.floor(val / 4) : Math.floor((val / 4) + 1);
+	
+	reply.day.start = ((val * 7) - 6);
+	reply.day.end = val	* 7;
+	
+	return reply;
+}
+
+function getfromday(val)
+{
+	var reply = {};
+	reply.week = {};
+	var week = val%7 == 0 ? Math.floor(val / 7) : Math.floor((val / 7) + 1);
+	
+	reply.month = (week%4 == 0 && week >= 4) ? Math.floor(week / 4) : Math.floor((week / 4) + 1);
+	
+	reply.week.current = week;
+	reply.week.start = ((reply.month * 4) - 3);
+	reply.week.end = week * 4;
+	return reply;
 }
