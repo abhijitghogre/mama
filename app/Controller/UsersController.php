@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('Project', 'User');
+    public $uses = array('Project', 'User', 'Channel');
 
     public function beforeFilter() {
         parent::beforeFilter();
@@ -10,6 +10,8 @@ class UsersController extends AppController {
     }
 
     public function add($projectId) {
+        $channels = $this->Channel->getAllChannels();
+        $this->set('channels', $channels);
         if ($this->request->is('post')) {
             $formData = array();
             parse_str($this->request->data['formData'], $formData);
@@ -26,7 +28,7 @@ class UsersController extends AppController {
             } else {
                 $this->User->create();
             }
-
+            $savedata["User"]["channel_id"] = $formData['mand-channel'];
             $savedata["User"]["name"] = $formData['mand-name'];
             $savedata["User"]["phone_no"] = $formData['mand-phone'];
             $savedata["User"]["lmp"] = $formData['mand-lmp'];
@@ -145,6 +147,8 @@ class UsersController extends AppController {
     }
 
     public function edit($id, $projectId) {
+        $channels = $this->Channel->getAllChannels();
+        $this->set('channels', $channels);
         $this->set('project_id', $projectId);
         $project = $this->Project->getExtraFields($projectId);
         $custom_fields = json_decode($project[0]['Project']['custom_fields'], true);

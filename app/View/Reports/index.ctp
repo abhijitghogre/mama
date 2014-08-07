@@ -1,15 +1,15 @@
 <div class="content-box-header">
-    <div class="panel-title">Logs</div>
+    <div class="panel-title">Reports</div>
 </div>
 <div class="content-box-large box-with-header">
     <div class="panel-body">
         <div class="row">
             <div class="col-md-2 col-md-offset-10 text-right">
-                <i class="glyphicon glyphicon-download" id="generatecsv" title="Generate CSV"></i>
+                <i class="glyphicon glyphicon-download" id="reportcsv" title="Generate CSV"></i>
             </div>
         </div>
         <div class="row padding-bottom-15">
-            <?php echo $this->Form->create('Logs', array('action' => 'index', 'class' => 'form-vertical', 'role' => 'form')); ?>
+            <?php echo $this->Form->create('Reports', array('action' => 'index', 'class' => 'form-vertical', 'role' => 'form')); ?>
             <div class="col-md-2 form-group">
                 <label>Project</label>
                 <?php
@@ -21,33 +21,32 @@
                 ?>
             </div>
             <div class="col-md-2 form-group">
-                <label>Name</label>
+                <label>Channel</label>
                 <?php
-                $user[0] = array('value' => 0, 'name' => '');
-                foreach ($users as $u) {
-                    $user[] = array('value' => $u['User']['id'], 'name' => $u['User']['name'], 'class' => 'username project' . $u['User']['project_id']);
+                $channel[0] = array('value' => 0, 'name' => '');
+                foreach ($channels as $c) {
+                    $channel[] = array('value' => $c['Channel']['id'], 'name' => $c['Channel']['channel_name']);
                 }
-                echo $this->Form->input('user_id', array('type' => 'select', 'options' => $user, 'label' => false, 'class' => 'form-control', 'div' => FALSE));
+                echo $this->Form->input('channel_id', array('type' => 'select', 'options' => $channel, 'label' => false, 'class' => 'form-control', 'div' => FALSE));
                 ?>
             </div>
             <div class="col-md-2 form-group">
-                <label>Call Status</label>
+                <label>Filter</label>
                 <?php
                 $call_code = array(
-                    "-1" => "",
-                    "0" => "Success",
-                    "1" => "Failure"
+                    "0" => "",
+                    "1" => "Number of woman enrolled"
                 );
-                echo $this->Form->input('call_code', array('type' => 'select', 'options' => $call_code, 'label' => false, 'class' => 'form-control', 'div' => FALSE));
+                echo $this->Form->input('filter', array('type' => 'select', 'options' => $call_code, 'label' => false, 'class' => 'form-control', 'div' => FALSE));
                 ?>
             </div>
             <div class="col-md-2 form-group">
                 <label>From Date</label>
-                <input type="text" name ="fromdate" id="LogsFromdate" class="form-control" placeholder="Text input">
+                <input type="text" name ="fromdate" id="ReportsFromdate" class="form-control" placeholder="Text input">
             </div>
             <div class="col-md-2 form-group">
                 <label>To Date</label>
-                <input type="text" name ="todate" id="LogsTodate" class="form-control" placeholder="Text input">
+                <input type="text" name ="todate" id="ReportsTodate" class="form-control" placeholder="Text input">
             </div>
             <div class="col-md-2 form-group">
                 <label>&nbsp;</label>
@@ -56,7 +55,7 @@
                     'label' => 'Generate Report',
                     'div' => FALSE,
                     'class' => 'form-control btn btn-primary',
-                    'id' => 'generatereport'
+                    'id' => 'reportbtn'
                 );
                 echo $this->Form->end($options);
                 ?>
@@ -65,78 +64,18 @@
         
         <div class="row">
             <div class="col-md-12">
-                <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="report">
+                <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="reportTable">
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Project Name</th>
                             <th>Phone No.</th>
                             <th>Call Slot</th>
-                            <th>Call Status</th>
-                            <th>Call Date & Time</th>
-                            <th>Call Duration</th>
-                            <th>Gestational Age</th>
-                            <th>Attempts</th>
-                            <th>Delivery Status</th>
+                            <th>Age</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($result as $r): ?>
-                            <tr>
-                                <td><?php echo $r['u']['name']; ?></td>
-                                <td><?php echo $r['p']['project_name']; ?></td>
-                                <td><?php echo $r['d']['phoneno']; ?></td>
-                                <td>
-                                    <?php
-                                    /*$slot = array('1' => '9:00 AM to 12:00 PM', '2' => '12:00 PM to 3:00 PM', '3' => '3:00 PM to 6:00 PM', '4' => '6:00 PM to 9:00 PM');*/
-                                    echo $r['u']['call_slots'];
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    if (isset($r['d']['callstatus']) && $r['d']['callstatus'] == 0) {
-                                        echo "Success";
-                                    } else {
-                                        echo "Failure";
-                                    }
-                                    ?>
-                                </td>
-                                <td><?php echo date("d-m-Y H:i:s D", strtotime($r['d']['startdatetime'])); ?></td>
-                                <td>
-                                    <?php
-                                    $duration = $r['d']['duration'];
-                                    if ($duration == 0) {
-                                        echo "0 mins " . $duration . " secs";
-                                    } else if ($duration < 60) {
-                                        echo $duration . " secs";
-                                    } else if ($duration == 60) {
-                                        echo "1 mins 0 secs";
-                                    } else if ($duration > 60) {
-                                        $mins = $duration / 60;
-                                        $secs = $duration % 60;
-                                        echo (int) $mins . " mins " . $secs . " secs";
-                                    }
-                                    ?>
-                                </td>
-                                <td><?php echo $r['d']['gest_age']; ?></td>
-                                <td>
-                                    <?php
-                                    if ($r['d']['gest_age'] == "intro") {
-                                        echo $attempts = 1;
-                                    } else {
-                                        $decodedflag = json_decode($r['uc']['flag'], TRUE);
-                                        echo $attempts = $decodedflag[$r['d']['gest_age']]['attempts'] + 1;
-                                    }
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $delivery = array('0' => 'Pregnant', '1' => 'Successful', '2' => 'Unsuccessful');
-                                    echo $delivery[$r['u']['delivery']];
-                                    ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                        
                     </tbody>
                 </table>
                 <div class="loader">

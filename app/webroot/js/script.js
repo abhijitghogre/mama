@@ -141,7 +141,12 @@ $(document).ready(function() {
                 break;
         }
     });
-
+    //date picker for EDD field
+    if ($('#edd').length > 0) {
+       $('#edd').datepicker({
+           dateFormat: 'dd-mm-yy'
+       });
+    }
     //remove button click
     $(document).on('click', '.close-button', function() {
         var type = $(this).attr('data-type');
@@ -378,22 +383,22 @@ $(document).ready(function() {
                 user_meta_id: $('input.user_meta_id').val(),
                 user_callflag_id: $('input.user_callflag_id').val()
             }, function(response) {
-                if (JSON.parse(response).type === "success") {
+                //if (JSON.parse(response).type === "success") {
                     window.location.replace(BASE_URL + '/users/listUsers/' + $('.project_id').val());
-                } else {
+                /*} else {
                     alert('Some error occured. Please contact administrator');
-                }
+                }*/
             });
         } else {
             $.post(BASE_URL + '/users/add/' + $('.project_id').val(), {
                 formData: $(this).serialize(),
                 customFields: fields
             }, function(response) {
-                if (JSON.parse(response).type === "success") {
+                //if (JSON.parse(response).type === "success") {
                     window.location.replace(BASE_URL + '/users/listUsers/' + $('.project_id').val());
-                } else {
+                /*} else {
                     alert('Some error occured. Please contact administrator');
-                }
+                }*/
             });
         }
 
@@ -543,6 +548,7 @@ $(document).ready(function() {
         dateFormat: 'dd-mm-yy'
     }).datepicker("setDate", new Date());
 
+    /* call logs report */
     $('#generatereport').on('click', function(e) {
         e.preventDefault();
         var projectId = $('#LogsProjectId').val();
@@ -570,7 +576,45 @@ $(document).ready(function() {
         document.location.href = BASE_URL + '/logs/generate_csv/' + projectId + '/' + userId + '/' + callCode + '/' + fromDate + '/' + toDate;
 
     });
+    /*Reports page */
+    var rTable = $('#reportTable').dataTable();
+    // setting fromdate and todate in reports form
+    $('#ReportsFromdate').datepicker({
+        dateFormat: 'dd-mm-yy'
+    }).datepicker("setDate", getPreviousDate());
 
+    $('#ReportsTodate').datepicker({
+        dateFormat: 'dd-mm-yy'
+    }).datepicker("setDate", new Date());
+    
+    /* Reports */
+    $('#reportbtn').on('click', function(e) {
+        e.preventDefault();
+        var projectId = $('#ReportsProjectId').val();
+        var channelId = $('#ReportsChannelId').val();
+        var other = $('#ReportsFilter').val();
+        var fromDate = $('#ReportsFromdate').val();
+        var toDate = $('#ReportsTodate').val();
+        $('.loader').fadeIn();
+        $.post(BASE_URL + '/reports/report_data', {projectId: projectId, channelId: channelId, other: other, fromDate: fromDate, toDate: toDate}, function(data) {
+            rTable.fnDestroy();
+            $('#reportTable').replaceWith(data);
+            rTable = $('#reportTable').dataTable();
+            $('.loader').fadeOut();
+        });
+    });
+    /* csv for reports */
+    $('#reportcsv').on('click', function(e) {
+        e.preventDefault();
+        var projectId = $('#LogsProjectId').val();
+        var userId = $('#LogsUserId').val();
+        var callCode = $('#LogsCallCode').val();
+        var fromDate = $('#LogsFromdate').val();
+        var toDate = $('#LogsTodate').val();
+
+        document.location.href = BASE_URL + '/logs/generate_csv/' + projectId + '/' + userId + '/' + callCode + '/' + fromDate + '/' + toDate;
+
+    });
     //ajaxify add project
 //    $('')
 
@@ -592,6 +636,7 @@ $(document).ready(function() {
      $('input[name="mand-reg-date"]').val("2014-05-16");
      $('input[name="mand-gest-age"]').val(42);
      */
+     
 
     /*Edit stage functionality*/
     $('.editstage').on('click', function(e) {

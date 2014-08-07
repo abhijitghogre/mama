@@ -93,6 +93,11 @@
                                 echo $this->Html->link('<i class="glyphicon glyphicon-home"></i> Manage Projects', array('controller' => 'projects', 'action' => 'listProjects'), array('escape' => false));
                                 ?>
                             </li>
+                            <li class="<?php echo (isset($channelsActive) ? 'current' : ''); ?>">
+                                <?php
+                                echo $this->Html->link('<i class="glyphicon glyphicon-list"></i> Manage Channels', array('controller' => 'channels', 'action' => 'listChannels'), array('escape' => false));
+                                ?>
+                            </li>
                             <li class="submenu <?php echo (isset($volunteersActive) ? 'current' : ''); ?>">
                                 <a href="#">
                                     <i class="glyphicon glyphicon-user"></i> Volunteers
@@ -138,6 +143,11 @@
                                 //if ($role == 'superadmin' || $role == 'admin') {
                                 echo $this->Html->link('<i class="glyphicon glyphicon-stats"></i> Statistics', array('controller' => 'logs', 'action' => 'statistics'), array('escape' => false));
                                 //}
+                                ?>
+                            </li>
+                            <li class="<?php echo (isset($reportsActive) ? 'current' : ''); ?>">
+                                <?php
+                                echo $this->Html->link('<i class="glyphicon glyphicon-file"></i> Reports', array('controller' => 'reports', 'action' => 'index'), array('escape' => false));
                                 ?>
                             </li>
                         </ul>

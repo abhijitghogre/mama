@@ -1,6 +1,18 @@
 <div class="row">
     <div class="col-sm-8">
         <div class="form-group formField">
+            <label for="mand-channel" class="col-sm-2 control-label">Channel*:</label>
+            <div class="col-sm-10">
+                <?php
+                    $channeloption[0] = array('value'=>0,'name'=>'');
+                    foreach($channels as $c) {
+                            $channeloption[] = array('value'=>$c['Channel']['id'],'name'=>$c['Channel']['Name']);
+                    }
+                    echo $this->Form->input('channel_id', array('type' => 'select','name'=>'mand-channel', 'options' => $channeloption, 'label' => false, 'div' => FALSE, 'class'=>'form-control'));
+                ?>
+            </div>
+        </div>
+        <div class="form-group formField">
             <label for="mand-name" class="col-sm-2 control-label">Name*:</label>
             <div class="col-sm-10">
                 <input name="mand-name" id="mand-name" class="form-control" type="text" required>
