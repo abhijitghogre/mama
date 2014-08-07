@@ -147,6 +147,8 @@ class UsersController extends AppController {
     }
 
     public function edit($id, $projectId) {
+        $channels = $this->Channel->getAllChannels();
+        $this->set('channels', $channels);
         $this->set('project_id', $projectId);
         $project = $this->Project->getExtraFields($projectId);
         $custom_fields = json_decode($project[0]['Project']['custom_fields'], true);

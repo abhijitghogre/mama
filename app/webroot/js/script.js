@@ -141,7 +141,12 @@ $(document).ready(function() {
                 break;
         }
     });
-
+    //date picker for EDD field
+    if ($('#edd').length > 0) {
+       $('#edd').datepicker({
+           dateFormat: 'dd-mm-yy'
+       });
+    }
     //remove button click
     $(document).on('click', '.close-button', function() {
         var type = $(this).attr('data-type');
@@ -378,22 +383,22 @@ $(document).ready(function() {
                 user_meta_id: $('input.user_meta_id').val(),
                 user_callflag_id: $('input.user_callflag_id').val()
             }, function(response) {
-                if (JSON.parse(response).type === "success") {
+                //if (JSON.parse(response).type === "success") {
                     window.location.replace(BASE_URL + '/users/listUsers/' + $('.project_id').val());
-                } else {
+                /*} else {
                     alert('Some error occured. Please contact administrator');
-                }
+                }*/
             });
         } else {
             $.post(BASE_URL + '/users/add/' + $('.project_id').val(), {
                 formData: $(this).serialize(),
                 customFields: fields
             }, function(response) {
-                if (JSON.parse(response).type === "success") {
+                //if (JSON.parse(response).type === "success") {
                     window.location.replace(BASE_URL + '/users/listUsers/' + $('.project_id').val());
-                } else {
+                /*} else {
                     alert('Some error occured. Please contact administrator');
-                }
+                }*/
             });
         }
 
@@ -631,6 +636,7 @@ $(document).ready(function() {
      $('input[name="mand-reg-date"]').val("2014-05-16");
      $('input[name="mand-gest-age"]').val(42);
      */
+     
 
     /*Edit stage functionality*/
     $('.editstage').on('click', function(e) {

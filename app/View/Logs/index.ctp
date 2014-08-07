@@ -88,8 +88,8 @@
                                 <td><?php echo $r['d']['phoneno']; ?></td>
                                 <td>
                                     <?php
-                                    $slot = array('1' => '9:00 AM to 12:00 PM', '2' => '12:00 PM to 3:00 PM', '3' => '3:00 PM to 6:00 PM', '4' => '6:00 PM to 9:00 PM');
-                                    echo $slot[$r['u']['call_slots']];
+                                    /*$slot = array('1' => '9:00 AM to 12:00 PM', '2' => '12:00 PM to 3:00 PM', '3' => '3:00 PM to 6:00 PM', '4' => '6:00 PM to 9:00 PM');*/
+                                    echo $r['u']['call_slots'];
                                     ?>
                                 </td>
                                 <td>
