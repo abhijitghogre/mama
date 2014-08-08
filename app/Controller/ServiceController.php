@@ -28,8 +28,14 @@ class ServiceController extends AppController {
                     $stageend = $structure[$key]['stageduration'][$cf.'_end'];
                     for ($diff = $stagestart; $diff <= $stageend; $diff++) {
                         if ($structure[$key]['callfrequency'] != "daily") {
-                            for ($msg = 1; $msg <= $structure[$key]['numberofcalls']; $msg++) {
-                                $index = $stageno . "." . $cf . $diff . "." . $msg;
+                            if($structure[$key]['numberofcalls'] > 1){
+                                for ($msg = 1; $msg <= $structure[$key]['numberofcalls']; $msg++) {
+                                    $index = $stageno . "." . $cf . $diff . "." . $msg;
+                                    $flagvalue = array("reason" => 0, "attempts" => 0, "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+                                    $resultarray[$index] = $flagvalue;
+                                }
+                            }else{
+                                $index = $stageno . "." . $cf . $diff;
                                 $flagvalue = array("reason" => 0, "attempts" => 0, "startdatetime" => "", "duration" => 0, "missedcall" => 0);
                                 $resultarray[$index] = $flagvalue;
                             }
@@ -55,6 +61,7 @@ class ServiceController extends AppController {
     public function update_stage() {
         date_default_timezone_set('Asia/Calcutta');
         $current_time = time();
+        $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
         $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
         $user = $this->User->find('all', array('recursive' => 0));
         foreach ($user as $u) {
@@ -79,8 +86,8 @@ class ServiceController extends AppController {
                 $callfrequency = $struct['callfrequency'];
                 $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
                 $type = $struct['type'];
-                $stagestart = $struct['stageduration']['start'];
-                $stageend = $struct['stageduration']['end'];
+                $stagestart = $struct['stageduration'][$frequency[$callfrequency].'_start'];
+                $stageend = $struct['stageduration'][$frequency[$callfrequency].'_end'];
                 if ($presentgestage >= $stagestart && $presentgestage <= $stageend && $type == $u['User']['delivery']) {
                     $userstage = $stageno;
                 }else{
@@ -283,7 +290,7 @@ class ServiceController extends AppController {
         print_r($callsarray);
         $calltype = 1;
         $mid = 0;
-        $this->outbound($callsarray, $calltype, $mid);
+        //$this->outbound($callsarray, $calltype, $mid);
         exit;
     }
     /* list of calls to be made */
