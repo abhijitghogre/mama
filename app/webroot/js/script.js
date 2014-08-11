@@ -530,7 +530,7 @@ $(document).ready(function() {
     });
 
     /*logs page*/
-    var oTable = $('#report').dataTable();
+    var oTable = $('#report').dataTable({"aaSorting": [[6, "desc"]]});
     $('#LogsProjectId').on('change', function() {
         var id = $(this).val();
         if (id != 0) {

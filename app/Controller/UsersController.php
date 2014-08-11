@@ -150,11 +150,12 @@ class UsersController extends AppController {
         $channels = $this->Channel->getAllChannels();
         $this->set('channels', $channels);
         $this->set('project_id', $projectId);
+        $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
+        $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
         $project = $this->Project->getExtraFields($projectId);
         $custom_fields = json_decode($project[0]['Project']['custom_fields'], true);
         $custom_fields_dom = $this->_customFieldsArrayToDom($custom_fields, false);
         $this->set('custom_fields', $custom_fields_dom);
-
         $user = $this->User->getUserDetails($id);
         $this->set('user_id', $id);
         $this->set('user', $user);

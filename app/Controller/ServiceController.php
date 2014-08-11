@@ -96,8 +96,11 @@ class ServiceController extends AppController {
                 $stageno++;
             }
             echo $user_id . "-" . $userstage . "</br>";
-            $this->User->updateStage($user_id, $userstage);
+            $this->User->updateStage($user_id, $userstage);    
         }
+        $filename = WWW_ROOT . "stageLog.txt";
+        $datetime = date("d m Y H:i:s");
+        file_put_contents($filename," Time: " . $datetime  . "\n", FILE_APPEND);
         exit;
     }
     /* list of calls to be made */
@@ -290,7 +293,7 @@ class ServiceController extends AppController {
         print_r($callsarray);
         $calltype = 1;
         $mid = 0;
-        //$this->outbound($callsarray, $calltype, $mid);
+        $this->outbound($callsarray, $calltype, $mid);
         exit;
     }
     /* list of calls to be made */
@@ -806,9 +809,13 @@ class ServiceController extends AppController {
         $phoneno = $_GET['phoneno'];
         $calltype = 1;
         $tid = $callsummary['myData'];
-        $callstatus = $callsummary['drop-type'];
+        //$callstatus = $callsummary['drop-type'];
+        $callstatus = 1; //failure
         $dropreason = $callsummary['drop-reason'];
         $duration = $callsummary['call-duration'];
+        if($duration != 0){
+            $callstatus = 0; //success
+        }
         $startdatetime = date("Y-m-d H:i:s", strtotime($callsummary['answered-on']));
         $enddatetime = date("Y-m-d H:i:s", strtotime($callsummary['released-on']));
         $data = $this->DialerLogs->find('first', array('conditions' => array('DialerLogs.tid' => $tid), 'recursive' => -1));
