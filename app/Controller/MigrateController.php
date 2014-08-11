@@ -105,7 +105,7 @@ class MigrateController extends AppController {
 
     /* Migrating data from mMitra db to mMitra-MAMA */
 
-    public function changecallflag($callflag) {
+    public function changecallflag1($callflag) {
         $oldflag = json_decode($callflag, true);
         $newflag = array();
         $stage = 1;
@@ -151,11 +151,13 @@ class MigrateController extends AppController {
         }
         foreach ($oldflag[1][2] as $key => $val) {
             //print_r($val);exit;
+            if ($key <= 52) {
             $stage = 4;
             $freq = "w";
             $index = $stage . "." . $freq . $key;
             $flagvalue = array("reason" => $val['flag'], "attempts" => $val['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
             $newflag[$index] = $flagvalue;
+            }
         }
         //print_r($newflag);exit;
         /* foreach($oldflag[1][3] as $key=>$val){
@@ -169,7 +171,144 @@ class MigrateController extends AppController {
         $changedflag = json_encode($newflag);
         return $changedflag;
     }
-
+    public function changecallflag($callflag) {
+        $old = json_decode($callflag, true);
+        $newflag = array();
+        //stage1
+        $newflag['1.w11.1'] = array("reason" => $old[0][11]['first_call']['flag'], "attempts" => $old[0][11]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w11.2'] = array("reason" => $old[0][11]['second_call']['flag'], "attempts" => $old[0][11]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w12.1'] = array("reason" => $old[0][12]['first_call']['flag'], "attempts" => $old[0][12]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w12.2'] = array("reason" => $old[0][12]['second_call']['flag'], "attempts" => $old[0][12]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w13.1'] = array("reason" => $old[0][13]['first_call']['flag'], "attempts" => $old[0][13]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w13.2'] = array("reason" => $old[0][13]['second_call']['flag'], "attempts" => $old[0][13]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w14.1'] = array("reason" => $old[0][14]['first_call']['flag'], "attempts" => $old[0][14]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w14.2'] = array("reason" => $old[0][14]['second_call']['flag'], "attempts" => $old[0][14]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w15.1'] = array("reason" => $old[0][15]['first_call']['flag'], "attempts" => $old[0][15]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w15.2'] = array("reason" => $old[0][15]['second_call']['flag'], "attempts" => $old[0][15]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w16.1'] = array("reason" => $old[0][16]['first_call']['flag'], "attempts" => $old[0][16]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w16.2'] = array("reason" => $old[0][16]['second_call']['flag'], "attempts" => $old[0][16]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w17.1'] = array("reason" => $old[0][17]['first_call']['flag'], "attempts" => $old[0][17]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w17.2'] = array("reason" => $old[0][17]['second_call']['flag'], "attempts" => $old[0][17]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w18.1'] = array("reason" => $old[0][18]['first_call']['flag'], "attempts" => $old[0][18]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w18.2'] = array("reason" => $old[0][18]['second_call']['flag'], "attempts" => $old[0][18]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w19.1'] = array("reason" => $old[0][19]['first_call']['flag'], "attempts" => $old[0][19]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w19.2'] = array("reason" => $old[0][19]['second_call']['flag'], "attempts" => $old[0][19]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w20.1'] = array("reason" => $old[0][20]['first_call']['flag'], "attempts" => $old[0][20]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w20.2'] = array("reason" => $old[0][20]['second_call']['flag'], "attempts" => $old[0][20]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w21.1'] = array("reason" => $old[0][21]['first_call']['flag'], "attempts" => $old[0][21]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w21.2'] = array("reason" => $old[0][21]['second_call']['flag'], "attempts" => $old[0][21]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w22.1'] = array("reason" => $old[0][22]['first_call']['flag'], "attempts" => $old[0][22]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w22.2'] = array("reason" => $old[0][22]['second_call']['flag'], "attempts" => $old[0][22]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w23.1'] = array("reason" => $old[0][23]['first_call']['flag'], "attempts" => $old[0][23]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w23.2'] = array("reason" => $old[0][23]['second_call']['flag'], "attempts" => $old[0][23]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w24.1'] = array("reason" => $old[0][24]['first_call']['flag'], "attempts" => $old[0][24]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w24.2'] = array("reason" => $old[0][24]['second_call']['flag'], "attempts" => $old[0][24]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w25.1'] = array("reason" => $old[0][25]['first_call']['flag'], "attempts" => $old[0][25]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w25.2'] = array("reason" => $old[0][25]['second_call']['flag'], "attempts" => $old[0][25]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w26.1'] = array("reason" => $old[0][26]['first_call']['flag'], "attempts" => $old[0][26]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w26.2'] = array("reason" => $old[0][26]['second_call']['flag'], "attempts" => $old[0][26]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w27.1'] = array("reason" => $old[0][27]['first_call']['flag'], "attempts" => $old[0][27]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w27.2'] = array("reason" => $old[0][27]['second_call']['flag'], "attempts" => $old[0][27]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w28.1'] = array("reason" => $old[0][28]['first_call']['flag'], "attempts" => $old[0][28]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w28.2'] = array("reason" => $old[0][28]['second_call']['flag'], "attempts" => $old[0][28]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w29.1'] = array("reason" => $old[0][29]['first_call']['flag'], "attempts" => $old[0][29]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w29.2'] = array("reason" => $old[0][29]['second_call']['flag'], "attempts" => $old[0][29]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w30.1'] = array("reason" => $old[0][30]['first_call']['flag'], "attempts" => $old[0][30]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w30.2'] = array("reason" => $old[0][30]['second_call']['flag'], "attempts" => $old[0][30]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w31.1'] = array("reason" => $old[0][31]['first_call']['flag'], "attempts" => $old[0][31]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w31.2'] = array("reason" => $old[0][31]['second_call']['flag'], "attempts" => $old[0][31]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w32.1'] = array("reason" => $old[0][32]['first_call']['flag'], "attempts" => $old[0][32]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w32.2'] = array("reason" => $old[0][32]['second_call']['flag'], "attempts" => $old[0][32]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w33.1'] = array("reason" => $old[0][33]['first_call']['flag'], "attempts" => $old[0][33]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w33.2'] = array("reason" => $old[0][33]['second_call']['flag'], "attempts" => $old[0][33]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w34.1'] = array("reason" => $old[0][34]['first_call']['flag'], "attempts" => $old[0][34]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w34.2'] = array("reason" => $old[0][34]['second_call']['flag'], "attempts" => $old[0][34]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w35.1'] = array("reason" => $old[0][35]['first_call']['flag'], "attempts" => $old[0][35]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w35.2'] = array("reason" => $old[0][35]['second_call']['flag'], "attempts" => $old[0][35]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w36.1'] = array("reason" => $old[0][36]['first_call']['flag'], "attempts" => $old[0][36]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w36.2'] = array("reason" => $old[0][36]['second_call']['flag'], "attempts" => $old[0][36]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w37.1'] = array("reason" => $old[0][37]['first_call']['flag'], "attempts" => $old[0][37]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w37.2'] = array("reason" => $old[0][37]['second_call']['flag'], "attempts" => $old[0][37]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w38.1'] = array("reason" => $old[0][38]['first_call']['flag'], "attempts" => $old[0][38]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w38.2'] = array("reason" => $old[0][38]['second_call']['flag'], "attempts" => $old[0][38]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w39.1'] = array("reason" => 0, "attempts" => 0, "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['1.w39.2'] = array("reason" => 0, "attempts" => 0, "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        
+        //stage2
+        $newflag['2.d1'] = array("reason" => $old[1][0][1]['flag'], "attempts" => $old[1][0][1]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['2.d2'] = array("reason" => $old[1][0][2]['flag'], "attempts" => $old[1][0][2]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['2.d3'] = array("reason" => $old[1][0][3]['flag'], "attempts" => $old[1][0][3]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['2.d4'] = array("reason" => $old[1][0][4]['flag'], "attempts" => $old[1][0][4]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['2.d5'] = array("reason" => $old[1][0][5]['flag'], "attempts" => $old[1][0][5]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['2.d6'] = array("reason" => $old[1][0][6]['flag'], "attempts" => $old[1][0][6]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['2.d7'] = array("reason" => $old[1][0][7]['flag'], "attempts" => $old[1][0][7]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        //stage3
+        $newflag['3.w2.1'] = array("reason" => $old[1][1][2]['first_call']['flag'], "attempts" => $old[1][1][2]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w2.2'] = array("reason" => $old[1][1][2]['second_call']['flag'], "attempts" => $old[1][1][2]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w3.1'] = array("reason" => $old[1][1][3]['first_call']['flag'], "attempts" => $old[1][1][3]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w3.2'] = array("reason" => $old[1][1][3]['second_call']['flag'], "attempts" => $old[1][1][3]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w4.1'] = array("reason" => $old[1][1][4]['first_call']['flag'], "attempts" => $old[1][1][4]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w4.2'] = array("reason" => $old[1][1][4]['second_call']['flag'], "attempts" => $old[1][1][4]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w5.1'] = array("reason" => $old[1][1][5]['first_call']['flag'], "attempts" => $old[1][1][5]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w5.2'] = array("reason" => $old[1][1][5]['second_call']['flag'], "attempts" => $old[1][1][5]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w6.1'] = array("reason" => $old[1][1][6]['first_call']['flag'], "attempts" => $old[1][1][6]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w6.2'] = array("reason" => $old[1][1][6]['second_call']['flag'], "attempts" => $old[1][1][6]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w7.1'] = array("reason" => $old[1][1][7]['first_call']['flag'], "attempts" => $old[1][1][7]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w7.2'] = array("reason" => $old[1][1][7]['second_call']['flag'], "attempts" => $old[1][1][7]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w8.1'] = array("reason" => $old[1][1][8]['first_call']['flag'], "attempts" => $old[1][1][8]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w8.2'] = array("reason" => $old[1][1][8]['second_call']['flag'], "attempts" => $old[1][1][8]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w9.1'] = array("reason" => $old[1][1][9]['first_call']['flag'], "attempts" => $old[1][1][9]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w9.2'] = array("reason" => $old[1][1][9]['second_call']['flag'], "attempts" => $old[1][1][9]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w10.1'] = array("reason" => $old[1][1][10]['first_call']['flag'], "attempts" => $old[1][1][10]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w10.2'] = array("reason" => $old[1][1][10]['second_call']['flag'], "attempts" => $old[1][1][10]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w11.1'] = array("reason" => $old[1][1][11]['first_call']['flag'], "attempts" => $old[1][1][11]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w11.2'] = array("reason" => $old[1][1][11]['second_call']['flag'], "attempts" => $old[1][1][11]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w12.1'] = array("reason" => $old[1][1][12]['first_call']['flag'], "attempts" => $old[1][1][12]['first_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['3.w12.2'] = array("reason" => $old[1][1][12]['second_call']['flag'], "attempts" => $old[1][1][12]['second_call']['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        //stage4
+        $newflag['4.w13'] = array("reason" => $old[1][2][13]['flag'], "attempts" => $old[1][2][13]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w14'] = array("reason" => $old[1][2][14]['flag'], "attempts" => $old[1][2][14]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w15'] = array("reason" => $old[1][2][15]['flag'], "attempts" => $old[1][2][15]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w16'] = array("reason" => $old[1][2][16]['flag'], "attempts" => $old[1][2][16]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w17'] = array("reason" => $old[1][2][17]['flag'], "attempts" => $old[1][2][17]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w18'] = array("reason" => $old[1][2][18]['flag'], "attempts" => $old[1][2][18]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w19'] = array("reason" => $old[1][2][19]['flag'], "attempts" => $old[1][2][19]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w20'] = array("reason" => $old[1][2][20]['flag'], "attempts" => $old[1][2][20]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w21'] = array("reason" => $old[1][2][21]['flag'], "attempts" => $old[1][2][21]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w22'] = array("reason" => $old[1][2][22]['flag'], "attempts" => $old[1][2][22]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w23'] = array("reason" => $old[1][2][23]['flag'], "attempts" => $old[1][2][23]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w24'] = array("reason" => $old[1][2][24]['flag'], "attempts" => $old[1][2][24]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w25'] = array("reason" => $old[1][2][25]['flag'], "attempts" => $old[1][2][25]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w26'] = array("reason" => $old[1][2][26]['flag'], "attempts" => $old[1][2][26]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w27'] = array("reason" => $old[1][2][27]['flag'], "attempts" => $old[1][2][27]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w28'] = array("reason" => $old[1][2][28]['flag'], "attempts" => $old[1][2][28]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w29'] = array("reason" => $old[1][2][29]['flag'], "attempts" => $old[1][2][29]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w30'] = array("reason" => $old[1][2][30]['flag'], "attempts" => $old[1][2][30]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w31'] = array("reason" => $old[1][2][31]['flag'], "attempts" => $old[1][2][31]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w32'] = array("reason" => $old[1][2][32]['flag'], "attempts" => $old[1][2][32]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w33'] = array("reason" => $old[1][2][33]['flag'], "attempts" => $old[1][2][33]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w34'] = array("reason" => $old[1][2][34]['flag'], "attempts" => $old[1][2][35]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w35'] = array("reason" => $old[1][2][35]['flag'], "attempts" => $old[1][2][35]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w36'] = array("reason" => $old[1][2][36]['flag'], "attempts" => $old[1][2][36]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w37'] = array("reason" => $old[1][2][37]['flag'], "attempts" => $old[1][2][37]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w38'] = array("reason" => $old[1][2][38]['flag'], "attempts" => $old[1][2][38]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w39'] = array("reason" => $old[1][2][39]['flag'], "attempts" => $old[1][2][39]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w40'] = array("reason" => $old[1][2][40]['flag'], "attempts" => $old[1][2][40]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w41'] = array("reason" => $old[1][2][41]['flag'], "attempts" => $old[1][2][41]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w42'] = array("reason" => $old[1][2][42]['flag'], "attempts" => $old[1][2][42]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w43'] = array("reason" => $old[1][2][43]['flag'], "attempts" => $old[1][2][43]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w44'] = array("reason" => $old[1][2][44]['flag'], "attempts" => $old[1][2][44]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w45'] = array("reason" => $old[1][2][45]['flag'], "attempts" => $old[1][2][45]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w46'] = array("reason" => $old[1][2][46]['flag'], "attempts" => $old[1][2][46]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w47'] = array("reason" => $old[1][2][47]['flag'], "attempts" => $old[1][2][47]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w48'] = array("reason" => $old[1][2][48]['flag'], "attempts" => $old[1][2][48]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w49'] = array("reason" => $old[1][2][49]['flag'], "attempts" => $old[1][2][49]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w50'] = array("reason" => $old[1][2][50]['flag'], "attempts" => $old[1][2][50]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w51'] = array("reason" => $old[1][2][51]['flag'], "attempts" => $old[1][2][51]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $newflag['4.w52'] = array("reason" => $old[1][2][52]['flag'], "attempts" => $old[1][2][52]['attempts'], "startdatetime" => "", "duration" => 0, "missedcall" => 0);
+        $changedflag = json_encode($newflag);
+        return $changedflag;
+    }
     function datediff($interval, $datefrom, $dateto, $using_timestamps = false) {
         /*
           $interval can be:
