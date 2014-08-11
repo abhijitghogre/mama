@@ -15,8 +15,9 @@ class MigrateController extends AppController {
         //print_r($result);exit;
         foreach ($result as $r) {
             $customFields = array();
-            $customFields['1407483198'] = $r['u']['rid'];
-            $customFields['1407483223'] = $r['u']['village'];
+            //localhost custom field values
+           /* $customFields['1407389364'] = $r['u']['rid'];
+            $customFields['1407749850'] = $r['u']['village'];
             $customFields['1407483295'] = $r['um']['work_engagement'];
             $customFields['1407483322'] = $r['um']['house_hold_size'];
             $customFields['1407483357'] = $r['um']['monthly_family_income'];
@@ -30,6 +31,22 @@ class MigrateController extends AppController {
             $customFields['1407483801'] = $r['um']['medical_illness'];
             $customFields['1407483856'] = array($r['um']['personal_history']);
             $customFields['1407483921'] = $r['um']['shg'];
+            */
+            $customFields['1407394954'] = $r['u']['rid'];
+            $customFields['1407394981'] = $r['u']['village'];
+            $customFields['1407395036'] = $r['um']['work_engagement'];
+            $customFields['1407395081'] = $r['um']['house_hold_size'];
+            $customFields['1407395099'] = $r['um']['monthly_family_income'];
+            $customFields['1407395131'] = $r['um']['recieve_calls'];
+            $customFields['1407395170'] = $r['um']['make_calls'];
+            $customFields['1407395200'] = $r['um']['recieve_sms'];
+            $customFields['1407395230'] = $r['um']['read_sms'];
+            $customFields['1407395262'] = $r['um']['send_sms'];
+            $customFields['1407395291'] = $r['um']['edd'];
+            $customFields['1407395427'] = array($r['um']['complications']);
+            $customFields['1407395505'] = $r['um']['medical_illness'];
+            $customFields['1407395566'] = array($r['um']['personal_history']);
+            $customFields['1407395604'] = $r['um']['shg'];
             $savedata = array();
             $this->User->create();
             $savedata["User"]["channel_id"] = 1;
