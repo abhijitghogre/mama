@@ -5,7 +5,7 @@ class Migrate extends AppModel {
     public $useTable = false;
 
     public function getUser(){
-        $result = $this->query("SELECT * FROM users u join user_meta um on u.id=um.user_id join user_callflags uc on u.id=uc.user_id where u.project_id=1 and u.deleted=0 and (u.id between 47 and 50)");
+        $result = $this->query("SELECT * FROM users u join user_meta um on u.id=um.user_id join user_callflags uc on u.id=uc.user_id where u.project_id=1 and u.deleted=0 and (u.id between 35 and 94)");
         return $result;
     }
     
