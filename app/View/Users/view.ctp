@@ -14,33 +14,71 @@
                         <tr><td>Current Gestational age</td>
                             <td>
                                 <?php 
-                                    $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
-                                    $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
-                                    $stage = "stage" . $user[0]['User']['stage'];
-                                    if($user[0]['User']['stage']>0) {
-                                        if(!empty($user[0]['Project']['stage_structure'])){
-                                            $structure = json_decode($user[0]['Project']['stage_structure'],true);
-                                            //echo"<pre>";print_r($structure);exit;
-                                            $callfrequency = $structure[$stage]['callfrequency'];
-                                        }
-                                        if ($user[0]['User']['delivery'] == 0) {
-                                            if (isset($user[0]['User']['lmp'])) {
-                                                $date1 = strtotime($user[0]['User']['lmp']);
-                                                $gest_age = 0;
-                                            } else {
-                                                $date1 = strtotime($user[0]['User']['registration_date']);
-                                                $gest_age = $user[0]['User']['enroll_gest_age'];
-                                            }
-                                        } elseif ($user[0]['User']['delivery'] == 1) {
-                                            $gest_age = 0;
-                                            $date1 = strtotime($user[0]['User']['delivery_date']);
-                                        }
-                                        $date2 = time();
-                                        //echo $callfrequency;exit;
-                                        $cf = $frequency[$callfrequency];
-                                        $presentgestage = datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
-                                        echo $stage . "." . $cf . "" . $presentgestage;
-                                    }
+                                    // $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
+                                    // $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
+                                    // $stage = "stage" . $user[0]['User']['stage'];
+                                    // if($user[0]['User']['stage']>0) {
+                                    //     if(!empty($user[0]['Project']['stage_structure'])){
+                                    //         $structure = json_decode($user[0]['Project']['stage_structure'],true);
+                                    //         //echo"<pre>";print_r($structure);exit;
+                                    //         $callfrequency = $structure[$stage]['callfrequency'];
+                                    //     }
+                                    //     if ($user[0]['User']['delivery'] == 0) {
+                                    //         if (isset($user[0]['User']['lmp'])) {
+                                    //             $date1 = strtotime($user[0]['User']['lmp']);
+                                    //             $gest_age = 0;
+                                    //         } else {
+                                    //             $date1 = strtotime($user[0]['User']['registration_date']);
+                                    //             $gest_age = $user[0]['User']['enroll_gest_age'];
+                                    //         }
+                                    //     } elseif ($user[0]['User']['delivery'] == 1) {
+                                    //         $gest_age = 0;
+                                    //         $date1 = strtotime($user[0]['User']['delivery_date']);
+                                    //     }
+                                    //     $date2 = time();
+                                    //     //echo $callfrequency;exit;
+                                    //     $cf = $frequency[$callfrequency];
+                                    //     $presentgestage = datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
+                                    //     echo $stage . "." . $cf . "" . $presentgestage;
+                                    // }
+                                date_default_timezone_set('Asia/Calcutta');
+                                if(!empty($user[0]['User']['lmp'])){
+                                $date1 = strtotime($user[0]['User']['lmp']);
+                                $gest_age = 0;
+                                } else {
+                                $date1 = strtotime($user[0]['User']['registration_date']);
+                                $gest_age = $user[0]['User']['enroll_gest_age'];
+                                }
+                                $date2 = time();
+                                $presentgestage = datediff('ww', $date1, $date2, true) + $gest_age ;
+
+                                if($user[0]['User']['delivery'] == 0 && $presentgestage > 0 && $presentgestage <= 38){
+                                echo $presentgestage;
+                                } else if($user[0]['User']['delivery'] == 1 ){
+                                $date1 = strtotime($user[0]['User']['delivery_date']);
+                                $date2 = time();
+                                $weekdiff = datediff('ww',$date1 , $date2, true);
+                                $monthdiff = datediff('m',$date1 , $date2, true);
+                                $yeardiff = datediff('yyyy',$date1 , $date2, true);
+
+                                if($monthdiff > 12 && $yeardiff <= 5){
+                                //check for corresponding monthflag in forth category
+                                echo "m".$monthdiff;
+                                } else if($monthdiff > 3 && $monthdiff <= 12) {
+                                //check for corresponding weekflag in third category
+                                echo "w".$weekdiff;
+
+                                } else if($monthdiff <= 3 && $weekdiff > 1){
+                                //check for corresponding weekflag in second category
+                                echo "w".$weekdiff;
+                                } else if($weekdiff <= 1){
+                                $daydiff = datediff('d',$date1 , $date2, true) + 1;
+                                //check for corresponding weekflag in first category
+                                echo "d".$daydiff;
+                                }
+                                } else{
+                                echo $presentgestage;
+                                }
                                 ?>
                             </td>
                         </tr>
