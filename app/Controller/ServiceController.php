@@ -6,7 +6,7 @@ class ServiceController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('get_user', 'update', 'outbound', 'missedcall1', 'missedcall2');
+        $this->Auth->allow('get_user', 'update', 'outbound', 'missedcall1', 'missedcall2', 'update_stage');
     }
 
     /* stage callflag template for each project */
@@ -66,6 +66,7 @@ class ServiceController extends AppController {
         $user = $this->User->find('all', array('recursive' => 0));
         foreach ($user as $u) {
             $stage = "stage" . $u['User']['stage'];
+            //echo $stage;exit;
             $user_id = $u['User']['id'];
             $structure = json_decode($u["Project"]["stage_structure"], true);
             if ($u['User']['delivery'] == 0) {
@@ -82,6 +83,7 @@ class ServiceController extends AppController {
             }
             $date2 = $current_time;
             $stageno = 1;
+            $userstage = 1;
             foreach ($structure as $key => $struct) {
                 $callfrequency = $struct['callfrequency'];
                 $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
@@ -90,8 +92,6 @@ class ServiceController extends AppController {
                 $stageend = $struct['stageduration'][$frequency[$callfrequency].'_end'];
                 if ($presentgestage >= $stagestart && $presentgestage <= $stageend && $type == $u['User']['delivery']) {
                     $userstage = $stageno;
-                }else{
-                    $userstage = 0;
                 }
                 $stageno++;
             }
@@ -103,7 +103,9 @@ class ServiceController extends AppController {
         file_put_contents($filename," Time: " . $datetime  . "\n", FILE_APPEND);
         exit;
     }
+
     /* list of calls to be made */
+
     public function get_user() {
         date_default_timezone_set('Asia/Calcutta');
         $current_time = time();
@@ -296,7 +298,9 @@ class ServiceController extends AppController {
         $this->outbound($callsarray, $calltype, $mid);
         exit;
     }
+
     /* list of calls to be made */
+
     public function get_user_old() {
         date_default_timezone_set('Asia/Calcutta');
         $current_time = time();
@@ -548,7 +552,7 @@ class ServiceController extends AppController {
     /* Missedcall No1. - 4071012038 for callback */
     public function missedcall1() {
         date_default_timezone_set('Asia/Calcutta');
-        
+
         $phoneno = $_GET['msisdn'];
         $serviceName = $_GET['serviceName'];
         $missedcalltime = date('Y-m-d H:i:s');
@@ -769,7 +773,6 @@ class ServiceController extends AppController {
             echo "</br>Response        : " . $response;
             echo "</br>=================================================================";
 
-            //$this->dialer_entry($call, $response, $calltype, $mid, $tid);
             $this->dialer_entry($call, $response, $calltype, $mid, $tid);
         }
     }

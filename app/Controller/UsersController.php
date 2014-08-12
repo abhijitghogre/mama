@@ -76,6 +76,7 @@ class UsersController extends AppController {
             /* calculating stage */
             date_default_timezone_set('Asia/Calcutta');
             $current_time = time();
+            $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
             $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
             $structure = json_decode($result['Project']['stage_structure'], true);
             if ($savedata["User"]["delivery"] == 0) {
@@ -91,12 +92,12 @@ class UsersController extends AppController {
             }
             $date2 = $current_time;
             $stageno = 1;
-            $userstage = 0;
+            $userstage = 1;
             foreach ($structure as $key => $struct) {
                 $callfrequency = $struct['callfrequency'];
                 $presentgestage = $this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
-                $stagestart = $struct['stageduration']['start'];
-                $stageend = $struct['stageduration']['end'];
+                $stagestart = $struct['stageduration'][$frequency[$callfrequency].'_start'];
+                $stageend = $struct['stageduration'][$frequency[$callfrequency].'_end'];
                 if ($presentgestage >= $stagestart && $presentgestage <= $stageend) {
                     $userstage = $stageno;
                 }
