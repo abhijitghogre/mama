@@ -3,7 +3,7 @@
 header("Content-type: application/csv");
 header("Content-Disposition: attachment; filename=report.csv");
 echo "mMitra \r\n";
-echo "Name, Project Name, Phone No., Call Slot, Call Status, Call Date & Time, Call Duration, Gestational Age, Attempts, Delivery Status\r\n";
+echo "Name, Project Name, Phone No., Call Slot, Call Status,Drop Reason, Call Date & Time, Call Duration, Gestational Age, Attempts, Delivery Status\r\n";
 foreach ($result as $r) {
     // call status
     if (isset($r['d']['callstatus']) && $r['d']['callstatus'] == 0) {
@@ -36,8 +36,22 @@ foreach ($result as $r) {
     // delivery status
     $delivery = array('0' => 'Pregnant', '1' => 'Successful', '2' => 'Unsuccessful');
     $deliverystatus = $delivery[$r['u']['delivery']];
-
-    echo $r['u']['name'] . "," . $r['p']['project_name'] . "," . $r['u']['phone_no'] . "," . $r['u']['call_slots'] . "," . $callstatus . "," . $calltime . "," . $callduration . "," . $r['d']['gest_age'] . ",". $attempts . ",". $deliverystatus . "\r\n";
+    if (!isset($r['d']['callstatus'])) {
+        if(!empty($r['d']['message']))
+        {
+            $drop_reason = $r['d']['message'];
+        }
+        else if(!empty($r['d']['dropreason'])){
+               echo $r['d']['dropreason'];
+            }
+            else{
+                echo "Not updated delivery status";
+            }
+    }else{
+        $drop_reason = "-";
+    }
+                            
+    echo $r['u']['name'] . "," . $r['p']['project_name'] . "," . $r['u']['phone_no'] . "," . $r['u']['call_slots'] . "," . $callstatus . "," . $drop_reason . "," . $calltime . "," . $callduration . "," . $r['d']['gest_age'] . ",". $attempts . ",". $deliverystatus . "\r\n";
 }
 ?>
 <?php

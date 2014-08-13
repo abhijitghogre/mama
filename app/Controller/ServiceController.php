@@ -291,6 +291,11 @@ class ServiceController extends AppController {
                 }
             }
         }
+
+        // $filename = WWW_ROOT . "userList.txt";
+        // $datetime = date("d m Y H:i:s");
+        // file_put_contents($filename," Time: " . $datetime  ."UsersList". $callsarray . "\n", FILE_APPEND);
+        $this->logSentData($callsarray);
         echo "<pre>";
         print_r($callsarray);
         $calltype = 1;
@@ -299,6 +304,22 @@ class ServiceController extends AppController {
         exit;
     }
 
+    /* To Write the get_user list in text file*/
+    private function logSentData($data){
+            $filename = WWW_ROOT . "calllog.txt";
+            $curdatetime = date("d m Y H:i:s");
+            $logstring = "";
+            $logstring .= "$curdatetime\n==========================================\n";
+            if(!empty($data)){
+                foreach ($data as $r) {
+                    $logstring .= "User_id: ". $r["user_id"] . " , Phone no: " . $r["phoneno"] . " , gest_age: " .$r["gest_age"]. " , media: " . $r["media"] . " \n";
+                }
+            } else{
+                $logstring .= "No data sent\n";
+            }
+            file_put_contents($filename, $logstring."\n",FILE_APPEND);
+    }
+    
     /* list of calls to be made */
 
     public function get_user_old() {
@@ -778,6 +799,7 @@ class ServiceController extends AppController {
     }
 
     public function dialer_entry($call, $response, $calltype, $mid, $tid) {
+        date_default_timezone_set('Asia/Calcutta');
         $user_id = $call["user_id"];
         $startdatetime = date('Y-m-d H:i:s');
         $gest_age = $call["gest_age"];
@@ -819,7 +841,10 @@ class ServiceController extends AppController {
         if($duration != 0){
             $callstatus = 0; //success
         }
-        $startdatetime = date("Y-m-d H:i:s", strtotime($callsummary['answered-on']));
+        $startdatetime = date("Y-m-d H:i:s", strtotime($callsummary['released-on']));
+        if(!empty($callsummary['answered-on'])){
+            $startdatetime = date("Y-m-d H:i:s", strtotime($callsummary['answered-on']));
+        }
         $enddatetime = date("Y-m-d H:i:s", strtotime($callsummary['released-on']));
         $data = $this->DialerLogs->find('first', array('conditions' => array('DialerLogs.tid' => $tid), 'recursive' => -1));
         $index = $data['DialerLogs']['gest_age'];

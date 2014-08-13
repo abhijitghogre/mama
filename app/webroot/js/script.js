@@ -528,7 +528,8 @@ $(document).ready(function() {
     $('#custom-field-modal').on('hidden.bs.modal', function(e) {
         location.reload();
     });
-
+    
+    var oTable = $('#List_users').dataTable();
     /*logs page*/
     var oTable = $('#report').dataTable({"aaSorting": [[6, "desc"]]});
     $('#LogsProjectId').on('change', function() {
