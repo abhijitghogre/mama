@@ -8,6 +8,7 @@
                     <th>Phone No.</th>
                     <th>Call Slot</th>
                     <th>Call Status</th>
+                    <th>Drop reason</th>
                     <th>Call Date & Time</th>
                     <th>Call Duration</th>
                     <th>Gestational Age</th>
@@ -35,6 +36,24 @@
                                  }else{
                                     echo "Failure";
                                  }
+                            ?>
+                        </td>
+                         <td>
+                            <?php
+                            if (!isset($r['d']['callstatus'])) {
+                                if(!empty($r['d']['message']))
+                                {
+                                    echo $r['d']['message'];
+                                }
+                                else if(!empty($r['d']['dropreason'])){
+                                           echo $r['d']['dropreason'];
+                                        }
+                                        else{
+                                            echo "Not updated delivery status";
+                                        }
+                            }else{
+                                echo "-";
+                            }
                             ?>
                         </td>
                         <td><?php echo date("d-m-Y H:i:s D", strtotime($r['d']['startdatetime'])); ?></td>

@@ -4,8 +4,8 @@
 <div class="content-box-large padding-10 box-with-header">
     <div class="panel-body">
         <div class="row">
-            <div class="col-md-6">
-                <table class="table table-bordered">
+            <div class="col-md-7">
+                <table class="table table-bordered" id="List_users">
                     <thead>
                         <tr>
                             <th>Name</th>

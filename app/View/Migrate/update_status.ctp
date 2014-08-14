@@ -5,7 +5,7 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-6">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="need_update">
                     <thead>
                         <tr>
                             <th>id</th>
