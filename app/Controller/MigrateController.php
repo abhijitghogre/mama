@@ -334,7 +334,7 @@ class MigrateController extends AppController {
         $list=array();
         date_default_timezone_set('Asia/Calcutta');
         $this->Migrate->setDataSource('default');
-        $result = $this->Migrate->getUserList();
+        $result = $this->User->query("SELECT * FROM users u join projects p on u.project_id=p.id");
         $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
         $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
         foreach($result as $r){

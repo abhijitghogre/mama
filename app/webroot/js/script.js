@@ -529,7 +529,8 @@ $(document).ready(function() {
         location.reload();
     });
     
-    var oTable = $('#List_users').dataTable();
+    var oTable1 = $('#List_users').dataTable();
+    var oTable2= $('#need_update').dataTable();
     /*logs page*/
     var oTable = $('#report').dataTable({"aaSorting": [[6, "desc"]]});
     $('#LogsProjectId').on('change', function() {
