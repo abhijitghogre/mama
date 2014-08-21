@@ -11,17 +11,25 @@ class LogsController extends AppController {
 
     public function index() {
         $this->set('logsActive', 1);
-        $current_week_monday = date('Y-m-d', strtotime('monday this week'));
+        $current_week_monday = date('Y-m-d H:i:s', strtotime('monday this week'));
+		//echo $current_week_monday;
+		//exit;
         $projects = $this->Project->find('all');
+		
+		$this->User->unbindModel(
+			array('hasMany' => array('DialerLogs'),'hasOne' => array('UserMeta', 'UserCallflag'))
+		);
         $users = $this->User->find('all', array('conditions' => array('User.deleted' => 0), 'order' => array('User.name')));
-        $this->set('$projects', $projects);
+        //print_r($users);
+		$this->set('$projects', $projects);
         $this->set('users', $users);
 
-        $result = $this->DialerLogs->query("SELECT * FROM dialer_logs d join users u on u.id = d.user_id
+        $result = $this->DialerLogs->query("SELECT u.name, u.call_slots, u.delivery, uc.flag, d.callstatus, d.dropreason, d.message, d.duration, d.startdatetime, d.gest_age, d.phoneno, p.project_name FROM dialer_logs d 
+										join users u on u.id = d.user_id
                                         join projects p on u.project_id = p.id
                                         join user_callflags uc on u.id = uc.user_id
-                                        WHERE d.startdatetime >= '$current_week_monday' GROUP BY d.startdatetime,u.phone_no ORDER BY d.startdatetime DESC");
-        $this->set('result', $result);
+                                        WHERE d.startdatetime>='".$current_week_monday."' GROUP BY d.startdatetime ORDER BY d.startdatetime DESC");
+		$this->set('result', $result);
         //echo "<pre>";
         //print_r($result);exit;
     }

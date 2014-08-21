@@ -131,6 +131,9 @@ class UsersController extends AppController {
     }
 
     public function listUsers($projectId) {
+        $this->User->unbindModel(
+            array('hasMany' => array('DialerLogs'),'hasOne' => array('UserMeta', 'UserCallflag'))
+	);
         $users = $this->User->getUsersByProject($projectId);
 //        var_dump($users);exit;
         $this->set('users', $users);

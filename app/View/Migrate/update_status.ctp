@@ -32,6 +32,16 @@
                                         array('class' => 'btn btn-primary btn-xs')
                                 );
                                 ?>
+                                <?php
+                                echo $this->Html->link(
+                                        'View', 
+                                        array(
+                                                'controller' => 'users',
+                                                'action' => 'view', $user['id'], $user['project_id']
+                                        ), 
+                                        array('class' => 'btn btn-success btn-xs')
+                                );
+                                ?>
                             </td>
                         </tr>
                         <?php

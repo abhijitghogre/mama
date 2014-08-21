@@ -104,7 +104,8 @@
                                 </td>
                                 <td>
                                     <?php
-                                    if (!isset($r['d']['callstatus']) || $r['d']['callstatus']==1) {
+                                    $stage=$r['u']['stage'];
+                                    if ((!isset($r['d']['callstatus']) || $r['d']['callstatus']==1) && $stage==1) {
                                         if(!empty($r['d']['message']))
                                         {
                                             echo $r['d']['message'];

@@ -8,6 +8,7 @@
                 <table class="table table-bordered" id="List_users">
                     <thead>
                         <tr>
+                            <th>User id</th>
                             <th>Name</th>
                             <th>Phone</th>
                             <th>Actions</th>
@@ -19,6 +20,7 @@
                         foreach ($users as $user) {
                             ?>
                             <tr>
+                                <td><?php echo $user['User']['id']; ?></td>
                                 <td><?php echo $user['User']['Name']; ?></td>
                                 <td><?php echo $user['User']['Phone']; ?></td>
                                 <td>
