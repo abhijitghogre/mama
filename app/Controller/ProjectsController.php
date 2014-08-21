@@ -123,4 +123,5 @@ class ProjectsController extends AppController {
 		$projectid = $_POST['projectid'];
 		$this->Project->saveallstages($projectid,$data);
 	}
+        
 }

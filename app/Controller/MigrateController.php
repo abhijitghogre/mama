@@ -329,8 +329,51 @@ class MigrateController extends AppController {
         return $changedflag;
     }
 
+//    public function update_status(){
+//        $presentgestage=0;
+//        $list=array();
+//        date_default_timezone_set('Asia/Calcutta');
+//        $this->Migrate->setDataSource('default');
+//        $result = $this->User->query("SELECT * FROM users u join projects p on u.project_id=p.id");
+//        $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");
+//        $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
+//        foreach($result as $r){
+//            $stage = "stage" . $r['u']['stage'];
+//            if($r['u']['stage']>0) {
+//                if(!empty($r['p']['stage_structure'])){
+//                    $structure = json_decode($r['p']['stage_structure'],true);
+//                    $callfrequency = $structure[$stage]['callfrequency'];
+//                }
+//                if ($r['u']['delivery'] == 0) {
+//                    if (isset($r['u']['lmp'])) {
+//                        $date1 = strtotime($r['u']['lmp']);
+//                        $gest_age = 0;
+//                    } else {
+//                        $date1 = strtotime($r['u']['registration_date']);
+//                        $gest_age = $r['u']['enroll_gest_age'];
+//                    }
+//                } elseif ($r['u']['delivery'] == 1) {
+//                    $gest_age = 0;
+//                    $date1 = strtotime($r['u']['delivery_date']);
+//                }
+//                $date2 = time();
+//                $cf = $frequency[$callfrequency];
+//                $presentgestage =$this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
+//            }
+//            if($presentgestage>39 && $r['u']['delivery'] == 0)
+//            {
+//                    $list[]=array(
+//                        "id"  =>$r['u']['id'],
+//                        "name"=>$r['u']['name'],
+//                        "project_id"=>$r['p']['id']
+//                        );
+//            }
+//        }
+//        $this->set('users', $list);
+//        //print_r($list);exit;
+//    }
     public function update_status(){
-        $presentgestage=0;
+        $presentgestage=0;$gest_age=0;
         $list=array();
         date_default_timezone_set('Asia/Calcutta');
         $this->Migrate->setDataSource('default');
@@ -339,37 +382,41 @@ class MigrateController extends AppController {
         $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
         foreach($result as $r){
             $stage = "stage" . $r['u']['stage'];
+			
             if($r['u']['stage']>0) {
                 if(!empty($r['p']['stage_structure'])){
                     $structure = json_decode($r['p']['stage_structure'],true);
                     $callfrequency = $structure[$stage]['callfrequency'];
-                }
-                if ($r['u']['delivery'] == 0) {
-                    if (isset($r['u']['lmp'])) {
-                        $date1 = strtotime($r['u']['lmp']);
-                        $gest_age = 0;
-                    } else {
-                        $date1 = strtotime($r['u']['registration_date']);
-                        $gest_age = $r['u']['enroll_gest_age'];
-                    }
-                } elseif ($r['u']['delivery'] == 1) {
-                    $gest_age = 0;
-                    $date1 = strtotime($r['u']['delivery_date']);
-                }
-                $date2 = time();
-                $cf = $frequency[$callfrequency];
-                $presentgestage =$this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
-            }
-            if($presentgestage>39 && $r['u']['delivery'] == 0)
-            {
-                    $list[]=array(
-                        "id"  =>$r['u']['id'],
-                        "name"=>$r['u']['name'],
-                        "project_id"=>$r['p']['id']
-                        );
-            }
+					if ($r['u']['delivery'] == 0) {
+						if (isset($r['u']['lmp'])) {
+							$date1 = strtotime($r['u']['lmp']);
+							$gest_age = 0;
+						} else {
+							$date1 = strtotime($r['u']['registration_date']);
+							$gest_age = $r['u']['enroll_gest_age'];
+						}
+						$date2 = time();
+						$cf = $frequency[$callfrequency];
+						$presentgestage =$this->datediff($diff[$callfrequency], $date1, $date2, true) + $gest_age;
+						//echo $stage."===>".$presentgestage."/n";
+						if(($presentgestage<$structure[$stage]['stageduration'][$cf.'_start'] || 
+							$presentgestage>$structure[$stage]['stageduration'][$cf.'_end']) && 
+							($r['u']['delivery'] == 0 || $r['u']['delivery']==1)){
+							$list[]=array(
+								"id"  =>$r['u']['id'],
+								"name"=>$r['u']['name'],
+								"stage"=> $stage,
+								"gest_age"=>$presentgestage,
+								"project_id"=>$r['p']['id']
+								);
+						}
+					}
+				}
+			}
         }
         $this->set('users', $list);
+		//exit;
+		//echo"<pre>";
         //print_r($list);exit;
     }
     function datediff($interval, $datefrom, $dateto, $using_timestamps = false) {
