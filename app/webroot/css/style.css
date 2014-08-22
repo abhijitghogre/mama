@@ -20,6 +20,9 @@
     background-color: #d9534f;
 }
 
+.hidetext{
+    display:none;
+}
 .edit-button{
     position: absolute;
     right: 22px;

@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('Project', 'User', 'Channel');
+    public $uses = array('Project', 'User', 'Channel','Sakhi');
 
     public function beforeFilter() {
         parent::beforeFilter();
@@ -12,6 +12,8 @@ class UsersController extends AppController {
     public function add($projectId) {
         $channels = $this->Channel->getAllChannels();
         $this->set('channels', $channels);
+        $managers = $this->Managers->getAllManagers();
+        $this->set('managers', $managers);
         if ($this->request->is('post')) {
             $formData = array();
             parse_str($this->request->data['formData'], $formData);
@@ -34,7 +36,7 @@ class UsersController extends AppController {
             $savedata["User"]["lmp"] = $formData['mand-lmp'];
             $savedata["User"]["enroll_gest_age"] = $formData['mand-gest-age'];
             $savedata["User"]["project_id"] = $projectId;
-            $savedata["User"]["manager_id"] = $this->Auth->user('id');
+            $savedata["User"]["manager_id"] = $formData['mand-arogya-sakhi'];
             $savedata["User"]["call_slots"] = $formData['mand-call-slot'];
             $savedata["User"]["delivery"] = $formData['mand-delivery-status'];
             $savedata["User"]["language"] = $formData['mand-language'];
@@ -153,6 +155,8 @@ class UsersController extends AppController {
     public function edit($id, $projectId) {
         $channels = $this->Channel->getAllChannels();
         $this->set('channels', $channels);
+        $managers = $this->Sakhi->getAllManagers();
+        $this->set('managers', $managers);
         $this->set('project_id', $projectId);
         $diff = array("daily" => "d", "weekly" => "ww", "monthly" => "m", "yearly" => "yyyy");
         $frequency = array("daily" => "d", "weekly" => "w", "monthly" => "m", "yearly" => "y");

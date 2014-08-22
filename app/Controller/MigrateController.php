@@ -2,7 +2,7 @@
 
 class MigrateController extends AppController {
 
-    var $uses = array('Migrate', 'User', 'UserCallflags', 'UserMeta', 'Project');
+    var $uses = array('Migrate', 'User', 'UserCallflags', 'UserMeta', 'Project','Manager');
 
     function beforeFilter() {
         $this->Auth->allow();
@@ -32,8 +32,8 @@ class MigrateController extends AppController {
             $customFields['1407483856'] = array($r['um']['personal_history']);
             $customFields['1407483921'] = $r['um']['shg'];
             */
-             //server custom field values
-            $customFields['1407394954'] = $r['u']['rid'];
+             //server custom field values for dfid project
+            /*$customFields['1407394954'] = $r['u']['rid'];
             $customFields['1407394981'] = $r['u']['village'];
             $customFields['1407395036'] = $r['um']['work_engagement'];
             $customFields['1407395081'] = $r['um']['house_hold_size'];
@@ -47,7 +47,12 @@ class MigrateController extends AppController {
             $customFields['1407395427'] = array($r['um']['complications']);
             $customFields['1407395505'] = $r['um']['medical_illness'];
             $customFields['1407395566'] = array($r['um']['personal_history']);
-            $customFields['1407395604'] = $r['um']['shg'];
+            $customFields['1407395604'] = $r['um']['shg'];*/
+            // server custom field values for glenmark project
+            $customFields['1408685840']=$r['u']['rid'];
+
+            //for localhost
+//$customFields['1408685213']=$r['u']['rid'];
             $savedata = array();
             $this->User->create();
             $savedata["User"]["channel_id"] = 1;
@@ -73,9 +78,9 @@ class MigrateController extends AppController {
             $savedata["UserMeta"]["alternate_no_owner"] = $r['um']['alternate_owner1'];
             $savedata["UserMeta"]["birth_place"] = $r['um']['birth_place'];
             $savedata["UserMeta"]["custom_fields"] = '';
-            $savedata["UserMeta"]["custom_fields"] = json_encode($customFields);
+            $savedata["UserMeta"]["custom_fields"] = json_encode($customFields);;
             //save default call flags
-            $result = $this->Project->find('first', array('conditions' => array('Project.id' => 1)));
+            $result = $this->Project->find('first', array('conditions' => array('Project.id' => 2)));
             $stage_template = $result['Project']['template'];
             $savedata["UserCallflag"]["flag"] = $this->changecallflag($r['uc']['flag']);
             
@@ -418,6 +423,37 @@ class MigrateController extends AppController {
 		//exit;
 		//echo"<pre>";
         //print_r($list);exit;
+    }
+
+    public function migrateManager(){
+        date_default_timezone_set('Asia/Calcutta');
+        // $this->Migrate->setDataSource('default2');
+        $result = $this->Migrate->getManagers();
+       $count=1;
+        foreach($result as $r){
+            //echo $r['managers']['fname'].$r['managers']['lname'];
+            $savedata=array();
+            $this->Manager->create();
+            // $username=substr($r['managers']['lname'], strrpos($r['managers']['lname'], ' '));
+            // $user1=trim($r['managers']['fname']);
+            // $username1=trim($username);
+            // $username2=$user1.$username1;
+            // echo "<pre>";
+            // echo $username2;
+            $username=trim($r['managers']['fname']).$count;
+           $savedata["Manager"]["username"] =$username;
+            $savedata["Manager"]["password"] = 'test';
+            $savedata["Manager"]["role"] = 'volunteer';
+             $savedata["Manager"]["created"] = date('y-m-d H:i:s');
+            $savedata["Manager"]["modified"] = date('y-m-d H:i:s');
+            $savedata["Manager"]["fname"] = $r['managers']['fname'];
+            $savedata["Manager"]["lname"] = $r['managers']['lname'];
+            if ($this->Manager->saveAll($savedata)) {
+                echo json_encode(array('type' => 'success'));
+            }
+            $count=$count+1; 
+        }
+        exit;
     }
     function datediff($interval, $datefrom, $dateto, $using_timestamps = false) {
         /*

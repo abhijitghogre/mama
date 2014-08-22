@@ -37,21 +37,16 @@ class ManagersController extends AppController {
         if ($this->Auth->user('role') == 'admin' || $this->Auth->user('role') == 'superadmin') {
 
             if ($this->request->is('post')) {
-
-                if ($this->Manager->checkIfUsernameExists($this->request->data['Manager']['username'])) {
-                    $this->Session->setFlash(
-                            __('Username already taken.')
-                    );
-                } else {
-                    $this->Manager->create();
-                    if ($this->Manager->saveAll($this->request->data)) {
-                        $this->Session->setFlash(__('The user has been registered'));
-                        return $this->redirect(array('controller' => 'managers', 'action' => 'add'));
-                    }
-                    $this->Session->setFlash(
-                            __('The user could not be saved. Please, try again.')
-                    );
-                }
+                $savedata=array();
+                $this->Manager->create();
+                $savedata['Manager']['fname']=$this->request->data['Manager']['fname'];
+                $savedata['Manager']['lname']=$this->request->data['Manager']['lname'];
+                $savedata['Manager']['username']=$this->request->data['Manager']['fname']."_".$this->request->data['Manager']['lname'];
+                $savedata['Manager']['password']='test';
+                $savedata['Manager']['role']='volunteer';
+                print_r($savedata);
+                $this->Manager->saveAll($savedata);
+                return $this->redirect(array('controller' => 'managers', 'action' => 'add'));
             }
         } else {
             return $this->redirect(array('controller' => 'home', 'action' => 'index'));
