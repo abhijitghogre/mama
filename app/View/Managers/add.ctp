@@ -20,19 +20,19 @@
                     <?php
                     echo $this->Form->create('Manager', array('class' => 'form-horizontal', 'role' => 'form'));
                     ?>
-                    <div class="form-group formField">
+                    <div class="form-group formField hidetext">
                         <label for="inputusername" class="col-sm-2 control-label">Username:</label>
                         <div class="col-sm-10">
                             <?php echo $this->Form->input('username', array('label' => false, 'class' => 'form-control', 'placeholder' => 'Username', 'id' => 'inputusername')); ?>
                         </div>
                     </div>
-                    <div class="form-group formField">
+                    <div class="form-group formField hidetext">
                         <label for="inputpass" class="col-sm-2 control-label">Password:</label>
                         <div class="col-sm-10">
                             <?php echo $this->Form->input('password', array('label' => false, 'class' => 'form-control', 'placeholder' => 'Password', 'id' => 'inputpass')); ?>
                         </div>
                     </div>
-                    <div class="form-group formField">
+                    <div class="form-group formField hidetext">
                         <label for="inputconpass" class="col-sm-2 control-label">Confirm Password:</label>
                         <div class="col-sm-10">
                             <?php echo $this->Form->input('password', array('label' => false, 'class' => 'form-control', 'placeholder' => 'Confirm Password', 'id' => 'inputconpass')); ?>
@@ -67,12 +67,12 @@
                     <div class="row">
                         <div class="col-sm-12 text-center">
                             <?php
-                            echo $this->Form->submit('Register', array('class' => 'btn btn-primary', 'title' => 'Register'));
-                            echo $this->Form->end();
+                            //echo $this->Form->submit('Register', array('class' => 'btn btn-primary', 'title' => 'Register'));
+                             echo $this->Form->end('Finish'); 
                             ?>
                         </div>
                     </div>
-                    </form>
+                    
                 </div>
             </div>
         </div>

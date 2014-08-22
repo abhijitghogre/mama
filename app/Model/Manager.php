@@ -6,25 +6,25 @@ App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 class Manager extends AppModel {
 
     public $validate = array(
-        'username' => array(
-            'required' => array(
-                'rule' => array('notEmpty'),
-                'message' => 'A username is required'
-            )
-        ),
-        'password' => array(
-            'required' => array(
-                'rule' => array('notEmpty'),
-                'message' => 'A password is required'
-            )
-        ),
-        'repass' => array(
-            'equaltofield' => array(
-                'rule' => array('equaltofield', 'password'),
-                'message' => 'Password does not match.',
-                'on' => 'create', // Limit validation to 'create' or 'update' operations
-            )
-        ),
+        // 'username' => array(
+        //     'required' => array(
+        //         'rule' => array('notEmpty'),
+        //         'message' => 'A username is required'
+        //     )
+        // ),
+        // 'password' => array(
+        //     'required' => array(
+        //         'rule' => array('notEmpty'),
+        //         'message' => 'A password is required'
+        //     )
+        // ),
+        // 'repass' => array(
+        //     'equaltofield' => array(
+        //         'rule' => array('equaltofield', 'password'),
+        //         'message' => 'Password does not match.',
+        //         'on' => 'create', // Limit validation to 'create' or 'update' operations
+        //     )
+        // ),
         'fname' => array(
             'required' => array(
                 'rule' => array('notEmpty'),
@@ -146,6 +146,10 @@ class Manager extends AppModel {
                         'username' => $username
                     )
         ));
+    }
+    public function getAllManagers() {
+        return $this->query("SELECT id,fname,lname from managers"
+        );
     }
 
 }
